@@ -3,7 +3,7 @@ import "./globals.css";
 import ClientLayout from "./Clientlayout";
 
 export const metadata: Metadata = {
-  title: "Home - IoTani",
+  title: "IoTani",
 };
 
 export default function RootLayout({

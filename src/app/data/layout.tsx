@@ -18,11 +18,11 @@ const DataPage = ({
       <div>{children}</div>
       <div className="p-6 space-y-6">
         {analytics}
-        <div className="flex gap-5">
-          {kelembabanTanah}
+        <div>{kelembabanTanah}</div>
+        <div className="flex  gap-2">
           {phTanah}
+          {suhuTanah}
         </div>
-        {suhuTanah}
         {modal}
       </div>
     </>

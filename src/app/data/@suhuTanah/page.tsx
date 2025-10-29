@@ -1,9 +1,24 @@
-const SuhuTanahPage = () => {
-  return (
-    <div className="flex justify-center items-center w-full h-96 bg-stone-500 rounded-2xl">
-      SuhuTanahPage
-    </div>
-  );
-};
+// app/data/@suhuTanah/page.tsx
+"use client";
 
-export default SuhuTanahPage;
+import { StatCard } from "@/components/dashboard/StatCard";
+import { LuThermometer } from "react-icons/lu";
+import { motion } from "framer-motion";
+
+export default function SuhuTanahPage() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: "spring", stiffness: 100 }}
+      className="w-1/2"
+    >
+      <StatCard
+        title="Suhu Udara"
+        value="28°C"
+        icon={<LuThermometer size={24} className="text-orange-400" />}
+        trend="Stabil"
+      />
+    </motion.div>
+  );
+}
