@@ -13,7 +13,6 @@ const firestore = getFirestore(app);
 
 export async function register(data: {
   fullName: string;
-  username: string;
   email: string;
   password: string;
   role?: string;
@@ -28,6 +27,7 @@ export async function register(data: {
     id: doc.id,
     ...doc.data(),
   }));
+
   if (users.length > 0) {
     return {
       status: false,

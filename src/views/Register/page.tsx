@@ -1,17 +1,19 @@
 "use client";
-import { useRouter } from "next/navigation";
+
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
+import { IoPlayBack } from "react-icons/io5";
 
 const Register = () => {
-  const { push } = useRouter();
   const [error, setError] = useState("");
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    setError(" ");
+    setError("");
     setIsLoading(true);
 
     try {
@@ -26,9 +28,9 @@ const Register = () => {
         }),
       });
 
-      if (res.status === 200) {
+      if (res.status == 200) {
         e.target.reset();
-        push("/");
+        router.push("/");
       } else {
         const data = await res.json().catch(() => null);
         setError((data && data.message) || "Email already exists!");
@@ -45,11 +47,18 @@ const Register = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-black p-4">
       <motion.div
-        className="w-full max-w-md rounded-2xl border border-gray-800 bg-gray-900 p-8 shadow-2xl md:p-10"
+        className="w-full relative max-w-md rounded-2xl border border-gray-800 bg-gray-900 p-8 shadow-2xl md:p-10"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
+        <Link
+          href="/login"
+          className="absolute top-6 left-6 text-gray-500 transition-colors hover:text-white"
+          aria-label="Kembali ke beranda"
+        >
+          <IoPlayBack size={24} />
+        </Link>
         <div className="flex justify-center mb-4">
           <Link
             href="/"
@@ -68,12 +77,18 @@ const Register = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} method="POST">
+        <form
+          onSubmit={(e) => {
+            handleSubmit(e);
+          }}
+          method="POST"
+        >
           <div className="mb-4">
             <label className="mb-2 block font-medium text-gray-300">
               Nama Lengkap
             </label>
             <input
+              id="name"
               type="text"
               name="name"
               placeholder="Masukkan nama lengkap"
@@ -86,6 +101,7 @@ const Register = () => {
               Username
             </label>
             <input
+              id="username"
               type="text"
               name="username"
               placeholder="Masukkan username unik"
@@ -98,6 +114,7 @@ const Register = () => {
               Email
             </label>
             <input
+              id="email"
               type="email"
               name="email"
               placeholder="Masukkan email"
@@ -110,6 +127,7 @@ const Register = () => {
               Password
             </label>
             <input
+              id="password"
               type="password"
               name="password"
               placeholder="Minimal 6 karakter"
@@ -138,7 +156,7 @@ const Register = () => {
           Sudah punya akun?{" "}
           <Link
             className="font-medium text-white transition-colors hover:text-gray-300 hover:underline"
-            href={"/"}
+            href={"/login"}
           >
             Login
           </Link>

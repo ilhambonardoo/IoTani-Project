@@ -3,17 +3,26 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
+import { IoPlayBack } from "react-icons/io5"; // <-- 1. IMPORT IKON BARU
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   return (
     <div className="flex min-h-screen bg-transparent items-center justify-center">
       <motion.div
-        className="w-full max-w-md flex flex-col rounded-2xl border border-gray-800 bg-gray-900 p-6 sm:p-8 md:p-10 shadow-2xl"
+        className="relative w-full max-w-md flex flex-col rounded-2xl border border-gray-800 bg-gray-900 p-6 sm:p-8 md:p-10 shadow-2xl"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
+        <Link
+          href="/"
+          className="absolute top-6 left-6 text-gray-500 transition-colors hover:text-white"
+          aria-label="Kembali ke beranda"
+        >
+          <IoPlayBack size={24} />
+        </Link>
+
         <div className="flex justify-center mb-4">
           <Link
             href="/"
