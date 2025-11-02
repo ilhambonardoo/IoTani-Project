@@ -1,5 +1,3 @@
-"use client";
-
 import Login from "@/views/Login/page";
 
 const LoginPage = () => {

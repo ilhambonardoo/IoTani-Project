@@ -1,23 +1,23 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { signIn } from "next-auth/react";
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
 import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
 
 const galleryImages = [
   {
     id: "cabai1",
-    src: "/Cabai/cabai1.jpg",
+    src: "/cabai/cabai1.jpg",
     alt: "Gambar Tanaman Cabai 1",
   },
   {
     id: "cabai2",
-    src: "/Cabai/cabai2.jpg",
+    src: "/cabai/cabai2.jpg",
     alt: "Gambar Tanaman Cabai 2",
   },
   {
     id: "cabai3",
-    src: "/Cabai/cabai3.jpg",
+    src: "/cabai/cabai3.jpg",
     alt: "Gambar Tanaman Cabai 3",
   },
 ];
@@ -54,15 +54,17 @@ const HeroSection = () => {
           Solusi berbasis web untuk kontrol pompa otomatis dan deteksi tanaman
           menggunakan AI.
         </p>
-        <Link href={"/login"}>
-          <motion.button
-            className="mt-10 rounded-lg bg-white px-8 py-3 text-lg font-semibold text-black shadow-lg shadow-stone-400/20 transition-all duration-300 hover:bg-stone-200 hover:shadow-xl hover:shadow-stone-300/30 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-black cursor-pointer"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Login
-          </motion.button>
-        </Link>
+
+        <motion.button
+          className="mt-10 rounded-lg bg-white px-8 py-3 text-lg font-semibold text-black shadow-lg shadow-stone-400/20 transition-all duration-300 hover:bg-stone-200 hover:shadow-xl hover:shadow-stone-300/30 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-black cursor-pointer"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => {
+            signIn();
+          }}
+        >
+          Login
+        </motion.button>
       </motion.div>
 
       <div className="flex w-full max-w-md flex-col items-center lg:w-1/2 ">

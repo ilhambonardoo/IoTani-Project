@@ -1,7 +1,7 @@
 // app/data/@phTanah/page.tsx
 "use client";
 
-import { StatCard } from "@/components/dashboard/StatCard";
+import { StatCard } from "@/components/dataPage/StatCard";
 import { LuTrendingUp } from "react-icons/lu";
 import { motion } from "framer-motion";
 

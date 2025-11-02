@@ -8,7 +8,7 @@ import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 
 const sliderImages = [
   {
-    src: "/Cabai/petani.jpg",
+    src: "/cabai/petani.jpg",
     alt: "Petani",
   },
   {
@@ -39,7 +39,7 @@ export default function DataHomePage() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: "spring", stiffness: 100 }}
-      className="relative w-full h-96 overflow-hidden"
+      className="relative w-full h-[550px] overflow-hidden rounded-2xl"
     >
       <AnimatePresence mode="wait">
         <motion.div

@@ -42,7 +42,7 @@ export function DataChart() {
             <Line
               type="monotone"
               dataKey="pH"
-              stroke="#A3E635" // Lime
+              stroke="#A3E635"
               strokeWidth={2}
               dot={false}
               yAxisId={0}
@@ -50,7 +50,7 @@ export function DataChart() {
             <Line
               type="monotone"
               dataKey="Kelembapan"
-              stroke="#60A5FA" // Blue
+              stroke="#60A5FA"
               strokeWidth={2}
               dot={false}
               yAxisId={0}

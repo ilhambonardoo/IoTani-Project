@@ -1,8 +1,8 @@
 // app/data/@kelembabanTanah/page.tsx
 "use client";
 
-import { StatCard } from "@/components/dashboard/StatCard";
-import { PumpControl } from "@/components/dashboard/PumpControl";
+import { StatCard } from "@/components/dataPage/StatCard";
+import { PumpControl } from "@/components/dataPage/PumpControl";
 import { LuDroplet } from "react-icons/lu";
 import { motion } from "framer-motion";
 

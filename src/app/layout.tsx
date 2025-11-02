@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ClientLayout from "./Clientlayout";
+import Provider from "./Provider";
 
 export const metadata: Metadata = {
   title: "IoTani",
@@ -14,7 +15,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={"antialiased"}>
-        <ClientLayout>{children}</ClientLayout>
+        <Provider>
+          <ClientLayout>{children}</ClientLayout>
+        </Provider>
       </body>
     </html>
   );

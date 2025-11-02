@@ -1,9 +1,9 @@
-"use client";
-
-export default function DashboardHome() {
+const DashboardPage = () => {
   return (
-    <>
-      <div>Dashboard Home</div>
-    </>
+    <div>
+      <h1>Hi</h1>
+    </div>
   );
-}
+};
+
+export default DashboardPage;

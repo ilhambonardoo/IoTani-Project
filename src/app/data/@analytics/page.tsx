@@ -1,7 +1,7 @@
 // app/data/@analytics/page.tsx
 "use client";
 
-import { DataChart } from "@/components/dashboard/DataChart";
+import { DataChart } from "@/components/dataPage/DataChart";
 import { motion } from "framer-motion";
 
 export default function AnalyticsPage() {

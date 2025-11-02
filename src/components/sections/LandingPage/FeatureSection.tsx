@@ -1,8 +1,8 @@
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { LuBrainCircuit, LuDroplets, LuLayoutDashboard } from "react-icons/lu";
 
 const FeatureSection = () => {
-  const featureContainerVariants = {
+  const featureContainerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -12,7 +12,7 @@ const FeatureSection = () => {
     },
   };
 
-  const featureItemVariants = {
+  const featureItemVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
@@ -24,7 +24,7 @@ const FeatureSection = () => {
     },
   };
   return (
-    <section className="py-10 bg-stone-950">
+    <section className="py-10 bg-lime-100">
       <div className="container mx-auto px-6 lg:px-12">
         <motion.div
           className="text-center"
@@ -33,10 +33,10 @@ const FeatureSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          <h2 className="text-4xl font-bold text-white md:text-5xl">
+          <h2 className="lg:text-6xl font-extrabold text-lime-900 md:text-5xl text-2xl">
             Fitur Unggulan Kami
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-300">
+          <p className="mx-auto mt-4 max-w-2xl lg:text-lg md:text-2xl text-[15px] font-semibold text-black">
             Dibangun dengan teknologi terkini untuk memberikan hasil presisi dan
             efisiensi maksimal di lahan Anda.
           </p>

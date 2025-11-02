@@ -5,51 +5,103 @@ import { IoIosHome } from "react-icons/io";
 import { BsClipboardDataFill } from "react-icons/bs";
 import { BiSolidLogOut } from "react-icons/bi";
 import { FaPeopleGroup } from "react-icons/fa6";
-import { useState } from "react";
+import Image from "next/image";
+import { GiHamburgerMenu } from "react-icons/gi";
+import { signOut, useSession } from "next-auth/react";
 
-// Ganti nama komponen dari Navbar menjadi Sidebar
-const Sidebar = () => {
+const Sidebar = ({
+  toggleSideBar,
+  isOpenSideBar,
+}: {
+  toggleSideBar: () => void;
+  isOpenSideBar: boolean;
+}) => {
+  const { data: session }: { data: any } = useSession();
   const pathname = usePathname();
-  const [IsOpen, setIsOpen] = useState(false);
-
-  // Helper function untuk styling link agar lebih rapi
   const getLinkClasses = (path: string) => {
     const isActive = pathname === path;
     return `flex items-center p-3 my-1 rounded-lg font-semibold transition-colors duration-200 ${
-      isActive
-        ? "bg-white/30 text-gray-950"
-        : "text-stone-600 hover:bg-white/20"
+      isActive ? "bg-black/30 text-white" : "text-stone-100 hover:bg-black/20"
     }`;
   };
 
   return (
     <>
-      <nav className="fixed left-0 top-0 z-20 flex h-screen w-60 flex-col border-r border-white/30 bg-white/10 p-5 backdrop-blur-md">
-        <div className="mb-10">
-          <Link href={"/"}>
-            <h1 className="cursor-pointer text-black text-3xl font-semibold">
-              IoTani
-            </h1>
-          </Link>
-        </div>
-
+      <nav
+        className={`fixed left-0 top-0 z-20 flex h-screen ${
+          isOpenSideBar
+            ? "w-60 transition-all duration-300"
+            : "w-20 transition-all duration-300"
+        }  flex-col border-r border-white/30 bg-black/40 backdrop-blur-md`}
+      >
+        {session?.user?.fullname}
+        <GiHamburgerMenu
+          size={30}
+          className="text-white cursor-pointer hover:scale-120 duration-300 ml-5 mt-5"
+          onClick={toggleSideBar}
+        />
+        <Link href={"/dashboard"}>
+          <Image src={"/logo/logo.png"} width={200} height={200} alt={"logo"} />
+        </Link>
         <ul className="flex flex-col">
           <li>
             <Link href={"/dashboard"} className={getLinkClasses("/dashboard")}>
-              <IoIosHome size={25} className="mr-4" />
-              <span>Dashboard</span>
+              {isOpenSideBar ? (
+                <>
+                  <IoIosHome
+                    size={30}
+                    className="mr-4 transition-all duration-300"
+                  />
+                  <span>Dashboard</span>
+                </>
+              ) : (
+                <>
+                  <IoIosHome
+                    size={30}
+                    className="mr-4 transition-all duration-300  mx-auto"
+                  />
+                </>
+              )}
             </Link>
           </li>
           <li>
             <Link href={"/data"} className={getLinkClasses("/data")}>
-              <BsClipboardDataFill size={25} className="mr-4" />
-              <span>Data</span>
+              {isOpenSideBar ? (
+                <>
+                  <BsClipboardDataFill
+                    size={30}
+                    className="mr-4 transition-all duration-300"
+                  />
+                  <span>Data</span>
+                </>
+              ) : (
+                <>
+                  <BsClipboardDataFill
+                    size={30}
+                    className="mr-4 transition-all duration-300 mx-auto"
+                  />
+                </>
+              )}
             </Link>
           </li>
           <li>
             <Link href={"/about"} className={getLinkClasses("/about")}>
-              <FaPeopleGroup size={25} className="mr-4" />
-              <span>About</span>
+              {isOpenSideBar ? (
+                <>
+                  <FaPeopleGroup
+                    size={25}
+                    className="mr-4 transition-all duration-300"
+                  />
+                  <span>About</span>
+                </>
+              ) : (
+                <>
+                  <FaPeopleGroup
+                    size={30}
+                    className="mr-4 transition-all duration-300 mx-auto"
+                  />
+                </>
+              )}
             </Link>
           </li>
         </ul>
@@ -57,13 +109,30 @@ const Sidebar = () => {
         <ul className="mt-auto">
           {" "}
           <li>
-            <Link
-              href={"/"}
-              className="flex items-center p-3 my-1 rounded-lg font-semibold text-stone-600 hover:bg-white/20 transition-colors duration-200"
+            <button
+              onClick={() => {
+                signOut({ callbackUrl: "/" });
+              }}
+              className={`flex justify-center items-center p-3 ${
+                isOpenSideBar ? "px-10" : "px-4"
+              } mx-auto rounded-lg font-semibold bg-black/50 hover:bg-black/60 transition-colors duration-200 mb-9`}
             >
-              <BiSolidLogOut size={25} className="mr-4" />
-              <span>Logout</span>
-            </Link>
+              {isOpenSideBar ? (
+                <>
+                  <div className="flex">
+                    <BiSolidLogOut size={30} className=" text-white" />
+                    <span className="text-white text-lg">Logout</span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <BiSolidLogOut
+                    size={30}
+                    className=" text-white transition-all duration-300 mx-auto"
+                  />
+                </>
+              )}
+            </button>
           </li>
         </ul>
       </nav>
