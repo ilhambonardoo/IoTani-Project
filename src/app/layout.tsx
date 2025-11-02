@@ -1,23 +1,23 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ClientLayout from "./Clientlayout";
+import Provider from "./Provider";
 
 export const metadata: Metadata = {
-  title: "Home - IoTani",
+  title: "IoTani",
 };
 
 export default function RootLayout({
   children,
-  modal,
 }: Readonly<{
   children: React.ReactNode;
-  modal: React.ReactNode;
 }>) {
   return (
     <html lang="en">
       <body className={"antialiased"}>
-        {modal}
-        <ClientLayout>{children}</ClientLayout>
+        <Provider>
+          <ClientLayout>{children}</ClientLayout>
+        </Provider>
       </body>
     </html>
   );

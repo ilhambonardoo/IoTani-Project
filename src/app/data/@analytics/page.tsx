@@ -1,9 +1,17 @@
-const AnalyticsPage = () => {
-  return (
-    <div className="flex justify-center items-center w-full h-96 bg-stone-500 rounded-2xl">
-      AnalyticsPage
-    </div>
-  );
-};
+// app/data/@analytics/page.tsx
+"use client";
 
-export default AnalyticsPage;
+import { DataChart } from "@/components/dataPage/DataChart";
+import { motion } from "framer-motion";
+
+export default function AnalyticsPage() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: "spring", stiffness: 100 }}
+    >
+      <DataChart />
+    </motion.div>
+  );
+}
