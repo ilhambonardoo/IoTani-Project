@@ -7,7 +7,11 @@ import { useEffect, useState, FormEvent } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { IoPlayBack } from "react-icons/io5";
 
-const Login = () => {
+const Login = ({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | undefined };
+}) => {
   const { push } = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -25,15 +29,15 @@ const Login = () => {
         redirect: false,
         email,
         password,
-        callbackUrl: "/dashboard",
+        callbackUrl: searchParams.url ?? "/dashboard",
       });
 
+      const callbackUrl = searchParams.url ?? "/dashboard";
       if (!res?.error) {
-        e.currentTarget.reset();
-        push("/dashboard");
+        push(callbackUrl);
         setIsLoading(false);
       } else {
-        if (res.status == 401) {
+        if (res?.status === 401) {
           setError("Email or password is incorrect");
           setIsLoading(false);
           e.currentTarget.reset();
@@ -187,7 +191,7 @@ const Login = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="mt-4 w-full rounded-lg bg-white py-3 text-base font-semibold text-black shadow-lg shadow-gray-100/20 transition-all duration-300 hover:bg-gray-200 hover:shadow-xl hover:shadow-gray-200/30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900 disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-4 w-full rounded-lg bg-white py-3 text-base font-semibold text-black shadow-lg shadow-gray-100/20 transition-all duration-300 hover:bg-gray-200 hover:shadow-xl hover:shadow-gray-200/30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
             >
               {isLoading ? "Loading..." : "Login"}
             </button>

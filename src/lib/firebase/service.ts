@@ -1,9 +1,13 @@
+"use server";
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
   getDocs,
   getFirestore,
   query,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { app } from "./init";
@@ -18,7 +22,7 @@ export async function register(data: {
   role?: string;
 }) {
   const q = query(
-    collection(firestore, "users"),
+    collection(firestore, "user"),
     where("email", "==", data.email)
   );
 
@@ -67,5 +71,50 @@ export async function login(data: { email: string }) {
     return user[0];
   } else {
     return null;
+  }
+}
+export async function getUser() {
+  const useCollection = collection(firestore, "user");
+  const useSnapshot = await getDocs(useCollection);
+
+  const userList = useSnapshot.docs.map((doc) => ({
+    id: doc.id,
+    fullName: doc.data().fullName || "No Name",
+    email: doc.data().email || "no-email@example.com",
+    role: doc.data().role || "user",
+    status: doc.data().status || "Inactive",
+    avatar: doc.data().avatar || "/avatars/default.png",
+  }));
+
+  return userList;
+}
+
+export async function deleteUser(id: string) {
+  try {
+    const useDoc = doc(firestore, "user", id);
+    await deleteDoc(useDoc);
+    return { status: true, message: "User delete successfully" };
+  } catch (error) {
+    return { status: false, message: "Error deleting user", error };
+  }
+}
+
+export async function updateUser(
+  id: string,
+  newfullName: string,
+  newEmail: string,
+  newPassword: string
+) {
+  try {
+    const useDoc = doc(firestore, "user", id);
+    const hashedPassoword = await bcrypt.hash(newPassword, 10);
+    await updateDoc(useDoc, {
+      fullName: newfullName,
+      email: newEmail,
+      password: hashedPassoword,
+    });
+    return { status: true, message: "User role update " };
+  } catch (error) {
+    return { status: false, message: "Error updating user role", error };
   }
 }

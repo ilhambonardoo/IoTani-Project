@@ -37,7 +37,7 @@ const Register = () => {
 
       if (res.status == 200) {
         form.reset();
-        router.push("/");
+        signIn();
         setSuccess("Register successfull");
       } else {
         const data = await res.json().catch(() => null);
@@ -228,7 +228,7 @@ const Register = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="mt-4 w-full rounded-lg bg-white py-3 text-base font-semibold text-black shadow-lg shadow-gray-100/20 transition-all duration-300 hover:bg-gray-200 hover:shadow-xl hover:shadow-gray-200/30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900 disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-4 w-full rounded-lg bg-white py-3 text-base font-semibold text-black shadow-lg shadow-gray-100/20 transition-all duration-300 hover:bg-gray-200 hover:shadow-xl hover:shadow-gray-200/30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
             >
               {isLoading ? "Mendaftarkan..." : "Daftar"}
             </button>
@@ -244,7 +244,7 @@ const Register = () => {
           <div className="mt-6 text-center text-base text-gray-400">
             Sudah punya akun?{" "}
             <button
-              className="font-medium text-white transition-colors hover:text-gray-300 hover:underline"
+              className="font-medium text-white transition-colors hover:text-gray-300 hover:underline cursor-pointer"
               onClick={() => {
                 signIn();
               }}
