@@ -1,7 +1,7 @@
 // app/data/@suhuTanah/page.tsx
 "use client";
 
-import { StatCard } from "@/components/dataPage/StatCard";
+import { StatCard } from "@/components/DataPage/StatCard";
 import { LuThermometer } from "react-icons/lu";
 import { motion } from "framer-motion";
 
