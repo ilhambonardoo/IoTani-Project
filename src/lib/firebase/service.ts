@@ -89,7 +89,7 @@ export async function getUser() {
   return userList;
 }
 
-export async function deleteUser(id: string) {
+export async function deleteUserAdmin(id: string) {
   try {
     const useDoc = doc(firestore, "user", id);
     await deleteDoc(useDoc);
@@ -99,7 +99,7 @@ export async function deleteUser(id: string) {
   }
 }
 
-export async function updateUser(
+export async function updateUserAdmin(
   id: string,
   newfullName: string,
   newEmail: string,

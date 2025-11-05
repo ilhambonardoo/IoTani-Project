@@ -8,7 +8,9 @@ import {
   MdAdminPanelSettings,
   MdOutlineSupervisorAccount,
 } from "react-icons/md";
-import { getUser, deleteUser } from "@/lib/firebase/service";
+import { getUser, deleteUserAdmin } from "@/lib/firebase/service";
+import { toast } from "react-toastify";
+import ConfirmationModal from "../ConfirmationModal/page";
 
 const RoleBadge = ({ role }: { role: string }) => {
   const roleColors: { [key: string]: string } = {
@@ -40,6 +42,12 @@ export default function UserManagementPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // const { data: session }: { data: any } = useSession();
+  // const isAdmin = session?.user?.role === "admin";
+
+  const [isModalOpen, setisModalOpen] = useState(false);
+  const [userToDelete, setuserToDelete] = useState<string | null>(null);
+
   useEffect(() => {
     async function fetchUser() {
       try {
@@ -64,19 +72,39 @@ export default function UserManagementPage() {
     );
   });
 
-  const handleDeleteUser = async (id: string) => {
-    if (window.confirm("Apakah anda yakin ingin menghapus user ini?")) {
-      try {
-        const result = await deleteUser(id);
-        if (result?.status) {
-          setUsers((prev) => prev.filter((user) => user.id !== id));
-        }
-      } catch (err) {
-        setError("Gagal menghapus pengguna");
+  const handleCloseModal = () => {
+    setisModalOpen(false);
+    setuserToDelete(null);
+  };
+
+  const showDeleteConfirm = (id: string) => {
+    setisModalOpen(true);
+    setuserToDelete(id);
+  };
+
+  const handleDeleteUser = async () => {
+    if (!userToDelete) {
+      return;
+    }
+
+    try {
+      const result = await deleteUserAdmin(userToDelete);
+      if (result?.status) {
+        setUsers((prev) => prev.filter((user) => user.id !== userToDelete));
+        toast.success("Berhasil menghapus pengguna");
+        handleCloseModal();
+      } else {
+        setError("Gagal menghapus pengguna dari server");
+        toast.error("Gagal menghapus pengguna");
       }
+    } catch (error) {
+      setError("Gagal menghapus pengguna");
+      toast.error("Gagal menghapus pengguna");
+      return error;
     }
   };
 
+  const handleUpdateUser = async (id: string) => {};
   if (loading) {
     return (
       <div className="flex h-60 w-full items-center justify-center text-white">
@@ -157,7 +185,7 @@ export default function UserManagementPage() {
                 <td className="whitespace-nowrap px-6 py-4">
                   <div className="flex items-center">
                     <div className="h-10 w-10 flex-shrink-0">
-                      <img
+                      {/* <img
                         className="h-10 w-10 rounded-full object-cover"
                         src={user.avatar}
                         alt={user.fullName || "Avatar"}
@@ -168,7 +196,7 @@ export default function UserManagementPage() {
                             (user.fullName ? user.fullName.charAt(0) : "U");
                           target.onerror = null; // Mencegah loop error
                         }}
-                      />
+                      /> */}
                     </div>
                     <div className="ml-4">
                       <div className="font-medium text-white">
@@ -188,19 +216,33 @@ export default function UserManagementPage() {
                   >
                     <FiEdit size={18} />
                   </button>
-                  <button
-                    onClick={() => handleDeleteUser(user.id)}
-                    className="text-red-500 transition-colors hover:text-red-400"
-                    aria-label={`Delete ${user.fullName}`}
-                  >
-                    <FiTrash2 size={18} />
-                  </button>
+                  {user.role !== "admin" && (
+                    <button
+                      onClick={() => showDeleteConfirm(user.id)}
+                      className={`text-red-500 transition-colors hover:text-red-400`}
+                      aria-label={`Delete ${user.fullName}`}
+                    >
+                      <FiTrash2 size={18} />
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onConfirm={handleDeleteUser}
+        title="Konfirmasi Hapus Penggua"
+      >
+        <p>Apakah Anda yakin ingin menghapus pengguna ini?</p>
+        <p className="mt-2 text-sm text-gray-400">
+          Tindakan ini tidak dapat dibatalkan.
+        </p>
+      </ConfirmationModal>
 
       {filteredUsers.length === 0 && !loading && (
         <div className="mt-4 rounded-lg border border-white/30 bg-black/40 p-10 text-center text-gray-400 backdrop-blur-md">

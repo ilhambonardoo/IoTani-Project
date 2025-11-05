@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { IoIosHome } from "react-icons/io";
 import { BsClipboardDataFill } from "react-icons/bs";
 import { BiSolidLogOut } from "react-icons/bi";
-import { FaPeopleGroup } from "react-icons/fa6";
+import { FaPeopleGroup, FaUser } from "react-icons/fa6";
 import Image from "next/image";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { signOut, useSession } from "next-auth/react";
@@ -105,10 +105,32 @@ const Sidebar = ({
               )}
             </Link>
           </li>
+
+          <li>
+            <Link href={"/profile"} className={getLinkClasses("/profile")}>
+              {isOpenSideBar ? (
+                <>
+                  <FaUser
+                    size={30}
+                    className="mr-4 transition-all duration-300"
+                  />
+                  <span>Profile</span>
+                </>
+              ) : (
+                <>
+                  <FaUser
+                    size={30}
+                    className="mr-4 transition-all duration-300 mx-auto"
+                  />
+                </>
+              )}
+            </Link>
+          </li>
+
           {isAdmin && (
             <li>
               <Link
-                href={"/user-management"} // Ganti dengan rute Anda
+                href={"/user-management"}
                 className={getLinkClasses("/user-management")}
               >
                 {isOpenSideBar ? (
