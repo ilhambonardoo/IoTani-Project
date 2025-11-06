@@ -37,29 +37,23 @@ const Register = () => {
 
       if (res.status == 200) {
         form.reset();
-        signIn();
-        setSuccess("Register successfull");
+        setSuccess("Registrasi berhasil! Mengarahkan ke halaman login...");
+        setTimeout(() => {
+          router.push("/login");
+        }, 2000);
       } else {
         const data = await res.json().catch(() => null);
-        setError((data && data.message) || "Email already exists!");
+        setError((data && data.message) || "Email sudah terdaftar!");
         form.reset();
         console.log(res, data);
       }
     } catch (err) {
       console.error(err);
-      setError("An unexpected error occurred.");
+      setError("Terjadi kesalahan. Silakan coba lagi.");
     } finally {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
-    }, 4000); // Ganti slide setiap 4 detik
-
-    return () => clearInterval(timer); // Cleanup
-  }, []);
 
   const slides = [
     {
@@ -78,11 +72,20 @@ const Register = () => {
       description: "Tingkatkan hasil panen dengan teknologi pintar.",
     },
   ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+    }, 4000);
+
+    return () => clearInterval(timer);
+  }, [slides.length]);
+
   return (
-    <div className="flex min-h-screen w-full bg-gray-900">
-      <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-gray-800 p-10 text-white md:flex">
+    <div className="flex min-h-screen w-full bg-gradient-to-br from-neutral-50 to-neutral-100">
+      <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-gradient-to-br from-green-600 to-green-700 p-10 text-white md:flex">
         <div className="z-10 text-3xl font-bold">
-          IoTani<span className="text-gray-400">.</span>
+          IoTani<span className="text-green-200">.</span>
         </div>
 
         <AnimatePresence mode="wait">
@@ -97,7 +100,7 @@ const Register = () => {
             <h1 className="mb-4 text-4xl font-bold leading-tight">
               {slides[currentSlide].title}
             </h1>
-            <p className="text-xl text-gray-300">
+            <p className="text-xl text-green-50">
               {slides[currentSlide].description}
             </p>
           </motion.div>
@@ -108,7 +111,7 @@ const Register = () => {
               key={index}
               onClick={() => setCurrentSlide(index)}
               className={`h-2 w-10 cursor-pointer rounded-full transition-all ${
-                currentSlide === index ? "bg-white" : "bg-gray-500"
+                currentSlide === index ? "bg-white" : "bg-green-300/50"
               }`}
             ></div>
           ))}
@@ -126,7 +129,7 @@ const Register = () => {
             className="absolute inset-0 z-0 h-full w-full object-cover"
           />
         </AnimatePresence>
-        <div className="absolute inset-0 z-0 bg-black opacity-50"></div>
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-green-900/40 to-green-800/60"></div>
       </div>
       <div className="flex w-full items-center justify-center p-6 md:w-1/2 md:p-10">
         <motion.div
@@ -135,45 +138,51 @@ const Register = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <button
-            onClick={() => {
-              signIn();
-            }}
-            className="mb-6 flex items-center gap-2 text-gray-500 transition-colors hover:text-white cursor-pointer"
+          <Link
+            href="/login"
+            className="mb-6 flex items-center gap-2 text-neutral-600 transition-colors hover:text-green-600"
             aria-label="Kembali ke login"
           >
             <IoPlayBack size={20} />
             <span>Kembali</span>
-          </button>
+          </Link>
 
           <div className="flex justify-center mb-4 md:hidden">
             <Link
               href="/"
-              className="text-4xl font-bold text-white transition-opacity hover:opacity-80"
+              className="text-4xl font-bold text-green-600 transition-opacity hover:opacity-80"
             >
-              IoTani<span className="text-gray-400">.</span>
+              IoTani<span className="text-green-400">.</span>
             </Link>
           </div>
 
-          <h2 className="mb-6 text-center text-2xl font-bold text-white md:text-left">
+          <h2 className="mb-6 text-center text-3xl font-bold text-neutral-800 md:text-left">
             Daftar Akun Baru
           </h2>
 
           {success && (
-            <div className="mb-4 rounded-lg bg-green-900/30 p-3 text-center text-sm text-green-300">
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-4 rounded-lg bg-green-50 border border-green-200 p-3 text-center text-green-700"
+            >
               {success}
-            </div>
+            </motion.div>
           )}
 
           {error && (
-            <div className="mb-4 rounded-lg bg-red-900/30 p-3 text-center text-sm text-red-300">
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-4 rounded-lg bg-red-50 border border-red-200 p-3 text-center text-red-700"
+            >
               {error}
-            </div>
+            </motion.div>
           )}
 
           <form onSubmit={handleSubmit} method="POST">
             <div className="mb-4">
-              <label className="mb-2 block font-medium text-gray-300">
+              <label className="mb-2 block font-medium text-neutral-700">
                 Nama Lengkap
               </label>
               <input
@@ -182,11 +191,11 @@ const Register = () => {
                 name="name"
                 placeholder="Masukkan nama lengkap"
                 required
-                className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-base text-white placeholder-gray-500 transition-colors focus:border-white focus:outline-none focus:ring-2 focus:ring-white/50"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-base text-neutral-800 placeholder-neutral-400 transition-colors focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500/50"
               />
             </div>
             <div className="mb-4">
-              <label className="mb-2 block font-medium text-gray-300">
+              <label className="mb-2 block font-medium text-neutral-700">
                 Username
               </label>
               <input
@@ -195,11 +204,11 @@ const Register = () => {
                 name="username"
                 placeholder="Masukkan username unik"
                 required
-                className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-base text-white placeholder-gray-500 transition-colors focus:border-white focus:outline-none focus:ring-2 focus:ring-white/50"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-base text-neutral-800 placeholder-neutral-400 transition-colors focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500/50"
               />
             </div>
             <div className="mb-4">
-              <label className="mb-2 block font-medium text-gray-300">
+              <label className="mb-2 block font-medium text-neutral-700">
                 Email
               </label>
               <input
@@ -208,11 +217,11 @@ const Register = () => {
                 name="email"
                 placeholder="Masukkan email"
                 required
-                className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-base text-white placeholder-gray-500 transition-colors focus:border-white focus:outline-none focus:ring-2 focus:ring-white/50"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-base text-neutral-800 placeholder-neutral-400 transition-colors focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500/50"
               />
             </div>
             <div className="mb-4">
-              <label className="mb-2 block font-medium text-gray-300">
+              <label className="mb-2 block font-medium text-neutral-700">
                 Password
               </label>
               <input
@@ -222,35 +231,37 @@ const Register = () => {
                 placeholder="Minimal 6 karakter"
                 required
                 minLength={6}
-                className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-base text-white placeholder-gray-500 transition-colors focus:border-white focus:outline-none focus:ring-2 focus:ring-white/50"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-base text-neutral-800 placeholder-neutral-400 transition-colors focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500/50"
               />
             </div>
-            <button
+            <motion.button
               type="submit"
               disabled={isLoading}
-              className="mt-4 w-full rounded-lg bg-white py-3 text-base font-semibold text-black shadow-lg shadow-gray-100/20 transition-all duration-300 hover:bg-gray-200 hover:shadow-xl hover:shadow-gray-200/30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+              className="mt-4 w-full rounded-lg bg-gradient-to-r from-green-500 to-green-600 py-3 text-base font-semibold text-white shadow-lg shadow-green-500/30 transition-all duration-300 hover:from-green-600 hover:to-green-700 hover:shadow-xl hover:shadow-green-500/40 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+              whileHover={{ scale: isLoading ? 1 : 1.02 }}
+              whileTap={{ scale: isLoading ? 1 : 0.98 }}
             >
               {isLoading ? "Mendaftarkan..." : "Daftar"}
-            </button>
+            </motion.button>
           </form>
-          <button
+          <motion.button
             type="button"
             disabled={isLoading}
-            className="mt-4 flex w-full items-center justify-center gap-3 rounded-lg border border-gray-700 py-3 text-base font-semibold text-white shadow transition-all hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-4 flex w-full items-center justify-center gap-3 rounded-lg border border-neutral-300 bg-white py-3 text-base font-semibold text-neutral-700 shadow transition-all hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+            whileHover={{ scale: isLoading ? 1 : 1.02 }}
+            whileTap={{ scale: isLoading ? 1 : 0.98 }}
           >
             <FcGoogle size={25} />
             <span>Daftar dengan Google</span>
-          </button>
-          <div className="mt-6 text-center text-base text-gray-400">
+          </motion.button>
+          <div className="mt-6 text-center text-base text-neutral-600">
             Sudah punya akun?{" "}
-            <button
-              className="font-medium text-white transition-colors hover:text-gray-300 hover:underline cursor-pointer"
-              onClick={() => {
-                signIn();
-              }}
+            <Link
+              href="/login"
+              className="font-medium text-green-600 transition-colors hover:text-green-700 hover:underline"
             >
               Login
-            </button>
+            </Link>
           </div>
         </motion.div>
       </div>

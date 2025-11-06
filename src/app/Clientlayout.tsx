@@ -4,7 +4,7 @@ import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 import { useState } from "react";
 
-const disableNavigation = ["/login", "/register", "/"];
+const disableNavigation = ["/login", "/register", "/", "/about"];
 
 const ClientLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();

@@ -4,7 +4,7 @@ import { LuArrowRight } from "react-icons/lu";
 
 const CtaSection = () => {
   return (
-    <section className="bg-gradient-to-b from-gray-50 to-lime-950 py-16 md:py-24">
+    <section className="bg-gradient-to-b from-neutral-50 to-green-50 py-16 md:py-24">
       <motion.div
         className="container mx-auto px-4"
         initial={{ opacity: 0, y: 50 }}
@@ -12,7 +12,7 @@ const CtaSection = () => {
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-lime-600 to-lime-800 p-8 shadow-2xl md:p-12 lg:flex lg:items-center lg:justify-between lg:gap-12">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-green-600 to-green-700 p-8 shadow-2xl md:p-12 lg:flex lg:items-center lg:justify-between lg:gap-12">
           <div className="absolute inset-0 z-0 opacity-10">
             <Image
               src="/gambar_tambahan/robot.jpg"
@@ -34,8 +34,8 @@ const CtaSection = () => {
               lebih produktif.
             </p>
             <motion.a
-              href="#"
-              className="inline-flex items-center rounded-full bg-white px-8 py-3 text-lg font-bold text-lime-800 shadow-lg transition-all duration-300 hover:bg-lime-50 hover:scale-105"
+              href="/login"
+              className="inline-flex items-center rounded-full bg-white px-8 py-3 text-lg font-bold text-green-700 shadow-lg transition-all duration-300 hover:bg-green-50 hover:scale-105"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
