@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
 
 const galleryImages = [
@@ -33,38 +34,51 @@ const HeroSection = () => {
   const nextImage = () => {
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % galleryImages.length);
   };
+  const { push } = useRouter();
   return (
-    <section className="container  mx-auto flex min-h-screen flex-col items-center justify-center gap-12 py-20 px-6 lg:flex-row lg:justify-between lg:gap-20 lg:px-20">
+    <section className="container mx-auto flex min-h-screen flex-col items-center justify-center gap-12 py-20 px-6 lg:flex-row lg:justify-between lg:gap-20 lg:px-20">
       <motion.div
-        className="flex w-full flex-col items-center text-center lg:w-1/2 lg:items-start lg:text-left "
+        className="flex w-full flex-col items-center text-center lg:w-1/2 lg:items-start lg:text-left"
         initial={{ opacity: 0, x: -30 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8, ease: "easeInOut" }}
       >
-        <span className="mb-4 rounded-full bg-stone-100/10 px-4 py-1 text-sm font-medium text-stone-300 ring-1 ring-stone-400/30">
+        <span className="mb-4 rounded-full bg-green-100 px-4 py-1 text-sm font-medium text-green-700 ring-1 ring-green-200">
           Sistem Pengukuran pH dan Kelembapan Tanah
         </span>
 
-        <h1 className="text-5xl font-bold leading-tight text-white md:text-7xl">
+        <h1 className="text-5xl font-bold leading-tight text-neutral-800 md:text-7xl">
           IoTani
-          <span className="text-stone-400 animate-pulse">.</span>
+          <span className="text-green-500 animate-pulse">.</span>
         </h1>
 
-        <p className="mt-6 text-lg text-gray-300 md:text-xl max-w-lg">
+        <p className="mt-6 text-lg text-neutral-600 md:text-xl max-w-lg">
           Solusi berbasis web untuk kontrol pompa otomatis dan deteksi tanaman
           menggunakan AI.
         </p>
 
-        <motion.button
-          className="mt-10 rounded-lg bg-white px-8 py-3 text-lg font-semibold text-black shadow-lg shadow-stone-400/20 transition-all duration-300 hover:bg-stone-200 hover:shadow-xl hover:shadow-stone-300/30 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-black cursor-pointer"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => {
-            signIn();
-          }}
-        >
-          Login
-        </motion.button>
+        <div className="flex justify-center items-center gap-5">
+          <motion.button
+            className="mt-10 rounded-lg bg-linear-to-r from-green-500 to-green-600 px-8 py-3 text-lg font-semibold text-white shadow-lg shadow-green-500/30 transition-all duration-300 hover:from-green-600 hover:to-green-700 hover:shadow-xl hover:shadow-green-500/40 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 cursor-pointer"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => {
+              signIn();
+            }}
+          >
+            Login
+          </motion.button>
+          <motion.button
+            className="mt-10 rounded-lg bg-linear-to-r from-green-500 to-green-600 px-8 py-3 text-lg font-semibold text-white shadow-lg shadow-green-500/30 transition-all duration-300 hover:from-green-600 hover:to-green-700 hover:shadow-xl hover:shadow-green-500/40 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 cursor-pointer"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => {
+              push("/about");
+            }}
+          >
+            Tentang Kami
+          </motion.button>
+        </div>
       </motion.div>
 
       <div className="flex w-full max-w-md flex-col items-center lg:w-1/2 ">
@@ -91,7 +105,7 @@ const HeroSection = () => {
         <div className="mt-8 flex w-full justify-center gap-4">
           <motion.button
             onClick={prevImage}
-            className="rounded-full bg-gray-800 p-4 text-white transition-colors hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            className="rounded-full bg-green-500 p-4 text-white transition-colors hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             aria-label="Gambar sebelumnya"
@@ -100,7 +114,7 @@ const HeroSection = () => {
           </motion.button>
           <motion.button
             onClick={nextImage}
-            className="rounded-full bg-gray-800 p-4 text-white transition-colors hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            className="rounded-full bg-green-500 p-4 text-white transition-colors hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             aria-label="Gambar berikutnya"

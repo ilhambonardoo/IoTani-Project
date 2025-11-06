@@ -24,7 +24,7 @@ const FeatureSection = () => {
     },
   };
   return (
-    <section className="py-10 bg-lime-100">
+    <section className="py-16 bg-gradient-to-b from-green-50 to-white">
       <div className="container mx-auto px-6 lg:px-12">
         <motion.div
           className="text-center"
@@ -33,10 +33,10 @@ const FeatureSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          <h2 className="lg:text-6xl font-extrabold text-lime-900 md:text-5xl text-2xl">
+          <h2 className="lg:text-6xl font-extrabold text-neutral-800 md:text-5xl text-2xl">
             Fitur Unggulan Kami
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl lg:text-lg md:text-2xl text-[15px] font-semibold text-black">
+          <p className="mx-auto mt-4 max-w-2xl lg:text-lg md:text-2xl text-[15px] font-semibold text-neutral-600">
             Dibangun dengan teknologi terkini untuk memberikan hasil presisi dan
             efisiensi maksimal di lahan Anda.
           </p>
@@ -50,48 +50,48 @@ const FeatureSection = () => {
           viewport={{ once: true }}
         >
           <motion.div
-            className="flex flex-col gap-4 rounded-2xl border border-gray-800 bg-gray-900 p-8 shadow-lg transition-all duration-300 hover:bg-gray-800/60 hover:shadow-lime-400/10 hover:-translate-y-1"
+            className="flex flex-col gap-4 rounded-2xl border border-neutral-200 bg-white p-8 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
             variants={featureItemVariants}
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-lime-400/10 text-lime-400">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600">
               <LuLayoutDashboard size={24} />
             </div>
-            <h3 className="text-2xl font-semibold text-white">
+            <h3 className="text-2xl font-semibold text-neutral-800">
               Dashboard Real-time
             </h3>
-            <p className="text-gray-400">
+            <p className="text-neutral-600">
               Pantau data pH, kelembapan, dan suhu tanah secara langsung
               kapanpun dan dimanapun.
             </p>
           </motion.div>
 
           <motion.div
-            className="flex flex-col gap-4 rounded-2xl border border-gray-800 bg-gray-900 p-8 shadow-lg transition-all duration-300 hover:bg-gray-800/60 hover:shadow-lime-400/10 hover:-translate-y-1"
+            className="flex flex-col gap-4 rounded-2xl border border-neutral-200 bg-white p-8 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
             variants={featureItemVariants}
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-lime-400/10 text-lime-400">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600">
               <LuDroplets size={24} />
             </div>
-            <h3 className="text-2xl font-semibold text-white">
+            <h3 className="text-2xl font-semibold text-neutral-800">
               Kontrol Pompa Otomatis
             </h3>
-            <p className="text-gray-400">
+            <p className="text-neutral-600">
               Sistem irigasi cerdas yang menyiram tanaman secara otomatis
               berdasarkan kondisi kelembapan.
             </p>
           </motion.div>
 
           <motion.div
-            className="flex flex-col gap-4 rounded-2xl border border-gray-800 bg-gray-900 p-8 shadow-lg transition-all duration-300 hover:bg-gray-800/60 hover:shadow-lime-400/10 hover:-translate-y-1"
+            className="flex flex-col gap-4 rounded-2xl border border-neutral-200 bg-white p-8 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
             variants={featureItemVariants}
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-lime-400/10 text-lime-400">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100 text-orange-600">
               <LuBrainCircuit size={24} />
             </div>
-            <h3 className="text-2xl font-semibold text-white">
+            <h3 className="text-2xl font-semibold text-neutral-800">
               Deteksi Tanaman (AI)
             </h3>
-            <p className="text-gray-400">
+            <p className="text-neutral-600">
               Manfaatkan Machine Learning dan Robotik untuk identifikasi kondisi
               tanaman secara presisi.
             </p>

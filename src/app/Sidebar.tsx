@@ -4,11 +4,21 @@ import { usePathname } from "next/navigation";
 import { IoIosHome } from "react-icons/io";
 import { BsClipboardDataFill } from "react-icons/bs";
 import { BiSolidLogOut } from "react-icons/bi";
-import { FaPeopleGroup, FaUser } from "react-icons/fa6";
+import { FaPeopleGroup, FaUser, FaCamera, FaComments, FaEnvelope } from "react-icons/fa6";
+import { MdAdminPanelSettings, MdContentCopy, MdInbox } from "react-icons/md";
+import { HiOutlineChartBar, HiOutlineDocumentReport } from "react-icons/hi";
+import { FaRobot, FaFileExport } from "react-icons/fa";
 import Image from "next/image";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { signOut, useSession } from "next-auth/react";
-import { MdAdminPanelSettings } from "react-icons/md";
+import { motion } from "framer-motion";
+
+interface MenuItem {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+  roles: string[];
+}
 
 const Sidebar = ({
   toggleSideBar,
@@ -18,12 +28,99 @@ const Sidebar = ({
   isOpenSideBar: boolean;
 }) => {
   const { data: session }: { data: any } = useSession();
-  const isAdmin = session?.user?.role === "admin";
+  const userRole = session?.user?.role || "user";
   const pathname = usePathname();
+
+  const menuItems: MenuItem[] = [
+    // Common items
+    {
+      href: userRole === "admin" ? "/dashboardAdmin" : userRole === "owner" ? "/owner/dashboard" : "/dashboard",
+      icon: <IoIosHome size={24} />,
+      label: "Dashboard",
+      roles: ["user", "admin", "owner"],
+    },
+    // User items
+    {
+      href: "/data/realtime",
+      icon: <HiOutlineChartBar size={24} />,
+      label: "Grafik Real-time",
+      roles: ["user", "owner"],
+    },
+    {
+      href: "/camera",
+      icon: <FaCamera size={24} />,
+      label: "Kamera",
+      roles: ["user", "owner"],
+    },
+    {
+      href: "/forum",
+      icon: <FaComments size={24} />,
+      label: "Forum QnA",
+      roles: ["user"],
+    },
+    {
+      href: "/message",
+      icon: <FaEnvelope size={24} />,
+      label: "Pesan",
+      roles: ["user", "owner"],
+    },
+    // Admin items
+    {
+      href: "/user-management",
+      icon: <MdAdminPanelSettings size={24} />,
+      label: "Manajemen User",
+      roles: ["admin"],
+    },
+    {
+      href: "/admin/content",
+      icon: <MdContentCopy size={24} />,
+      label: "Manajemen Konten",
+      roles: ["admin"],
+    },
+    {
+      href: "/admin/inbox",
+      icon: <MdInbox size={24} />,
+      label: "Inbox",
+      roles: ["admin"],
+    },
+    // Owner items
+    {
+      href: "/owner/export",
+      icon: <FaFileExport size={24} />,
+      label: "Export Database",
+      roles: ["owner"],
+    },
+    {
+      href: "/owner/operational",
+      icon: <FaRobot size={24} />,
+      label: "Status Operasional",
+      roles: ["owner"],
+    },
+    // Common items
+    {
+      href: "/about",
+      icon: <FaPeopleGroup size={24} />,
+      label: "About",
+      roles: ["user", "admin", "owner"],
+    },
+    {
+      href: "/profile",
+      icon: <FaUser size={24} />,
+      label: "Profile",
+      roles: ["user", "admin", "owner"],
+    },
+  ];
+
+  const filteredMenuItems = menuItems.filter((item) =>
+    item.roles.includes(userRole)
+  );
+
   const getLinkClasses = (path: string) => {
-    const isActive = pathname === path;
-    return `flex items-center p-3 my-1 rounded-lg font-semibold transition-colors duration-200 ${
-      isActive ? "bg-black/30 text-white" : "text-stone-100 hover:bg-black/20"
+    const isActive = pathname === path || pathname.startsWith(path + "/");
+    return `flex items-center p-3 my-1 rounded-lg font-semibold transition-all duration-200 ${
+      isActive
+        ? "bg-green-500/20 text-green-600 border-l-4 border-green-500"
+        : "text-neutral-700 hover:bg-green-50 hover:text-green-600"
     }`;
   };
 
@@ -32,157 +129,81 @@ const Sidebar = ({
       <nav
         className={`fixed left-0 top-0 z-20 flex h-screen ${
           isOpenSideBar
-            ? "w-60 transition-all duration-300 bg-black/40 backdrop-blur-md border-white/30  border-r "
-            : "w-20 transition-all duration-300 bg-transparent "
-        }  flex-col`}
+            ? "w-64 transition-all duration-300 bg-white shadow-xl border-r border-neutral-200"
+            : "w-20 transition-all duration-300 bg-white shadow-xl border-r border-neutral-200"
+        } flex-col`}
       >
-        <GiHamburgerMenu
-          size={30}
-          className="text-white cursor-pointer hover:scale-120 duration-300 ml-5 mt-5"
-          onClick={toggleSideBar}
-        />
-        <Link href={"/dashboard"}>
-          <Image src={"/logo/logo.png"} width={200} height={200} alt={"logo"} />
+        <div className="flex items-center justify-between p-4 border-b border-neutral-200">
+          <GiHamburgerMenu
+            size={24}
+            className="text-neutral-700 cursor-pointer hover:text-green-600 transition-colors"
+            onClick={toggleSideBar}
+          />
+          {isOpenSideBar && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-xl font-bold text-green-600"
+            >
+              IoTani
+            </motion.div>
+          )}
+        </div>
+
+        <Link href={isOpenSideBar ? "/dashboard" : "/dashboard"} className="p-4 border-b border-neutral-200">
+          <div className="flex items-center justify-center">
+            <Image
+              src={"/logo/logo.png"}
+              width={isOpenSideBar ? 120 : 40}
+              height={isOpenSideBar ? 120 : 40}
+              alt={"logo"}
+              className="object-contain"
+            />
+          </div>
         </Link>
-        <ul className="flex flex-col">
-          <li>
-            <Link href={"/dashboard"} className={getLinkClasses("/dashboard")}>
-              {isOpenSideBar ? (
-                <>
-                  <IoIosHome
-                    size={30}
-                    className="mr-4 transition-all duration-300"
-                  />
-                  <span>Dashboard</span>
-                </>
-              ) : (
-                <>
-                  <IoIosHome
-                    size={30}
-                    className="mr-4 transition-all duration-300  mx-auto"
-                  />
-                </>
-              )}
-            </Link>
-          </li>
-          <li>
-            <Link href={"/data"} className={getLinkClasses("/data")}>
-              {isOpenSideBar ? (
-                <>
-                  <BsClipboardDataFill
-                    size={30}
-                    className="mr-4 transition-all duration-300"
-                  />
-                  <span>Data</span>
-                </>
-              ) : (
-                <>
-                  <BsClipboardDataFill
-                    size={30}
-                    className="mr-4 transition-all duration-300 mx-auto"
-                  />
-                </>
-              )}
-            </Link>
-          </li>
-          <li>
-            <Link href={"/about"} className={getLinkClasses("/about")}>
-              {isOpenSideBar ? (
-                <>
-                  <FaPeopleGroup
-                    size={25}
-                    className="mr-4 transition-all duration-300"
-                  />
-                  <span>About</span>
-                </>
-              ) : (
-                <>
-                  <FaPeopleGroup
-                    size={30}
-                    className="mr-4 transition-all duration-300 mx-auto"
-                  />
-                </>
-              )}
-            </Link>
-          </li>
 
-          <li>
-            <Link href={"/profile"} className={getLinkClasses("/profile")}>
-              {isOpenSideBar ? (
-                <>
-                  <FaUser
-                    size={30}
-                    className="mr-4 transition-all duration-300"
-                  />
-                  <span>Profile</span>
-                </>
-              ) : (
-                <>
-                  <FaUser
-                    size={30}
-                    className="mr-4 transition-all duration-300 mx-auto"
-                  />
-                </>
-              )}
-            </Link>
-          </li>
-
-          {isAdmin && (
-            <li>
-              <Link
-                href={"/user-management"}
-                className={getLinkClasses("/user-management")}
-              >
-                {isOpenSideBar ? (
-                  <>
-                    <MdAdminPanelSettings
-                      size={30}
-                      className="mr-4 transition-all duration-300"
-                    />
-                    <span>User Management</span>
-                  </>
-                ) : (
-                  <>
-                    <MdAdminPanelSettings
-                      size={30}
-                      className="mr-4 transition-all duration-300 mx-auto"
-                    />
-                  </>
+        <ul className="flex flex-col flex-1 overflow-y-auto p-2">
+          {filteredMenuItems.map((item) => (
+            <li key={item.href}>
+              <Link href={item.href} className={getLinkClasses(item.href)}>
+                <span className="flex-shrink-0">{item.icon}</span>
+                {isOpenSideBar && (
+                  <motion.span
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="ml-3"
+                  >
+                    {item.label}
+                  </motion.span>
                 )}
               </Link>
             </li>
-          )}
+          ))}
         </ul>
 
-        <ul className="mt-auto">
-          {" "}
-          <li>
-            <button
-              onClick={() => {
-                signOut({ callbackUrl: "/" });
-              }}
-              className={`flex justify-center items-center p-3 cursor-pointer ${
-                isOpenSideBar ? "px-10" : "px-4"
-              } mx-auto rounded-lg font-semibold bg-black/50 hover:bg-black/60 transition-colors duration-200 mb-9`}
-            >
-              {isOpenSideBar ? (
-                <>
-                  <div className="flex">
-                    <BiSolidLogOut size={30} className=" text-white" />
-                    <span className="text-white text-lg">Logout</span>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <BiSolidLogOut
-                    size={30}
-                    className=" text-white transition-all duration-300 mx-auto"
-                  />
-                </>
-              )}
-            </button>
-          </li>
-        </ul>
+        <div className="border-t border-neutral-200 p-4">
+          <button
+            onClick={() => {
+              signOut({ callbackUrl: "/" });
+            }}
+            className={`flex items-center w-full p-3 rounded-lg font-semibold transition-all duration-200 ${
+              isOpenSideBar
+                ? "bg-red-50 text-red-600 hover:bg-red-100 justify-start"
+                : "bg-red-50 text-red-600 hover:bg-red-100 justify-center"
+            }`}
+          >
+            <BiSolidLogOut size={24} />
+            {isOpenSideBar && (
+              <motion.span
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="ml-3"
+              >
+                Logout
+              </motion.span>
+            )}
+          </button>
+        </div>
       </nav>
     </>
   );

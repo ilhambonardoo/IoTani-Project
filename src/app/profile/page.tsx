@@ -11,7 +11,6 @@ import {
   LuX,
 } from "react-icons/lu";
 
-// Data dummy awal
 const userProfile = {
   name: "Budi Santoso",
   role: "Petani Cerdas",
@@ -28,9 +27,9 @@ const userProfile = {
 };
 
 const inputStyle =
-  "w-full p-2 border border-lime-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-600 transition-all";
+  "w-full p-2 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition-all bg-white text-neutral-800";
 const inlineInputStyle =
-  "w-full text-base text-gray-700 border-b-2 border-lime-300 focus:outline-none focus:border-lime-600";
+  "w-full text-base text-neutral-800 border-b-2 border-green-300 focus:outline-none focus:border-green-500";
 
 const ProfilePage = () => {
   const [profileData, setProfileData] = useState(userProfile);
@@ -38,7 +37,7 @@ const ProfilePage = () => {
   const [formData, setFormData] = useState(userProfile);
   // -------------------------
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: any) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -61,7 +60,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <section className="min-h-screen bg-gradient-to-b from-gray-50 to-lime-950 py-16 md:py-24">
+    <section className="min-h-screen bg-linear-to-r from-neutral-50 to-neutral-100 py-16 md:py-24">
       <motion.div
         className="container mx-auto px-4"
         initial={{ opacity: 0, y: 50 }}
@@ -76,7 +75,7 @@ const ProfilePage = () => {
               <>
                 <motion.button
                   onClick={handleSaveClick}
-                  className="inline-flex items-center rounded-full bg-lime-600 p-3 text-white transition-colors hover:bg-lime-700"
+                  className="inline-flex items-center rounded-full bg-green-500 p-3 text-white transition-colors hover:bg-green-600"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   aria-label="Simpan Profil"
@@ -96,7 +95,7 @@ const ProfilePage = () => {
             ) : (
               <motion.button
                 onClick={handleEditClick}
-                className="inline-flex items-center rounded-full bg-lime-100 p-3 text-lime-800 transition-colors hover:bg-lime-200"
+                className="inline-flex items-center rounded-full bg-green-100 p-3 text-green-800 transition-colors hover:bg-green-200"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 aria-label="Edit Profil"
@@ -113,7 +112,7 @@ const ProfilePage = () => {
                 alt={profileData.name}
                 width={128}
                 height={128}
-                className="rounded-full ring-4 ring-lime-600 ring-offset-4 ring-offset-white"
+                className="rounded-full ring-4 ring-green-500 ring-offset-4 ring-offset-white"
                 objectFit="cover"
               />
             </motion.div>
@@ -124,10 +123,10 @@ const ProfilePage = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                className="mt-6 text-center text-3xl font-extrabold text-lime-900 focus:outline-none md:text-4xl"
+                className="mt-6 text-center text-3xl font-extrabold text-neutral-800 focus:outline-none md:text-4xl"
               />
             ) : (
-              <h1 className="mt-6 text-3xl font-extrabold text-lime-900 md:text-4xl">
+              <h1 className="mt-6 text-3xl font-extrabold text-neutral-800 md:text-4xl">
                 {profileData.name}
               </h1>
             )}
@@ -138,10 +137,10 @@ const ProfilePage = () => {
                 name="role"
                 value={formData.role}
                 onChange={handleInputChange}
-                className="mt-2 text-center text-xl font-medium text-lime-700 focus:outline-none"
+                className="mt-2 text-center text-xl font-medium text-green-700 focus:outline-none"
               />
             ) : (
-              <p className="mt-2 text-xl font-medium text-lime-700">
+              <p className="mt-2 text-xl font-medium text-green-700">
                 {profileData.role}
               </p>
             )}
@@ -151,7 +150,7 @@ const ProfilePage = () => {
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-5">
             <div className="md:col-span-3">
-              <h2 className="mb-4 text-2xl font-bold text-lime-800">
+              <h2 className="mb-4 text-2xl font-bold text-neutral-800">
                 Tentang Saya
               </h2>
               {isEditing ? (
@@ -170,12 +169,12 @@ const ProfilePage = () => {
             </div>
 
             <div className="md:col-span-2">
-              <h2 className="mb-4 text-2xl font-bold text-lime-800">
+              <h2 className="mb-4 text-2xl font-bold text-neutral-800">
                 Informasi
               </h2>
               <ul className="space-y-4">
                 <li className="flex items-center">
-                  <LuMail className="mr-3 h-5 w-5 flex-shrink-0 text-lime-600" />
+                  <LuMail className="mr-3 h-5 w-5 shrink-0 text-green-600" />
                   {isEditing ? (
                     <input
                       type="email"
@@ -189,7 +188,7 @@ const ProfilePage = () => {
                   )}
                 </li>
                 <li className="flex items-center">
-                  <LuPhone className="mr-3 h-5 w-5 flex-shrink-0 text-lime-600" />
+                  <LuPhone className="mr-3 h-5 w-5 shrink-0 text-green-600" />
                   {isEditing ? (
                     <input
                       type="tel"
@@ -204,7 +203,7 @@ const ProfilePage = () => {
                 </li>
                 {/* Lokasi */}
                 <li className="flex items-center">
-                  <LuMapPin className="mr-3 h-5 w-5 flex-shrink-0 text-lime-600" />
+                  <LuMapPin className="mr-3 h-5 w-5 shrink-0 text-green-600" />
                   {isEditing ? (
                     <input
                       type="text"
@@ -228,24 +227,24 @@ const ProfilePage = () => {
               Statistik IoTani
             </h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <div className="rounded-xl bg-lime-50 p-4 text-center shadow-md">
-                <span className="block text-3xl font-bold text-lime-700">
+              <div className="rounded-xl bg-green-50 p-4 text-center shadow-md">
+                <span className="block text-3xl font-bold text-green-700">
                   {profileData.stats.lands}
                 </span>
                 <span className="text-sm font-medium text-gray-600">
                   Lahan Terdaftar
                 </span>
               </div>
-              <div className="rounded-xl bg-lime-50 p-4 text-center shadow-md">
-                <span className="block text-3xl font-bold text-lime-700">
+              <div className="rounded-xl bg-green-50 p-4 text-center shadow-md">
+                <span className="block text-3xl font-bold text-green-700">
                   {profileData.stats.sensors}
                 </span>
                 <span className="text-sm font-medium text-gray-600">
                   Sensor Aktif
                 </span>
               </div>
-              <div className="rounded-xl bg-lime-50 p-4 text-center shadow-md">
-                <span className="block text-3xl font-bold text-lime-700">
+              <div className="rounded-xl bg-green-50 p-4 text-center shadow-md">
+                <span className="block text-3xl font-bold text-green-700">
                   {profileData.stats.yieldIncrease}
                 </span>
                 <span className="text-sm font-medium text-gray-600">
