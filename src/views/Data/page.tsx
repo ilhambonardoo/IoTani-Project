@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import {
   LineChart,
@@ -13,18 +13,24 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { FiCalendar, FiDownload } from "react-icons/fi";
-import { FaTemperatureHigh, FaTint, HiOutlineChartBar } from "react-icons/fa";
+import { FaTemperatureHigh, FaTint } from "react-icons/fa";
+import { HiOutlineChartBar } from "react-icons/hi";
+import Image from "next/image";
+import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 
 // Mock data generator
 const generateData = (days: number) => {
   const data = [];
   const today = new Date();
-  
+
   for (let i = days - 1; i >= 0; i--) {
     const date = new Date(today);
     date.setDate(date.getDate() - i);
     data.push({
-      date: date.toLocaleDateString("id-ID", { day: "2-digit", month: "short" }),
+      date: date.toLocaleDateString("id-ID", {
+        day: "2-digit",
+        month: "short",
+      }),
       suhu: 25 + Math.random() * 5,
       kelembapan: 60 + Math.random() * 20,
       pH: 6.5 + Math.random() * 1,
@@ -33,8 +39,26 @@ const generateData = (days: number) => {
   return data;
 };
 
+// Image slider
+const sliderImages = [
+  {
+    src: "/cabai/petani.jpg",
+    alt: "Petani",
+  },
+  {
+    src: "/gambar_tambahan/robot.jpg",
+    alt: "Robotik",
+  },
+  {
+    src: "/gambar_tambahan/tanah.jpg",
+    alt: "tanah",
+  },
+];
+
 const RealtimeChartsPage = () => {
-  const [dateRange, setDateRange] = useState<"daily" | "weekly" | "monthly">("daily");
+  const [dateRange, setDateRange] = useState<"daily" | "weekly" | "monthly">(
+    "daily"
+  );
   const [chartData, setChartData] = useState(generateData(7));
 
   const handleDateRangeChange = (range: "daily" | "weekly" | "monthly") => {
@@ -48,6 +72,17 @@ const RealtimeChartsPage = () => {
     alert(`Exporting data as ${format.toUpperCase()}...`);
   };
 
+  // fiture slide
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const prevSlide = () => {
+    setCurrentIndex(
+      (prev) => (prev - 1 + sliderImages.length) % sliderImages.length
+    );
+  };
+
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % sliderImages.length);
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 p-6 lg:p-8">
       <div className="mx-auto max-w-7xl">
@@ -109,6 +144,65 @@ const RealtimeChartsPage = () => {
               <FiDownload size={16} />
               Export CSV
             </button>
+          </div>
+        </motion.div>
+
+        {/* Slide Image */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 100 }}
+          className="relative w-full h-[550px] overflow-hidden rounded-2xl mb-10"
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentIndex}
+              className="absolute inset-0 w-full h-full"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.7, ease: "easeInOut" }}
+            >
+              <Image
+                width={2000}
+                height={800}
+                src={sliderImages[currentIndex].src}
+                alt={sliderImages[currentIndex].alt}
+                className="w-full h-full object-cover"
+                priority
+              />
+            </motion.div>
+          </AnimatePresence>
+          <button
+            onClick={prevSlide}
+            className="absolute cursor-pointer top-1/2 left-4 z-10 -translate-y-1/2 rounded-full bg-black/40 p-2 text-white transition-all hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-lime-400"
+            aria-label="Previous slide"
+          >
+            <LuChevronLeft size={24} />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="absolute cursor-pointer top-1/2 right-4 z-10 -translate-y-1/2 rounded-full bg-black/40 p-2 text-white transition-all hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-lime-400"
+            aria-label="Next slide"
+          >
+            <LuChevronRight size={24} />
+          </button>
+
+          <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-2">
+            {sliderImages.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={`h-2 w-2 rounded-full transition-all
+              ${
+                index === currentIndex
+                  ? "w-4 bg-lime-400"
+                  : "bg-white/50 hover:bg-white/80"
+              }
+            `}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
           </div>
         </motion.div>
 
@@ -231,4 +325,3 @@ const RealtimeChartsPage = () => {
 };
 
 export default RealtimeChartsPage;
-

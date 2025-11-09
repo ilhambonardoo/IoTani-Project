@@ -1,9 +1,9 @@
 "use client";
 
-import CtaSection from "@/components/LandingPage/CtaSection";
-import FeatureSection from "@/components/LandingPage/FeatureSection";
-import HeroSection from "@/components/LandingPage/HeroSection";
-import Chatbot from "@/components/LandingPage/Chatbot";
+import CtaSection from "@/views/LandingPage/CtaSection";
+import FeatureSection from "@/views/LandingPage/FeatureSection";
+import HeroSection from "@/views/LandingPage/HeroSection";
+import Chatbot from "@/views/LandingPage/Chatbot";
 
 export default function Home() {
   return (

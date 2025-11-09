@@ -35,7 +35,6 @@ const ProfilePage = () => {
   const [profileData, setProfileData] = useState(userProfile);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(userProfile);
-  // -------------------------
 
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
