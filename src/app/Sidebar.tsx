@@ -2,11 +2,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IoIosHome } from "react-icons/io";
-import { BsClipboardDataFill } from "react-icons/bs";
 import { BiSolidLogOut } from "react-icons/bi";
-import { FaPeopleGroup, FaUser, FaCamera, FaComments, FaEnvelope } from "react-icons/fa6";
+import {
+  FaPeopleGroup,
+  FaUser,
+  FaCamera,
+  FaComments,
+  FaEnvelope,
+} from "react-icons/fa6";
 import { MdAdminPanelSettings, MdContentCopy, MdInbox } from "react-icons/md";
-import { HiOutlineChartBar, HiOutlineDocumentReport } from "react-icons/hi";
+import { HiOutlineChartBar } from "react-icons/hi";
 import { FaRobot, FaFileExport } from "react-icons/fa";
 import Image from "next/image";
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -34,14 +39,19 @@ const Sidebar = ({
   const menuItems: MenuItem[] = [
     // Common items
     {
-      href: userRole === "admin" ? "/dashboardAdmin" : userRole === "owner" ? "/owner/dashboard" : "/dashboard",
+      href:
+        userRole === "admin"
+          ? "/dashboardAdmin"
+          : userRole === "owner"
+          ? "/dashboard"
+          : "/dashboard",
       icon: <IoIosHome size={24} />,
       label: "Dashboard",
       roles: ["user", "admin", "owner"],
     },
     // User items
     {
-      href: "/data/realtime",
+      href: "/data",
       icon: <HiOutlineChartBar size={24} />,
       label: "Grafik Real-time",
       roles: ["user", "owner"],
@@ -72,26 +82,26 @@ const Sidebar = ({
       roles: ["admin"],
     },
     {
-      href: "/admin/content",
+      href: "/content",
       icon: <MdContentCopy size={24} />,
       label: "Manajemen Konten",
       roles: ["admin"],
     },
     {
-      href: "/admin/inbox",
+      href: "/inbox",
       icon: <MdInbox size={24} />,
       label: "Inbox",
       roles: ["admin"],
     },
     // Owner items
     {
-      href: "/owner/export",
+      href: "/export",
       icon: <FaFileExport size={24} />,
       label: "Export Database",
       roles: ["owner"],
     },
     {
-      href: "/owner/operational",
+      href: "/operational",
       icon: <FaRobot size={24} />,
       label: "Status Operasional",
       roles: ["owner"],
@@ -150,7 +160,10 @@ const Sidebar = ({
           )}
         </div>
 
-        <Link href={isOpenSideBar ? "/dashboard" : "/dashboard"} className="p-4 border-b border-neutral-200">
+        <Link
+          href={isOpenSideBar ? "/dashboard" : "/dashboard"}
+          className="p-4 border-b border-neutral-200"
+        >
           <div className="flex items-center justify-center">
             <Image
               src={"/logo/logo.png"}

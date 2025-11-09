@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { signIn } from "next-auth/react";
 import Image from "next/image";
 import { LuArrowRight } from "react-icons/lu";
 
@@ -34,7 +35,7 @@ const CtaSection = () => {
               lebih produktif.
             </p>
             <motion.a
-              href="/login"
+              onClick={() => signIn()}
               className="inline-flex items-center rounded-full bg-white px-8 py-3 text-lg font-bold text-green-700 shadow-lg transition-all duration-300 hover:bg-green-50 hover:scale-105"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}

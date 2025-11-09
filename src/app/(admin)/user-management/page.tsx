@@ -10,7 +10,7 @@ import {
 } from "react-icons/md";
 import { getUser, deleteUserAdmin } from "@/lib/firebase/service";
 import { toast } from "react-toastify";
-import ConfirmationModal from "../ConfirmationModal/page";
+import ConfirmationModal from "../../../components/ConfirmationModal/page";
 
 const RoleBadge = ({ role }: { role: string }) => {
   const roleColors: { [key: string]: string } = {
