@@ -2,8 +2,8 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { signIn } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState, FormEvent } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { IoPlayBack } from "react-icons/io5";
@@ -13,7 +13,6 @@ const Register = () => {
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const router = useRouter();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,7 +38,7 @@ const Register = () => {
         form.reset();
         setSuccess("Registrasi berhasil! Mengarahkan ke halaman login...");
         setTimeout(() => {
-          router.push("/login");
+          signIn();
         }, 2000);
       } else {
         const data = await res.json().catch(() => null);
@@ -118,16 +117,22 @@ const Register = () => {
         </div>
 
         <AnimatePresence mode="wait">
-          <motion.img
+          <motion.div //
             key={currentSlide}
-            src={slides[currentSlide].src}
-            alt={slides[currentSlide].title}
+            className="absolute inset-0 z-0 h-full w-full"
             initial={{ opacity: 0, scale: 1.1 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.1 }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="absolute inset-0 z-0 h-full w-full object-cover"
-          />
+          >
+            <Image //
+              src={slides[currentSlide].src}
+              alt={slides[currentSlide].title}
+              fill //
+              style={{ objectFit: "cover" }}
+              priority
+            />
+          </motion.div>
         </AnimatePresence>
         <div className="absolute inset-0 z-0 bg-gradient-to-b from-green-900/40 to-green-800/60"></div>
       </div>
@@ -138,14 +143,14 @@ const Register = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <Link
-            href="/login"
+          <button
+            onClick={() => signIn()}
             className="mb-6 flex items-center gap-2 text-neutral-600 transition-colors hover:text-green-600"
             aria-label="Kembali ke login"
           >
             <IoPlayBack size={20} />
             <span>Kembali</span>
-          </Link>
+          </button>
 
           <div className="flex justify-center mb-4 md:hidden">
             <Link
@@ -256,12 +261,12 @@ const Register = () => {
           </motion.button>
           <div className="mt-6 text-center text-base text-neutral-600">
             Sudah punya akun?{" "}
-            <Link
-              href="/login"
+            <button
+              onClick={() => signIn()}
               className="font-medium text-green-600 transition-colors hover:text-green-700 hover:underline"
             >
               Login
-            </Link>
+            </button>
           </div>
         </motion.div>
       </div>

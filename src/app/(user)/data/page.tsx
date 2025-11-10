@@ -1,4 +1,4 @@
-import RealtimeChartsPage from "@/views/Data/page";
+import RealtimeChartsPage from "@/views/Data/DataPage";
 
 const RealTime = () => {
   return (

@@ -1,4 +1,4 @@
-import CameraPage from "@/views/Camera/page";
+import CameraPage from "@/views/Camera/CameraPage";
 
 const Camera = () => {
   return <CameraPage />;

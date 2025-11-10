@@ -1,9 +1,9 @@
 "use client";
 import { usePathname } from "next/navigation";
-import Sidebar from "./Sidebar";
-import Footer from "./Footer";
+import Sidebar from "../components/Sidebar";
+import Footer from "../components/Footer";
 import { useState } from "react";
-import Navbar from "./Navbar";
+import Navbar from "../components/Navbar";
 
 const disableSidebar = ["/login", "/register", "/", "/about"];
 const showNavbar = ["/"];

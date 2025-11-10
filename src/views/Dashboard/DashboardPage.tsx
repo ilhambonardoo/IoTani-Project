@@ -1,20 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-import {
-  WiDaySunny,
-  WiRain,
-  WiCloudy,
-  WiStrongWind,
-} from "react-icons/wi";
-import {
-  FaTemperatureHigh,
-  FaTint,
-  FaRobot,
-  FaBell,
-} from "react-icons/fa";
+import { useState } from "react";
+import { WiDaySunny, WiRain, WiCloudy } from "react-icons/wi";
+import { FaTemperatureHigh, FaTint, FaRobot } from "react-icons/fa";
 import { IoMdNotifications } from "react-icons/io";
 import { HiOutlineChartBar } from "react-icons/hi";
 
@@ -128,7 +118,7 @@ const DashboardPage = () => {
     }
   };
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -138,13 +128,13 @@ const DashboardPage = () => {
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 100,
       },
     },

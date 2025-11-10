@@ -1,4 +1,4 @@
-import AboutPage from "@/views/About/page";
+import AboutPage from "@/views/About/AboutPage";
 
 const About = () => {
   return <AboutPage />;
