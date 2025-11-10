@@ -1,4 +1,4 @@
-import Login from "@/views/Login/page";
+import Login from "@/views/Login/LoginPage";
 
 const LoginPage = ({
   searchParams,

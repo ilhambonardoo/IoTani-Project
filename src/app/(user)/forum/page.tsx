@@ -1,4 +1,4 @@
-import ForumPage from "@/views/Forum/page";
+import ForumPage from "@/views/Forum/ForumPage";
 
 const Forum = () => {
   return <ForumPage />;

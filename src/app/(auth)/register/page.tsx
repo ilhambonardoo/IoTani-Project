@@ -1,5 +1,5 @@
 "use client";
-import Register from "@/views/Register/page";
+import Register from "@/views/Register/RegisterPage";
 
 const RegisterPage = () => {
   return <Register />;
