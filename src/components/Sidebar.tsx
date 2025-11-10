@@ -13,7 +13,7 @@ import {
 import { MdAdminPanelSettings, MdContentCopy, MdInbox } from "react-icons/md";
 import { HiOutlineChartBar } from "react-icons/hi";
 import { FaRobot, FaFileExport } from "react-icons/fa";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { signOut, useSession } from "next-auth/react";
 import { motion } from "framer-motion";

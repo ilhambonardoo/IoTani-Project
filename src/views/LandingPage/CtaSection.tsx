@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { signIn } from "next-auth/react";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { LuArrowRight } from "react-icons/lu";
 
 const CtaSection = () => {

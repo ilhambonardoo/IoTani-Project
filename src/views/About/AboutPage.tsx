@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { FaUsers, FaLightbulb, FaRocket } from "react-icons/fa";
 import { HiOutlineSparkles } from "react-icons/hi2";
 

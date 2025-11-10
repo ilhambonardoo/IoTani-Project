@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { signIn } from "next-auth/react";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
