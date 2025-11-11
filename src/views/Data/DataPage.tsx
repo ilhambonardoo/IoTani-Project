@@ -15,7 +15,7 @@ import {
 import { FiCalendar, FiDownload } from "react-icons/fi";
 import { FaTemperatureHigh, FaTint } from "react-icons/fa";
 import { HiOutlineChartBar } from "react-icons/hi";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 
 // Mock data generator

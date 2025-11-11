@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { signIn } from "next-auth/react";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { LuArrowRight } from "react-icons/lu";
 
 const CtaSection = () => {
@@ -58,7 +58,7 @@ const CtaSection = () => {
               width={500}
               height={350}
               objectFit="cover"
-              className="rounded-2xl shadow-xl ring-4 ring-white ring-opacity-30 md:w-[500px] md:h-[350px] lg:w-[600px] lg:h-[400px]"
+              className="rounded-2xl shadow-xl ring-4 ring-white ring-opacity-3j0 md:w-[500px] md:h-[350px] lg:w-[600px] lg:h-[400px]"
             />
           </motion.div>
         </div>

@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { signIn } from "next-auth/react";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
@@ -95,7 +95,7 @@ const HeroSection = () => {
               src={galleryImages[currentImageIndex].src}
               alt={galleryImages[currentImageIndex].alt}
               width={700}
-              height={700}
+              height={900}
               className="rounded-3xl  shadow-gray-950/60"
               priority
             />
