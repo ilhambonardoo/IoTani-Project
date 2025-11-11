@@ -125,11 +125,11 @@ const Register = () => {
             exit={{ opacity: 0, scale: 1.1 }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
           >
-            <Image //
+            <Image
               src={slides[currentSlide].src}
               alt={slides[currentSlide].title}
-              fill //
-              style={{ objectFit: "cover" }}
+              layout="fill"
+              objectFit="cover"
               priority
             />
           </motion.div>

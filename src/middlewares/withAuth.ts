@@ -1,5 +1,4 @@
 import { getToken } from "next-auth/jwt";
-import { signIn } from "next-auth/react";
 import {
   NextFetchEvent,
   NextMiddleware,
@@ -15,7 +14,7 @@ const onlyAdminPage = [
 ];
 
 const onlyOwnerPage = ["/dashboard_owner", "/export", "/operational"];
-const guestPages = ["/", signIn(), "/login", "/register"];
+const guestPages = ["/", "/login", "/register"];
 
 export default function withAuth(
   middleware: NextMiddleware,

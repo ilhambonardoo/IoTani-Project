@@ -1,10 +1,22 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/legacy/image";
 import { FaVideo, FaExclamationTriangle } from "react-icons/fa";
 import { IoMdRefresh } from "react-icons/io";
+
+async function analyzeImage(file: File): Promise<any> {
+  const base = process.env.NEXT_PUBLIC_ML_API_BASE || "http://127.0.0.1:8000";
+  const form = new FormData();
+  form.append("file", file);
+  const res = await fetch(`${base}/analyze`, {
+    method: "POST",
+    body: form,
+  });
+  if (!res.ok) throw new Error("ML service error");
+  return await res.json();
+}
 
 interface CameraFeed {
   id: string;
@@ -57,6 +69,27 @@ const CameraPage = () => {
   const [selectedCamera, setSelectedCamera] = useState<CameraFeed | null>(
     cameras[0]
   );
+  const [uploadPreview, setUploadPreview] = useState<string | null>(null);
+  const [mlResult, setMlResult] = useState<any | null>(null);
+  const [loading, setLoading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const onPick = () => fileRef.current?.click();
+  const onFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    setUploadPreview(URL.createObjectURL(f));
+    setLoading(true);
+    setMlResult(null);
+    try {
+      const result = await analyzeImage(f);
+      setMlResult(result);
+    } catch (err) {
+      setMlResult({ error: "Gagal menganalisis gambar." });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getDetectionColor = (type?: string) => {
     switch (type) {
@@ -185,33 +218,62 @@ const CameraPage = () => {
                 {/* Camera Feed */}
                 <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-neutral-900">
                   <Image
-                    src={selectedCamera.imageUrl}
+                    src={uploadPreview || selectedCamera.imageUrl}
                     alt={selectedCamera.name}
                     fill
                     className="object-cover"
                   />
-                  
-                  {/* AI Detection Overlay */}
+
+                  {/* AI Detection Overlay (Bounding Box + Info) */}
                   {selectedCamera.hasDetection && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="absolute inset-0 flex items-center justify-center"
-                    >
-                      <div className="absolute inset-0 bg-red-500/20" />
-                      <div
-                        className={`relative rounded-lg ${getDetectionColor(
-                          selectedCamera.detectionType
-                        )} px-6 py-3 text-white shadow-xl`}
+                    <>
+                      {/* Example bounding box */}
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.4 }}
+                        className="absolute left-[15%] top-[18%] h-[40%] w-[35%] rounded-lg border-2"
+                        style={{ borderColor: "#33D1FF", boxShadow: "0 0 0 2px rgba(51, 209, 255, 0.15), 0 0 24px rgba(51, 209, 255, 0.15) inset" }}
                       >
-                        <div className="flex items-center gap-2">
-                          <FaExclamationTriangle size={20} />
-                          <span className="font-semibold">
-                            {getDetectionText(selectedCamera.detectionType)}
-                          </span>
+                        <div className="absolute -top-7 left-0 rounded-md bg-black/60 px-2 py-1 text-xs font-semibold text-cyan-300 ring-1 ring-white/10">
+                          Cabai Rawit
                         </div>
-                      </div>
-                    </motion.div>
+                      </motion.div>
+
+                      {/* Info card */}
+                      <motion.div
+                        initial={{ x: 16, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ duration: 0.35 }}
+                        className="absolute right-4 top-4 w-72 rounded-xl border border-cyan-400/30 bg-black/50 p-4 text-white backdrop-blur"
+                      >
+                        <h3 className="mb-2 text-sm font-semibold text-cyan-300">Hasil Deteksi</h3>
+                        <div className="space-y-2 text-sm">
+                          {mlResult ? (
+                            mlResult.error ? (
+                              <p className="text-red-300">{mlResult.error}</p>
+                            ) : (
+                              <>
+                                <div className="flex items-center justify-between">
+                                  <span className="text-white/70">Objek</span>
+                                  <span className="font-medium">{mlResult.objek || "Cabai"}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                  <span className="text-white/70">Status</span>
+                                  <span className="font-medium text-cyan-300">{mlResult.kematangan || "N/A"}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                  <span className="text-white/70">Indikasi</span>
+                                  <span className="font-medium">{mlResult.penyakit || "Sehat"}</span>
+                                </div>
+                              </>
+                            )
+                          ) : (
+                            <p className="text-white/70">{loading ? "Memproses gambar..." : "Unggah gambar untuk analisis."}</p>
+                          )}
+                        </div>
+                      </motion.div>
+                    </>
                   )}
 
                   {/* Live Indicator */}
@@ -221,6 +283,22 @@ const CameraPage = () => {
                       <span className="text-xs font-medium">LIVE</span>
                     </div>
                   )}
+                </div>
+
+                {/* Upload controls */}
+                <div className="mt-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <button onClick={onPick} className="rounded-lg bg-cyan-500 px-4 py-2 text-sm font-semibold text-black hover:bg-cyan-400">
+                      Unggah Gambar
+                    </button>
+                    <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onFile} />
+                    {uploadPreview && (
+                      <button onClick={() => { setUploadPreview(null); setMlResult(null); }} className="text-sm text-neutral-600 hover:underline">
+                        Reset
+                      </button>
+                    )}
+                  </div>
+                  <div className="text-sm text-neutral-600">{loading ? "Menganalisis..." : mlResult ? "Selesai" : ""}</div>
                 </div>
 
                 {/* Detection Info */}

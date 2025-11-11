@@ -7,6 +7,14 @@ import { WiDaySunny, WiRain, WiCloudy } from "react-icons/wi";
 import { FaTemperatureHigh, FaTint, FaRobot } from "react-icons/fa";
 import { IoMdNotifications } from "react-icons/io";
 import { HiOutlineChartBar } from "react-icons/hi";
+import {
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+} from "recharts";
 
 interface WeatherData {
   temperature: number;
@@ -284,6 +292,46 @@ const DashboardPage = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          </motion.div>
+
+          {/* ML Analysis Chart */}
+          <motion.div
+            variants={itemVariants}
+            className="rounded-2xl bg-white p-6 shadow-lg transition-all hover:shadow-xl lg:col-span-3"
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-neutral-800">
+                Analisis Hama & Penyakit (Data Dummy)
+              </h2>
+            </div>
+            <div className="h-72 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={[
+                      { name: "Sehat", value: 70 },
+                      { name: "Hama (Thrips)", value: 15 },
+                      { name: "Penyakit (Antraknosa)", value: 10 },
+                      { name: "Lainnya", value: 5 },
+                    ]}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={100}
+                    paddingAngle={4}
+                  >
+                    <Cell fill="#22c55e" />
+                    <Cell fill="#3b82f6" />
+                    <Cell fill="#f59e0b" />
+                    <Cell fill="#94a3b8" />
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
           </motion.div>
 
