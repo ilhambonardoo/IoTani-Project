@@ -180,7 +180,7 @@ const AboutPage = () => {
                   <Image
                     src={member.image}
                     alt={member.name}
-                    fill
+                    layout="fill"
                     className="object-cover"
                   />
                 </div>

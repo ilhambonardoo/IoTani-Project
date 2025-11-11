@@ -95,7 +95,7 @@ const HeroSection = () => {
               src={galleryImages[currentImageIndex].src}
               alt={galleryImages[currentImageIndex].alt}
               width={700}
-              height={700}
+              height={900}
               className="rounded-3xl  shadow-gray-950/60"
               priority
             />

@@ -45,11 +45,12 @@ const Navbar = () => {
 
         {/* 3. Tombol CTA (Desktop) */}
         <div className="hidden md:block">
-          <button onClick={() => signIn()}>
-            <button className="flex items-center gap-2 rounded-lg bg-white px-5 py-2 text-sm font-semibold text-green-600 shadow transition-all duration-300 hover:bg-green-50 hover:shadow-md cursor-pointer">
-              <HiOutlineLogin size={18} />
-              <span>Login</span>
-            </button>
+          <button
+            onClick={() => signIn()}
+            className="flex items-center gap-2 rounded-lg bg-white px-5 py-2 text-sm font-semibold text-green-600 shadow transition-all duration-300 hover:bg-green-50 hover:shadow-md cursor-pointer"
+          >
+            <HiOutlineLogin size={18} />
+            <span>Login</span>
           </button>
         </div>
 

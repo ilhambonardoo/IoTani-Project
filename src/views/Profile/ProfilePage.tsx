@@ -10,11 +10,9 @@ import {
   LuSave,
   LuX,
 } from "react-icons/lu";
+import { useSession } from "next-auth/react";
 
 const userProfile = {
-  name: "Budi Santoso",
-  role: "Petani Cerdas",
-  email: "budi.santoso@iotani.com",
   phone: "+62 812 3456 7890",
   location: "Bogor, Jawa Barat",
   bio: "Petani cabai dengan pengalaman 10 tahun, kini beralih ke pertanian cerdas dengan iOTani untuk meningkatkan hasil dan efisiensi lahan saya.",
@@ -35,6 +33,8 @@ const ProfilePage = () => {
   const [profileData, setProfileData] = useState(userProfile);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(userProfile);
+
+  const { data: session }: { data: any } = useSession();
 
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
@@ -108,7 +108,7 @@ const ProfilePage = () => {
             <motion.div>
               <Image
                 src={profileData.avatarUrl}
-                alt={profileData.name}
+                alt="wkwk"
                 width={128}
                 height={128}
                 className="rounded-full ring-4 ring-green-500 ring-offset-4 ring-offset-white"
@@ -120,13 +120,13 @@ const ProfilePage = () => {
               <input
                 type="text"
                 name="name"
-                value={formData.name}
+                value={session?.user?.fullName}
                 onChange={handleInputChange}
                 className="mt-6 text-center text-3xl font-extrabold text-neutral-800 focus:outline-none md:text-4xl"
               />
             ) : (
               <h1 className="mt-6 text-3xl font-extrabold text-neutral-800 md:text-4xl">
-                {profileData.name}
+                {session?.user?.fullName}
               </h1>
             )}
 
@@ -134,13 +134,13 @@ const ProfilePage = () => {
               <input
                 type="text"
                 name="role"
-                value={formData.role}
+                value="Your role in here"
                 onChange={handleInputChange}
                 className="mt-2 text-center text-xl font-medium text-green-700 focus:outline-none"
               />
             ) : (
               <p className="mt-2 text-xl font-medium text-green-700">
-                {profileData.role}
+                {session?.user?.role}
               </p>
             )}
           </div>
@@ -183,7 +183,9 @@ const ProfilePage = () => {
                       className={inlineInputStyle}
                     />
                   ) : (
-                    <span className="text-gray-700">{profileData.email}</span>
+                    <span className="text-gray-700">
+                      {session?.user?.email}
+                    </span>
                   )}
                 </li>
                 <li className="flex items-center">
