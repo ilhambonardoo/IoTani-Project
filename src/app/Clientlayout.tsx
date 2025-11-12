@@ -3,10 +3,8 @@ import { usePathname } from "next/navigation";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import { useState } from "react";
-import Navbar from "../components/Navbar";
 
-const disableSidebar = ["/login", "/register", "/", "/about"];
-const showNavbar = ["/"];
+const disableNavigation = ["/login", "/register", "/"];
 
 const ClientLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -18,12 +16,11 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-      {!disableSidebar.includes(pathname) && (
+      {!disableNavigation.includes(pathname) && (
         <Sidebar isOpenSideBar={isOpenSideBar} toggleSideBar={toggleSideBar} />
       )}
-      {showNavbar.includes(pathname) && <Navbar />}
       {children}
-      {!disableSidebar.includes(pathname) && <Footer />}
+      {!disableNavigation.includes(pathname) && <Footer />}
     </>
   );
 };

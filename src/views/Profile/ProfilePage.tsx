@@ -1,7 +1,11 @@
 "use client";
-import { useState } from "react";
+
+import { useRef, useState } from "react";
+
 import { motion } from "framer-motion";
+
 import Image from "next/legacy/image";
+
 import {
   LuMail,
   LuPhone,
@@ -10,6 +14,7 @@ import {
   LuSave,
   LuX,
 } from "react-icons/lu";
+
 import { useSession } from "next-auth/react";
 
 const userProfile = {
@@ -17,6 +22,7 @@ const userProfile = {
   location: "Bogor, Jawa Barat",
   bio: "Petani cabai dengan pengalaman 10 tahun, kini beralih ke pertanian cerdas dengan iOTani untuk meningkatkan hasil dan efisiensi lahan saya.",
   avatarUrl: "/gambar_tambahan/petani.jpg",
+
   stats: {
     lands: 5,
     sensors: 32,
@@ -26,6 +32,7 @@ const userProfile = {
 
 const inputStyle =
   "w-full p-2 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition-all bg-white text-neutral-800";
+
 const inlineInputStyle =
   "w-full text-base text-neutral-800 border-b-2 border-green-300 focus:outline-none focus:border-green-500";
 
@@ -33,19 +40,23 @@ const ProfilePage = () => {
   const [profileData, setProfileData] = useState(userProfile);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(userProfile);
-
+  const [uploadPreview, setUploadPreview] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const onPick = () => fileRef.current?.click();
   const { data: session }: { data: any } = useSession();
-
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
+
       [name]: value,
     }));
   };
 
   const handleEditClick = () => {
     setFormData(profileData);
+
     setIsEditing(true);
   };
 
@@ -55,6 +66,7 @@ const ProfilePage = () => {
 
   const handleSaveClick = () => {
     setProfileData(formData);
+
     setIsEditing(false);
   };
 
@@ -69,6 +81,7 @@ const ProfilePage = () => {
       >
         <div className="relative mx-auto max-w-4xl overflow-hidden rounded-3xl bg-white p-8 shadow-2xl md:p-12">
           {/* --- Tombol Edit / Simpan / Batal --- */}
+
           <div className="absolute top-6 right-6 flex gap-2">
             {isEditing ? (
               <>
@@ -81,6 +94,7 @@ const ProfilePage = () => {
                 >
                   <LuSave size={20} />
                 </motion.button>
+
                 <motion.button
                   onClick={handleCancelClick}
                   className="inline-flex items-center rounded-full bg-gray-200 p-3 text-gray-700 transition-colors hover:bg-gray-300"
@@ -105,7 +119,7 @@ const ProfilePage = () => {
           </div>
 
           <div className="flex flex-col items-center text-center">
-            <motion.div>
+            <motion.button onClick={onPick}>
               <Image
                 src={profileData.avatarUrl}
                 alt="wkwk"
@@ -114,7 +128,7 @@ const ProfilePage = () => {
                 className="rounded-full ring-4 ring-green-500 ring-offset-4 ring-offset-white"
                 objectFit="cover"
               />
-            </motion.div>
+            </motion.button>
 
             {isEditing ? (
               <input
@@ -152,6 +166,7 @@ const ProfilePage = () => {
               <h2 className="mb-4 text-2xl font-bold text-neutral-800">
                 Tentang Saya
               </h2>
+
               {isEditing ? (
                 <textarea
                   name="bio"
@@ -171,14 +186,16 @@ const ProfilePage = () => {
               <h2 className="mb-4 text-2xl font-bold text-neutral-800">
                 Informasi
               </h2>
+
               <ul className="space-y-4">
                 <li className="flex items-center">
                   <LuMail className="mr-3 h-5 w-5 shrink-0 text-green-600" />
+
                   {isEditing ? (
                     <input
                       type="email"
                       name="email"
-                      value={formData.email}
+                      value={session?.user?.email}
                       onChange={handleInputChange}
                       className={inlineInputStyle}
                     />
@@ -188,8 +205,10 @@ const ProfilePage = () => {
                     </span>
                   )}
                 </li>
+
                 <li className="flex items-center">
                   <LuPhone className="mr-3 h-5 w-5 shrink-0 text-green-600" />
+
                   {isEditing ? (
                     <input
                       type="tel"
@@ -202,9 +221,12 @@ const ProfilePage = () => {
                     <span className="text-gray-700">{profileData.phone}</span>
                   )}
                 </li>
+
                 {/* Lokasi */}
+
                 <li className="flex items-center">
                   <LuMapPin className="mr-3 h-5 w-5 shrink-0 text-green-600" />
+
                   {isEditing ? (
                     <input
                       type="text"
@@ -227,27 +249,33 @@ const ProfilePage = () => {
             <h2 className="mb-4 text-center text-2xl font-bold text-lime-800">
               Statistik IoTani
             </h2>
+
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div className="rounded-xl bg-green-50 p-4 text-center shadow-md">
                 <span className="block text-3xl font-bold text-green-700">
                   {profileData.stats.lands}
                 </span>
+
                 <span className="text-sm font-medium text-gray-600">
                   Lahan Terdaftar
                 </span>
               </div>
+
               <div className="rounded-xl bg-green-50 p-4 text-center shadow-md">
                 <span className="block text-3xl font-bold text-green-700">
                   {profileData.stats.sensors}
                 </span>
+
                 <span className="text-sm font-medium text-gray-600">
                   Sensor Aktif
                 </span>
               </div>
+
               <div className="rounded-xl bg-green-50 p-4 text-center shadow-md">
                 <span className="block text-3xl font-bold text-green-700">
                   {profileData.stats.yieldIncrease}
                 </span>
+
                 <span className="text-sm font-medium text-gray-600">
                   Peningkatan Hasil
                 </span>

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { FiEdit, FiPlus, FiSearch, FiTrash2 } from "react-icons/fi";
 import { HiOutlineUser } from "react-icons/hi";
@@ -8,7 +8,7 @@ import {
   MdAdminPanelSettings,
   MdOutlineSupervisorAccount,
 } from "react-icons/md";
-import { getUser, deleteUserAdmin } from "@/lib/firebase/service";
+import { getUser, deleteUserAdmin, updateUserAdmin } from "@/lib/firebase/service";
 import { toast } from "react-toastify";
 import ConfirmationModal from "../../../components/ConfirmationModal/page";
 
@@ -47,6 +47,14 @@ export default function UserManagementPage() {
 
   const [isModalOpen, setisModalOpen] = useState(false);
   const [userToDelete, setuserToDelete] = useState<string | null>(null);
+  
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [userToEdit, setUserToEdit] = useState<any | null>(null);
+  const [editFormData, setEditFormData] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+  });
 
   useEffect(() => {
     async function fetchUser() {
@@ -104,7 +112,73 @@ export default function UserManagementPage() {
     }
   };
 
-  const handleUpdateUser = async (id: string) => {};
+  const showEditModal = (user: any) => {
+    setUserToEdit(user);
+    setEditFormData({
+      fullName: user.fullName || "",
+      email: user.email || "",
+      password: "",
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setUserToEdit(null);
+    setEditFormData({
+      fullName: "",
+      email: "",
+      password: "",
+    });
+  };
+
+  const handleUpdateUser = async () => {
+    if (!userToEdit) {
+      return;
+    }
+
+    if (!editFormData.fullName.trim() || !editFormData.email.trim()) {
+      toast.error("Nama dan email harus diisi");
+      return;
+    }
+
+    if (!editFormData.password.trim()) {
+      toast.error("Password harus diisi");
+      return;
+    }
+
+    try {
+      const result = await updateUserAdmin(
+        userToEdit.id,
+        editFormData.fullName,
+        editFormData.email,
+        editFormData.password
+      );
+      
+      if (result?.status) {
+        setUsers((prev) =>
+          prev.map((user) =>
+            user.id === userToEdit.id
+              ? {
+                  ...user,
+                  fullName: editFormData.fullName,
+                  email: editFormData.email,
+                }
+              : user
+          )
+        );
+        toast.success("Berhasil mengupdate pengguna");
+        handleCloseEditModal();
+      } else {
+        setError("Gagal mengupdate pengguna dari server");
+        toast.error("Gagal mengupdate pengguna");
+      }
+    } catch (error) {
+      setError("Gagal mengupdate pengguna");
+      toast.error("Gagal mengupdate pengguna");
+      return error;
+    }
+  };
   if (loading) {
     return (
       <div className="flex h-60 w-full items-center justify-center text-white">
@@ -211,6 +285,7 @@ export default function UserManagementPage() {
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm font-medium">
                   <button
+                    onClick={() => showEditModal(user)}
                     className="mr-3 text-lime-400 transition-colors hover:text-lime-300"
                     aria-label={`Edit ${user.fullName}`}
                   >
@@ -243,6 +318,94 @@ export default function UserManagementPage() {
           Tindakan ini tidak dapat dibatalkan.
         </p>
       </ConfirmationModal>
+
+      {/* Edit User Modal */}
+      <AnimatePresence>
+        {isEditModalOpen && userToEdit && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+            onClick={handleCloseEditModal}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-md rounded-xl border border-white/30 bg-gray-900/80 p-6 shadow-xl backdrop-blur-md"
+              onClick={(e) => e.stopPropagation()}
+            >
+            <h2 className="mb-4 text-2xl font-bold text-white">
+              Edit Pengguna
+            </h2>
+
+            <div className="mb-6 space-y-4">
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-300">
+                  Nama Lengkap
+                </label>
+                <input
+                  type="text"
+                  value={editFormData.fullName}
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, fullName: e.target.value })
+                  }
+                  className="w-full rounded-lg border border-white/30 bg-black/40 px-4 py-2 text-white placeholder-gray-400 backdrop-blur-md focus:border-lime-400 focus:outline-none focus:ring-1 focus:ring-lime-400"
+                  placeholder="Masukkan nama lengkap"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-300">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={editFormData.email}
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, email: e.target.value })
+                  }
+                  className="w-full rounded-lg border border-white/30 bg-black/40 px-4 py-2 text-white placeholder-gray-400 backdrop-blur-md focus:border-lime-400 focus:outline-none focus:ring-1 focus:ring-lime-400"
+                  placeholder="Masukkan email"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-300">
+                  Password Baru
+                </label>
+                <input
+                  type="password"
+                  value={editFormData.password}
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, password: e.target.value })
+                  }
+                  className="w-full rounded-lg border border-white/30 bg-black/40 px-4 py-2 text-white placeholder-gray-400 backdrop-blur-md focus:border-lime-400 focus:outline-none focus:ring-1 focus:ring-lime-400"
+                  placeholder="Masukkan password baru"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <button
+                className="rounded-lg bg-gray-700 px-4 py-2 font-semibold text-white transition-all hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                onClick={handleCloseEditModal}
+              >
+                Batal
+              </button>
+
+              <button
+                className="rounded-lg bg-lime-600 px-4 py-2 font-semibold text-white transition-all hover:bg-lime-500 focus:outline-none focus:ring-2 focus:ring-lime-400"
+                onClick={handleUpdateUser}
+              >
+                Simpan
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+        )}
+      </AnimatePresence>
 
       {filteredUsers.length === 0 && !loading && (
         <div className="mt-4 rounded-lg border border-white/30 bg-black/40 p-10 text-center text-gray-400 backdrop-blur-md">
