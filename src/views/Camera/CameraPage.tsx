@@ -91,32 +91,6 @@ const CameraPage = () => {
     }
   };
 
-  const getDetectionColor = (type?: string) => {
-    switch (type) {
-      case "pest":
-        return "bg-red-500";
-      case "disease":
-        return "bg-orange-500";
-      case "weed":
-        return "bg-yellow-500";
-      default:
-        return "bg-green-500";
-    }
-  };
-
-  const getDetectionText = (type?: string) => {
-    switch (type) {
-      case "pest":
-        return "Hama Terdeteksi";
-      case "disease":
-        return "Penyakit Terdeteksi";
-      case "weed":
-        return "Gulma Terdeteksi";
-      default:
-        return "Normal";
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 p-6 lg:p-8">
       <div className="mx-auto max-w-7xl">
@@ -170,7 +144,10 @@ const CameraPage = () => {
                         </span>
                       </div>
                       {camera.hasDetection && (
-                        <FaExclamationTriangle className="text-orange-500" size={16} />
+                        <FaExclamationTriangle
+                          className="text-orange-500"
+                          size={16}
+                        />
                       )}
                     </div>
                     <p className="mt-1 text-xs text-neutral-500">
@@ -207,7 +184,9 @@ const CameraPage = () => {
                           : "bg-red-500"
                       }`}
                     >
-                      {selectedCamera.status === "online" ? "Online" : "Offline"}
+                      {selectedCamera.status === "online"
+                        ? "Online"
+                        : "Offline"}
                     </div>
                     <button className="rounded-lg bg-blue-500 p-2 text-white transition-all hover:bg-blue-600">
                       <IoMdRefresh size={20} />
@@ -220,7 +199,7 @@ const CameraPage = () => {
                   <Image
                     src={uploadPreview || selectedCamera.imageUrl}
                     alt={selectedCamera.name}
-                    fill
+                    layout="fill"
                     className="object-cover"
                   />
 
@@ -233,7 +212,11 @@ const CameraPage = () => {
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.4 }}
                         className="absolute left-[15%] top-[18%] h-[40%] w-[35%] rounded-lg border-2"
-                        style={{ borderColor: "#33D1FF", boxShadow: "0 0 0 2px rgba(51, 209, 255, 0.15), 0 0 24px rgba(51, 209, 255, 0.15) inset" }}
+                        style={{
+                          borderColor: "#33D1FF",
+                          boxShadow:
+                            "0 0 0 2px rgba(51, 209, 255, 0.15), 0 0 24px rgba(51, 209, 255, 0.15) inset",
+                        }}
                       >
                         <div className="absolute -top-7 left-0 rounded-md bg-black/60 px-2 py-1 text-xs font-semibold text-cyan-300 ring-1 ring-white/10">
                           Cabai Rawit
@@ -247,7 +230,9 @@ const CameraPage = () => {
                         transition={{ duration: 0.35 }}
                         className="absolute right-4 top-4 w-72 rounded-xl border border-cyan-400/30 bg-black/50 p-4 text-white backdrop-blur"
                       >
-                        <h3 className="mb-2 text-sm font-semibold text-cyan-300">Hasil Deteksi</h3>
+                        <h3 className="mb-2 text-sm font-semibold text-cyan-300">
+                          Hasil Deteksi
+                        </h3>
                         <div className="space-y-2 text-sm">
                           {mlResult ? (
                             mlResult.error ? (
@@ -256,20 +241,32 @@ const CameraPage = () => {
                               <>
                                 <div className="flex items-center justify-between">
                                   <span className="text-white/70">Objek</span>
-                                  <span className="font-medium">{mlResult.objek || "Cabai"}</span>
+                                  <span className="font-medium">
+                                    {mlResult.objek || "Cabai"}
+                                  </span>
                                 </div>
                                 <div className="flex items-center justify-between">
                                   <span className="text-white/70">Status</span>
-                                  <span className="font-medium text-cyan-300">{mlResult.kematangan || "N/A"}</span>
+                                  <span className="font-medium text-cyan-300">
+                                    {mlResult.kematangan || "N/A"}
+                                  </span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                  <span className="text-white/70">Indikasi</span>
-                                  <span className="font-medium">{mlResult.penyakit || "Sehat"}</span>
+                                  <span className="text-white/70">
+                                    Indikasi
+                                  </span>
+                                  <span className="font-medium">
+                                    {mlResult.penyakit || "Sehat"}
+                                  </span>
                                 </div>
                               </>
                             )
                           ) : (
-                            <p className="text-white/70">{loading ? "Memproses gambar..." : "Unggah gambar untuk analisis."}</p>
+                            <p className="text-white/70">
+                              {loading
+                                ? "Memproses gambar..."
+                                : "Unggah gambar untuk analisis."}
+                            </p>
                           )}
                         </div>
                       </motion.div>
@@ -288,17 +285,34 @@ const CameraPage = () => {
                 {/* Upload controls */}
                 <div className="mt-4 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <button onClick={onPick} className="rounded-lg bg-cyan-500 px-4 py-2 text-sm font-semibold text-black hover:bg-cyan-400">
+                    <button
+                      onClick={onPick}
+                      className="rounded-lg bg-cyan-500 px-4 py-2 text-sm font-semibold text-black hover:bg-cyan-400"
+                    >
                       Unggah Gambar
                     </button>
-                    <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onFile} />
+                    <input
+                      ref={fileRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={onFile}
+                    />
                     {uploadPreview && (
-                      <button onClick={() => { setUploadPreview(null); setMlResult(null); }} className="text-sm text-neutral-600 hover:underline">
+                      <button
+                        onClick={() => {
+                          setUploadPreview(null);
+                          setMlResult(null);
+                        }}
+                        className="text-sm text-neutral-600 hover:underline"
+                      >
                         Reset
                       </button>
                     )}
                   </div>
-                  <div className="text-sm text-neutral-600">{loading ? "Menganalisis..." : mlResult ? "Selesai" : ""}</div>
+                  <div className="text-sm text-neutral-600">
+                    {loading ? "Menganalisis..." : mlResult ? "Selesai" : ""}
+                  </div>
                 </div>
 
                 {/* Detection Info */}
@@ -309,7 +323,10 @@ const CameraPage = () => {
                     className="mt-4 rounded-lg bg-orange-50 border border-orange-200 p-4"
                   >
                     <div className="flex items-start gap-3">
-                      <FaExclamationTriangle className="text-orange-500 mt-0.5" size={20} />
+                      <FaExclamationTriangle
+                        className="text-orange-500 mt-0.5"
+                        size={20}
+                      />
                       <div>
                         <h3 className="font-semibold text-orange-800">
                           Peringatan Deteksi
@@ -338,4 +355,3 @@ const CameraPage = () => {
 };
 
 export default CameraPage;
-

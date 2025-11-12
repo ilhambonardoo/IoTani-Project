@@ -36,3 +36,6 @@ async def analyze(file: UploadFile = File(...)):
     }
 
 
+
+
+
