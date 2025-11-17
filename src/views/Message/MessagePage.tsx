@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { FaUser, FaPaperPlane } from "react-icons/fa";
 import { HiOutlineSearch } from "react-icons/hi";
 // Simple date formatter
@@ -29,52 +29,86 @@ interface ChatMessage {
 const MessagePage = () => {
   const [selectedChat, setSelectedChat] = useState<number | null>(1);
   const [messageInput, setMessageInput] = useState("");
+  const [mounted, setMounted] = useState(false);
 
-  const conversations: Message[] = [
-    {
-      id: 1,
-      name: "Admin Penyuluh",
-      role: "Penyuluh Pertanian",
-      lastMessage: "Terima kasih atas pertanyaannya. Saya akan membantu...",
-      timestamp: new Date(),
-      unread: 2,
-    },
-    {
-      id: 2,
-      name: "Tim Support",
-      role: "Support",
-      lastMessage: "Masalah Anda sudah kami catat dan akan segera ditindaklanjuti.",
-      timestamp: new Date(Date.now() - 3600000),
-      unread: 0,
-    },
-  ];
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  const [messages] = useState<ChatMessage[]>([
-    {
-      id: 1,
-      text: "Halo, ada yang bisa saya bantu?",
-      sender: "admin",
-      timestamp: new Date(Date.now() - 7200000),
-    },
-    {
-      id: 2,
-      text: "Saya ingin bertanya tentang pH tanah yang optimal untuk cabai",
-      sender: "user",
-      timestamp: new Date(Date.now() - 3600000),
-    },
-    {
-      id: 3,
-      text: "pH optimal untuk tanaman cabai adalah antara 6.0 hingga 6.8. Apakah pH tanah Anda saat ini sudah dalam rentang tersebut?",
-      sender: "admin",
-      timestamp: new Date(Date.now() - 1800000),
-    },
-    {
-      id: 4,
-      text: "Terima kasih atas informasinya!",
-      sender: "user",
-      timestamp: new Date(),
-    },
-  ]);
+  const conversations: Message[] = useMemo(() => {
+    if (!mounted) {
+      // Return fixed timestamps for SSR
+      const baseTime = new Date("2024-01-01T12:00:00");
+      return [
+        {
+          id: 1,
+          name: "Admin Penyuluh",
+          role: "Penyuluh Pertanian",
+          lastMessage: "Terima kasih atas pertanyaannya. Saya akan membantu...",
+          timestamp: baseTime,
+          unread: 2,
+        },
+        {
+          id: 2,
+          name: "Tim Support",
+          role: "Support",
+          lastMessage: "Masalah Anda sudah kami catat dan akan segera ditindaklanjuti.",
+          timestamp: new Date(baseTime.getTime() - 3600000),
+          unread: 0,
+        },
+      ];
+    }
+    // Use real timestamps on client
+    return [
+      {
+        id: 1,
+        name: "Admin Penyuluh",
+        role: "Penyuluh Pertanian",
+        lastMessage: "Terima kasih atas pertanyaannya. Saya akan membantu...",
+        timestamp: new Date(),
+        unread: 2,
+      },
+      {
+        id: 2,
+        name: "Tim Support",
+        role: "Support",
+        lastMessage: "Masalah Anda sudah kami catat dan akan segera ditindaklanjuti.",
+        timestamp: new Date(Date.now() - 3600000),
+        unread: 0,
+      },
+    ];
+  }, [mounted]);
+
+  const [messages] = useState<ChatMessage[]>(() => {
+    // Use fixed timestamps for initial state to avoid hydration mismatch
+    const baseTime = new Date("2024-01-01T12:00:00");
+    return [
+      {
+        id: 1,
+        text: "Halo, ada yang bisa saya bantu?",
+        sender: "admin",
+        timestamp: new Date(baseTime.getTime() - 7200000),
+      },
+      {
+        id: 2,
+        text: "Saya ingin bertanya tentang pH tanah yang optimal untuk cabai",
+        sender: "user",
+        timestamp: new Date(baseTime.getTime() - 3600000),
+      },
+      {
+        id: 3,
+        text: "pH optimal untuk tanaman cabai adalah antara 6.0 hingga 6.8. Apakah pH tanah Anda saat ini sudah dalam rentang tersebut?",
+        sender: "admin",
+        timestamp: new Date(baseTime.getTime() - 1800000),
+      },
+      {
+        id: 4,
+        text: "Terima kasih atas informasinya!",
+        sender: "user",
+        timestamp: baseTime,
+      },
+    ];
+  });
 
   const handleSendMessage = () => {
     if (!messageInput.trim()) return;

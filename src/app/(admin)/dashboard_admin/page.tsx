@@ -71,7 +71,7 @@ const DashboardAdmin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 p-6 lg:p-8">
+    <div className="bg-linear-to-br from-neutral-50 to-neutral-100 p-6 lg:p-8">
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <motion.div
@@ -80,10 +80,11 @@ const DashboardAdmin = () => {
           className="mb-8"
         >
           <h1 className="text-3xl font-bold text-neutral-800 lg:text-4xl">
-            Dashboard Admin
+            Daftar platfrom
           </h1>
           <p className="mt-2 text-neutral-600">
-            Selamat datang, {session?.user?.name || "Admin"}! Kelola platform IoTani
+            Selamat datang, {session?.user?.name || "Admin"}! Kelola platform
+            IoTani
           </p>
         </motion.div>
 
@@ -201,8 +202,12 @@ const DashboardAdmin = () => {
                           <span className="h-2 w-2 rounded-full bg-green-500" />
                         )}
                       </div>
-                      <p className="text-sm text-neutral-600">{message.subject}</p>
-                      <p className="mt-1 text-xs text-neutral-400">{message.time}</p>
+                      <p className="text-sm text-neutral-600">
+                        {message.subject}
+                      </p>
+                      <p className="mt-1 text-xs text-neutral-400">
+                        {message.time}
+                      </p>
                     </div>
                   </div>
                 </div>

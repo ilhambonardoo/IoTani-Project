@@ -1,33 +1,45 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IoChatbubbleEllipses, IoClose } from "react-icons/io5";
 import { FiSend } from "react-icons/fi";
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      text: "Halo! Saya adalah asisten virtual IoTani. Ada yang bisa saya bantu?",
-      sender: "bot",
-      timestamp: new Date(),
-    },
-  ]);
+  const [mounted, setMounted] = useState(false);
+  const [messages, setMessages] = useState<Array<{
+    id: number;
+    text: string;
+    sender: "bot" | "user";
+    timestamp: Date;
+  }>>([]);
   const [inputMessage, setInputMessage] = useState("");
 
+  useEffect(() => {
+    setMounted(true);
+    // Initialize with fixed timestamp to avoid hydration mismatch
+    setMessages([
+      {
+        id: 1,
+        text: "Halo! Saya adalah asisten virtual IoTani. Ada yang bisa saya bantu?",
+        sender: "bot",
+        timestamp: new Date("2024-01-01T12:00:00"),
+      },
+    ]);
+  }, []);
+
   const handleSendMessage = () => {
-    if (!inputMessage.trim()) return;
+    if (!inputMessage.trim() || !mounted) return;
 
     const userMessage = {
       id: messages.length + 1,
       text: inputMessage,
-      sender: "user",
+      sender: "user" as const,
       timestamp: new Date(),
     };
 
-    setMessages([...messages, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInputMessage("");
 
     // Simulate bot response
@@ -45,7 +57,7 @@ const Chatbot = () => {
       const botMessage = {
         id: messages.length + 2,
         text: randomResponse,
-        sender: "bot",
+        sender: "bot" as const,
         timestamp: new Date(),
       };
 
@@ -99,7 +111,7 @@ const Chatbot = () => {
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-neutral-50">
-              {messages.map((message) => (
+              {mounted && messages.map((message) => (
                 <motion.div
                   key={message.id}
                   initial={{ opacity: 0, y: 10 }}

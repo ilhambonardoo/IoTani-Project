@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, FormEvent } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { IoPlayBack } from "react-icons/io5";
+import { login } from "@/lib/firebase/service";
 
 const Login = ({
   searchParams,
@@ -16,37 +17,135 @@ const Login = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [mounted, setMounted] = useState(false);
+  const [role, setRole] = useState("");
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  let defaultDashboardUrl =
+    role === "admin"
+      ? "/dashboard_admin"
+      : role === "owner"
+      ? "/dashboard_owner"
+      : "/dashboard";
+
+  const callbackUrl = searchParams.url ?? defaultDashboardUrl;
+
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
+
+    // Validasi role dipilih
+    if (!role) {
+      setError(
+        "Silakan pilih tipe akun terlebih dahulu (User, Admin, atau Owner)"
+      );
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const formData = new FormData(e.currentTarget);
       const email = formData.get("email")?.toString() ?? "";
       const password = formData.get("password")?.toString() ?? "";
 
+      // Fetch user data untuk mendapatkan role sebenarnya
+      let userData: any;
+      try {
+        userData = await login({ email });
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        setError(
+          "Terjadi kesalahan saat memverifikasi akun. Silakan coba lagi."
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      if (!userData) {
+        setError("Email atau password salah");
+        setIsLoading(false);
+        e.currentTarget.reset();
+        return;
+      }
+
+      // Validasi role yang dipilih dengan role user sebenarnya
+      const userRole = (userData.role || "").toLowerCase().trim();
+      const selectedRole = role.toLowerCase().trim();
+
+      if (userRole !== selectedRole) {
+        let errorMessage = "";
+        if (selectedRole === "admin" && userRole !== "admin") {
+          if (userRole === "user") {
+            errorMessage =
+              "Akun ini adalah akun User. Silakan login sebagai User.";
+          } else if (userRole === "owner") {
+            errorMessage =
+              "Akun ini adalah akun Owner. Silakan login sebagai Owner.";
+          } else {
+            errorMessage =
+              "Akun ini bukan akun Admin. Silakan pilih role yang sesuai.";
+          }
+        } else if (selectedRole === "owner" && userRole !== "owner") {
+          if (userRole === "user") {
+            errorMessage =
+              "Akun ini adalah akun User. Silakan login sebagai User.";
+          } else if (userRole === "admin") {
+            errorMessage =
+              "Akun ini adalah akun Admin. Silakan login sebagai Admin.";
+          } else {
+            errorMessage =
+              "Akun ini bukan akun Owner. Silakan pilih role yang sesuai.";
+          }
+        } else if (selectedRole === "user" && userRole !== "user") {
+          if (userRole === "admin") {
+            errorMessage =
+              "Akun ini adalah akun Admin. Silakan login sebagai Admin.";
+          } else if (userRole === "owner") {
+            errorMessage =
+              "Akun ini adalah akun Owner. Silakan login sebagai Owner.";
+          } else {
+            errorMessage =
+              "Role akun tidak sesuai. Silakan pilih role yang benar.";
+          }
+        } else {
+          errorMessage = "Role akun tidak sesuai dengan yang dipilih.";
+        }
+
+        setError(errorMessage);
+        setIsLoading(false);
+        return;
+      }
+
+      // Jika role sesuai, lanjutkan login
+
       const res = await signIn("credentials", {
         redirect: false,
         email,
         password,
-        callbackUrl: searchParams.url ?? "/dashboard",
+        role,
+        callbackUrl: callbackUrl,
       });
 
-      const callbackUrl = searchParams.url ?? "/dashboard";
       if (!res?.error) {
         push(callbackUrl);
         setIsLoading(false);
       } else {
         if (res?.status === 401) {
-          setError("Email or password is incorrect");
+          setError("Email atau password salah");
           setIsLoading(false);
           e.currentTarget.reset();
         } else {
+          setError("Terjadi kesalahan saat login. Silakan coba lagi.");
           setIsLoading(false);
         }
       }
     } catch (error) {
       console.log("Login failed:", error);
+      setError("Terjadi kesalahan saat login. Silakan coba lagi.");
       setIsLoading(false);
     }
   };
@@ -69,12 +168,14 @@ const Login = ({
   ];
 
   useEffect(() => {
+    if (!mounted) return;
+
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
     }, 4000);
 
     return () => clearInterval(timer);
-  }, [slides.length]);
+  }, [mounted, slides.length]);
 
   return (
     <div className="flex min-h-screen w-full bg-gradient-to-br from-neutral-50 to-neutral-100">
@@ -83,23 +184,33 @@ const Login = ({
           IoTani<span className="text-green-200">.</span>
         </div>
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentSlide}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.7, ease: "easeInOut" }}
-            className="relative z-10"
-          >
+        {mounted && (
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentSlide}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.7, ease: "easeInOut" }}
+              className="relative z-10"
+            >
+              <h1 className="mb-4 text-4xl font-bold leading-tight">
+                {slides[currentSlide].title}
+              </h1>
+              <p className="text-xl text-green-50">
+                {slides[currentSlide].description}
+              </p>
+            </motion.div>
+          </AnimatePresence>
+        )}
+        {!mounted && (
+          <div className="relative z-10">
             <h1 className="mb-4 text-4xl font-bold leading-tight">
-              {slides[currentSlide].title}
+              {slides[0].title}
             </h1>
-            <p className="text-xl text-green-50">
-              {slides[currentSlide].description}
-            </p>
-          </motion.div>
-        </AnimatePresence>
+            <p className="text-xl text-green-50">{slides[0].description}</p>
+          </div>
+        )}
 
         <div className="relative z-10 flex space-x-2">
           {slides.map((_, index) => (
@@ -113,18 +224,26 @@ const Login = ({
           ))}
         </div>
 
-        <AnimatePresence mode="wait">
-          <motion.img
-            key={currentSlide}
-            src={slides[currentSlide].src}
-            alt={slides[currentSlide].title}
-            initial={{ opacity: 0, scale: 1.1 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.1 }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
+        {mounted ? (
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={currentSlide}
+              src={slides[currentSlide].src}
+              alt={slides[currentSlide].title}
+              initial={{ opacity: 0, scale: 1.1 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.1 }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
+              className="absolute inset-0 z-0 h-full w-full object-cover"
+            />
+          </AnimatePresence>
+        ) : (
+          <img
+            src={slides[0].src}
+            alt={slides[0].title}
             className="absolute inset-0 z-0 h-full w-full object-cover"
           />
-        </AnimatePresence>
+        )}
         <div className="absolute inset-0 z-0 bg-gradient-to-b from-green-900/40 to-green-800/60"></div>
       </div>
 
@@ -166,6 +285,42 @@ const Login = ({
               {error}
             </motion.div>
           )}
+
+          <div className="mb-4 flex rounded-lg bg-neutral-200 p-1">
+            <button
+              type="button"
+              onClick={() => setRole("user")}
+              className={`w-1/3 cursor-pointer hover:bg-neutral-300 rounded-md px-3 py-2 text-sm font-medium transition-all ${
+                role === "user"
+                  ? "bg-white text-green-600 shadow"
+                  : "text-neutral-600"
+              }`}
+            >
+              User
+            </button>
+            <button
+              type="button"
+              onClick={() => setRole("admin")}
+              className={`w-1/3 hover:bg-neutral-300 rounded-md cursor-pointer px-3 py-2 text-sm font-medium transition-all ${
+                role === "admin"
+                  ? "bg-white text-green-600 shadow"
+                  : "text-neutral-600"
+              }`}
+            >
+              Admin
+            </button>
+            <button
+              type="button"
+              onClick={() => setRole("owner")}
+              className={`w-1/3 rounded-md hover:bg-neutral-300 cursor-pointer px-3 py-2 text-sm font-medium transition-all ${
+                role === "owner"
+                  ? "bg-white text-green-600 shadow"
+                  : "text-neutral-600"
+              }`}
+            >
+              Owner
+            </button>
+          </div>
 
           <form method="POST" onSubmit={handleLogin}>
             <div className="mb-4">
@@ -212,8 +367,11 @@ const Login = ({
           </form>
           <motion.button
             type="button"
+            onClick={() => {
+              signIn("google", { callbackUrl: callbackUrl, redirect: false });
+            }}
             disabled={isLoading}
-            className="mt-4 flex w-full items-center justify-center gap-3 rounded-lg border border-neutral-300 bg-white py-3 text-base font-semibold text-neutral-700 shadow transition-all hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-4 flex w-full items-center cursor-pointer justify-center gap-3 rounded-lg border border-neutral-300 bg-white py-3 text-base font-semibold text-neutral-700 shadow transition-all hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
             whileHover={{ scale: isLoading ? 1 : 1.02 }}
             whileTap={{ scale: isLoading ? 1 : 0.98 }}
           >

@@ -41,9 +41,9 @@ const Sidebar = ({
     {
       href:
         userRole === "admin"
-          ? "/dashboardAdmin"
+          ? "/dashboard_admin"
           : userRole === "owner"
-          ? "/dashboard"
+          ? "/dashboard_owner"
           : "/dashboard",
       icon: <IoIosHome size={24} />,
       label: "Dashboard",
@@ -107,12 +107,6 @@ const Sidebar = ({
       roles: ["owner"],
     },
     // Common items
-    {
-      href: "/about",
-      icon: <FaPeopleGroup size={24} />,
-      label: "About",
-      roles: ["user", "admin", "owner"],
-    },
     {
       href: "/profile",
       icon: <FaUser size={24} />,
@@ -199,7 +193,7 @@ const Sidebar = ({
             onClick={() => {
               signOut({ callbackUrl: "/" });
             }}
-            className={`flex items-center w-full p-3 rounded-lg font-semibold transition-all duration-200 ${
+            className={`flex items-center w-full p-3 rounded-lg font-semibold transition-all cursor-pointer duration-200 ${
               isOpenSideBar
                 ? "bg-red-50 text-red-600 hover:bg-red-100 justify-start"
                 : "bg-red-50 text-red-600 hover:bg-red-100 justify-center"
