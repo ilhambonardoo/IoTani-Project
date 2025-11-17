@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { signIn } from "next-auth/react";
 import Image from "next/legacy/image";
 import { FaUsers, FaLightbulb, FaRocket } from "react-icons/fa";
 import { HiOutlineSparkles } from "react-icons/hi2";
@@ -8,9 +9,24 @@ import { HiOutlineSparkles } from "react-icons/hi2";
 const AboutPage = () => {
   const teamMembers = [
     {
-      name: "Tim IoTani",
-      role: "Development Team",
-      image: "/cabai/petani.jpg",
+      name: "Malik Raihan Oli`i",
+      role: "Robotic Design",
+      image: "/anggota/malik.jpg",
+    },
+    {
+      name: "Ilham Bonardo Marpaung",
+      role: "Fullstack Web Developer",
+      image: "/anggota/ilham.jpg",
+    },
+    {
+      name: "Dandi Novian Pratama",
+      role: "Web Design",
+      image: "/anggota/dandi.jpg",
+    },
+    {
+      name: "Benediktus Aprilian Abimanyu",
+      role: "Development",
+      image: "/anggota/benediktus.jpg",
     },
   ];
 
@@ -166,7 +182,7 @@ const AboutPage = () => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 ">
             {teamMembers.map((member, index) => (
               <motion.div
                 key={index}
@@ -176,7 +192,7 @@ const AboutPage = () => {
                 transition={{ delay: index * 0.1 }}
                 className="rounded-2xl bg-white p-6 text-center shadow-lg transition-all hover:shadow-xl"
               >
-                <div className="relative mx-auto mb-4 h-32 w-32 overflow-hidden rounded-full">
+                <div className="relative mx-auto mb-4 h-62 w-72 overflow-hidden rounded-2xl">
                   <Image
                     src={member.image}
                     alt={member.name}
@@ -209,14 +225,14 @@ const AboutPage = () => {
               Mari bersama-sama membangun masa depan pertanian yang lebih baik
               dengan teknologi.
             </p>
-            <motion.a
-              href="/login"
-              className="inline-block rounded-lg bg-white px-8 py-3 text-lg font-semibold text-green-600 shadow-lg transition-all hover:bg-green-50 hover:shadow-xl"
+            <motion.button
+              onClick={() => signIn()}
+              className="inline-block rounded-lg cursor-pointer bg-white px-8 py-3 text-lg font-semibold text-green-600 shadow-lg transition-all hover:bg-green-50 hover:shadow-xl"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
               Mulai Sekarang
-            </motion.a>
+            </motion.button>
           </motion.div>
         </div>
       </section>

@@ -3,7 +3,8 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { FiCalendar, FiDownload, FiFileText, FiFile } from "react-icons/fi";
-import { FaTemperatureHigh, FaTint, HiOutlineChartBar } from "react-icons/fa";
+import { FaTemperatureHigh, FaTint } from "react-icons/fa";
+import { HiOutlineChartBar } from "react-icons/hi";
 
 const ExportPage = () => {
   const [dateRange, setDateRange] = useState({
@@ -14,8 +15,16 @@ const ExportPage = () => {
   const [exportFormat, setExportFormat] = useState<"pdf" | "csv">("pdf");
 
   const dataTypes = [
-    { value: "all", label: "Semua Data", icon: <HiOutlineChartBar size={20} /> },
-    { value: "temperature", label: "Suhu Tanah", icon: <FaTemperatureHigh size={20} /> },
+    {
+      value: "all",
+      label: "Semua Data",
+      icon: <HiOutlineChartBar size={20} />,
+    },
+    {
+      value: "temperature",
+      label: "Suhu Tanah",
+      icon: <FaTemperatureHigh size={20} />,
+    },
     { value: "moisture", label: "Kelembapan", icon: <FaTint size={20} /> },
     { value: "ph", label: "pH Tanah", icon: <HiOutlineChartBar size={20} /> },
   ];
@@ -25,7 +34,11 @@ const ExportPage = () => {
       alert("Silakan pilih rentang tanggal terlebih dahulu");
       return;
     }
-    alert(`Mengekspor data ${dataType} dari ${dateRange.start} hingga ${dateRange.end} sebagai ${exportFormat.toUpperCase()}`);
+    alert(
+      `Mengekspor data ${dataType} dari ${dateRange.start} hingga ${
+        dateRange.end
+      } sebagai ${exportFormat.toUpperCase()}`
+    );
   };
 
   return (
@@ -105,7 +118,9 @@ const ExportPage = () => {
                 >
                   <div
                     className={`${
-                      dataType === type.value ? "text-green-600" : "text-neutral-400"
+                      dataType === type.value
+                        ? "text-green-600"
+                        : "text-neutral-400"
                     }`}
                   >
                     {type.icon}
@@ -140,11 +155,17 @@ const ExportPage = () => {
               >
                 <FiFileText
                   size={24}
-                  className={exportFormat === "pdf" ? "text-green-600" : "text-neutral-400"}
+                  className={
+                    exportFormat === "pdf"
+                      ? "text-green-600"
+                      : "text-neutral-400"
+                  }
                 />
                 <span
                   className={`font-medium ${
-                    exportFormat === "pdf" ? "text-green-700" : "text-neutral-700"
+                    exportFormat === "pdf"
+                      ? "text-green-700"
+                      : "text-neutral-700"
                   }`}
                 >
                   PDF
@@ -160,11 +181,17 @@ const ExportPage = () => {
               >
                 <FiFile
                   size={24}
-                  className={exportFormat === "csv" ? "text-green-600" : "text-neutral-400"}
+                  className={
+                    exportFormat === "csv"
+                      ? "text-green-600"
+                      : "text-neutral-400"
+                  }
                 />
                 <span
                   className={`font-medium ${
-                    exportFormat === "csv" ? "text-green-700" : "text-neutral-700"
+                    exportFormat === "csv"
+                      ? "text-green-700"
+                      : "text-neutral-700"
                   }`}
                 >
                   CSV
@@ -193,9 +220,9 @@ const ExportPage = () => {
           className="mt-6 rounded-lg bg-blue-50 border border-blue-200 p-4"
         >
           <p className="text-sm text-blue-800">
-            <strong>Catatan:</strong> Data yang diekspor akan mencakup semua data sensor
-            dalam rentang tanggal yang dipilih. Proses export mungkin memakan waktu
-            beberapa menit tergantung jumlah data.
+            <strong>Catatan:</strong> Data yang diekspor akan mencakup semua
+            data sensor dalam rentang tanggal yang dipilih. Proses export
+            mungkin memakan waktu beberapa menit tergantung jumlah data.
           </p>
         </motion.div>
       </div>
@@ -204,4 +231,3 @@ const ExportPage = () => {
 };
 
 export default ExportPage;
-

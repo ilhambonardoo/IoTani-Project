@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -59,9 +59,16 @@ const RealtimeChartsPage = () => {
   const [dateRange, setDateRange] = useState<"daily" | "weekly" | "monthly">(
     "daily"
   );
-  const [chartData, setChartData] = useState(generateData(7));
+  const [chartData, setChartData] = useState<ReturnType<typeof generateData>>([]);
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+    setChartData(generateData(7));
+  }, []);
 
   const handleDateRangeChange = (range: "daily" | "weekly" | "monthly") => {
+    if (!mounted) return;
     setDateRange(range);
     const days = range === "daily" ? 7 : range === "weekly" ? 30 : 90;
     setChartData(generateData(days));
@@ -221,7 +228,7 @@ const RealtimeChartsPage = () => {
               </h2>
             </div>
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={chartData}>
+              <LineChart data={mounted ? chartData : []}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <XAxis dataKey="date" stroke="#6b7280" />
                 <YAxis stroke="#6b7280" />
@@ -258,7 +265,7 @@ const RealtimeChartsPage = () => {
               </h2>
             </div>
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={chartData}>
+              <LineChart data={mounted ? chartData : []}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <XAxis dataKey="date" stroke="#6b7280" />
                 <YAxis stroke="#6b7280" />
@@ -295,7 +302,7 @@ const RealtimeChartsPage = () => {
               </h2>
             </div>
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={chartData}>
+              <LineChart data={mounted ? chartData : []}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <XAxis dataKey="date" stroke="#6b7280" />
                 <YAxis stroke="#6b7280" />

@@ -44,7 +44,7 @@ const ConfirmationModal = ({
       {isOpen && (
         <motion.div
           key="overlay"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
           onClick={onClose}
           variants={overlayVariants}
           initial="hidden"
@@ -53,33 +53,37 @@ const ConfirmationModal = ({
         >
           <motion.div
             key="modal"
-            className="relative w-full max-w-md rounded-xl border border-white/30 bg-gray-900/80 p-6 shadow-xl backdrop-blur-md"
+            className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
             onClick={(e) => e.stopPropagation()}
             variants={modalVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
           >
-            <h2 className="mb-4 text-2xl font-bold text-white">
+            <h2 className="mb-4 text-2xl font-bold text-neutral-800">
               {title || "Konfirmasi Aksi"}
             </h2>
 
-            <div className="mb-6 text-gray-300">{children}</div>
+            <div className="mb-6 text-neutral-600">{children}</div>
 
             <div className="flex justify-end gap-3">
-              <button
-                className="rounded-lg bg-gray-700 px-4 py-2 font-semibold text-white transition-all hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              <motion.button
+                className="rounded-lg bg-neutral-200 px-4 py-2 font-semibold text-neutral-700 transition-all hover:bg-neutral-300 focus:outline-none focus:ring-2 focus:ring-neutral-400"
                 onClick={onClose}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 Batal
-              </button>
+              </motion.button>
 
-              <button
-                className="rounded-lg bg-red-600 px-4 py-2 font-semibold text-white transition-all hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-400"
+              <motion.button
+                className="rounded-lg bg-red-500 px-4 py-2 font-semibold text-white transition-all hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                 onClick={onConfirm}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 Ya, Hapus
-              </button>
+              </motion.button>
             </div>
           </motion.div>
         </motion.div>

@@ -29,7 +29,7 @@ const CtaSection = () => {
               Tingkatkan Hasil Panen Cabai Anda Sekarang!
             </h2>
             <p className="mb-8 text-lg opacity-90 md:text-xl">
-              Sistem iOTani kami dengan AI dan Robotik siap membantu Anda
+              Sistem IoTani kami dengan AI dan Robotik siap membantu Anda
               mengoptimalkan pertumbuhan cabai, memantau kondisi tanah secara
               real-time, dan mengambil keputusan cerdas untuk pertanian yang
               lebih produktif.

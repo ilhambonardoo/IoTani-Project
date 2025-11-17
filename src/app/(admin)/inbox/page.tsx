@@ -45,7 +45,8 @@ const AdminInboxPage = () => {
       from: "Petani C",
       role: "User",
       subject: "Terima kasih atas bantuannya",
-      content: "Terima kasih banyak atas saran yang diberikan. Tanaman saya sekarang sudah lebih baik!",
+      content:
+        "Terima kasih banyak atas saran yang diberikan. Tanaman saya sekarang sudah lebih baik!",
       timestamp: "1 hari lalu",
       unread: false,
     },
@@ -85,7 +86,10 @@ const AdminInboxPage = () => {
               {/* Search */}
               <div className="border-b border-neutral-200 p-4">
                 <div className="relative">
-                  <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={18} />
+                  <HiOutlineSearch
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
+                    size={18}
+                  />
                   <input
                     type="text"
                     placeholder="Cari pesan..."
@@ -199,7 +203,9 @@ const AdminInboxPage = () => {
               </div>
             ) : (
               <div className="flex h-[600px] items-center justify-center rounded-2xl bg-white shadow-lg">
-                <p className="text-neutral-500">Pilih pesan untuk melihat detail</p>
+                <p className="text-neutral-500">
+                  Pilih pesan untuk melihat detail
+                </p>
               </div>
             )}
           </motion.div>
@@ -210,8 +216,3 @@ const AdminInboxPage = () => {
 };
 
 export default AdminInboxPage;
-
-
-
-
-

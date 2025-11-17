@@ -16,27 +16,8 @@ interface Article {
 }
 
 const ContentManagementPage = () => {
-  const [articles, setArticles] = useState<Article[]>([
-    {
-      id: 1,
-      title: "Cara Mengatasi Hama pada Tanaman Cabai",
-      content: "Artikel lengkap tentang cara mengatasi hama...",
-      category: "Hama & Penyakit",
-      author: "Admin",
-      createdAt: "2024-01-10",
-      updatedAt: "2024-01-15",
-    },
-    {
-      id: 2,
-      title: "Panduan pH Tanah Optimal untuk Cabai",
-      content: "Penjelasan tentang pH tanah yang optimal...",
-      category: "Teknologi",
-      author: "Admin",
-      createdAt: "2024-01-08",
-      updatedAt: "2024-01-08",
-    },
-  ]);
-
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState<number | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState({
@@ -64,7 +45,11 @@ const ContentManagementPage = () => {
       setArticles(
         articles.map((a) =>
           a.id === isEditing
-            ? { ...a, ...formData, updatedAt: new Date().toISOString().split("T")[0] }
+            ? {
+                ...a,
+                ...formData,
+                updatedAt: new Date().toISOString().split("T")[0],
+              }
             : a
         )
       );
@@ -185,7 +170,10 @@ const ContentManagementPage = () => {
                   <div className="mb-4 flex items-start justify-between">
                     <div className="flex-1">
                       <div className="mb-2 flex items-center gap-2">
-                        <HiOutlineDocumentText className="text-green-500" size={20} />
+                        <HiOutlineDocumentText
+                          className="text-green-500"
+                          size={20}
+                        />
                         <h3 className="text-xl font-semibold text-neutral-800">
                           {article.title}
                         </h3>
@@ -299,8 +287,3 @@ const ContentManagementPage = () => {
 };
 
 export default ContentManagementPage;
-
-
-
-
-

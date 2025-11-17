@@ -103,7 +103,10 @@ const ForumPage = () => {
           className="mb-6 space-y-4"
         >
           <div className="relative">
-            <HiOutlineSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" size={20} />
+            <HiOutlineSearch
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400"
+              size={20}
+            />
             <input
               type="text"
               placeholder="Cari pertanyaan..."
@@ -118,9 +121,7 @@ const ForumPage = () => {
               <button
                 key={category}
                 onClick={() =>
-                  setSelectedCategory(
-                    category === "Semua" ? "all" : category
-                  )
+                  setSelectedCategory(category === "Semua" ? "all" : category)
                 }
                 className={`rounded-lg px-4 py-2 text-sm font-medium transition-all ${
                   (selectedCategory === "all" && category === "Semua") ||
@@ -189,7 +190,9 @@ const ForumPage = () => {
                   <div className="mt-4 flex flex-wrap items-center gap-4 text-sm">
                     <div className="flex items-center gap-2">
                       <FaUser className="text-neutral-400" size={14} />
-                      <span className="text-neutral-600">{question.author}</span>
+                      <span className="text-neutral-600">
+                        {question.author}
+                      </span>
                     </div>
                     <span className="rounded-full bg-green-100 px-3 py-1 text-green-700">
                       {question.category}
@@ -198,7 +201,9 @@ const ForumPage = () => {
                       <FiMessageSquare size={14} />
                       <span>{question.answers} jawaban</span>
                     </div>
-                    <span className="text-neutral-500">{question.timestamp}</span>
+                    <span className="text-neutral-500">
+                      {question.timestamp}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -212,7 +217,10 @@ const ForumPage = () => {
             animate={{ opacity: 1 }}
             className="rounded-2xl bg-white p-12 text-center shadow-lg"
           >
-            <FaQuestionCircle className="mx-auto mb-4 text-neutral-400" size={48} />
+            <FaQuestionCircle
+              className="mx-auto mb-4 text-neutral-400"
+              size={48}
+            />
             <p className="text-lg text-neutral-600">
               Tidak ada pertanyaan yang ditemukan
             </p>
@@ -224,4 +232,3 @@ const ForumPage = () => {
 };
 
 export default ForumPage;
-

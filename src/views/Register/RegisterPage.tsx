@@ -8,11 +8,18 @@ import { useEffect, useState, FormEvent } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { IoPlayBack } from "react-icons/io5";
 
-const Register = () => {
+const Register = ({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | undefined };
+}) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
+  
+  // Get callbackUrl from search params or default to dashboard
+  const callbackUrl = searchParams?.callbackUrl || "/dashboard";
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -145,7 +152,7 @@ const Register = () => {
         >
           <button
             onClick={() => signIn()}
-            className="mb-6 flex items-center gap-2 text-neutral-600 transition-colors hover:text-green-600"
+            className="mb-6 flex items-center cursor-pointer gap-2 text-neutral-600 transition-colors hover:text-green-600"
             aria-label="Kembali ke login"
           >
             <IoPlayBack size={20} />
@@ -251,8 +258,11 @@ const Register = () => {
           </form>
           <motion.button
             type="button"
+            onClick={() => {
+              signIn("google", { callbackUrl: callbackUrl });
+            }}
             disabled={isLoading}
-            className="mt-4 flex w-full items-center justify-center gap-3 rounded-lg border border-neutral-300 bg-white py-3 text-base font-semibold text-neutral-700 shadow transition-all hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-4 flex w-full items-center justify-center gap-3 rounded-lg border border-neutral-300 bg-white py-3 text-base font-semibold text-neutral-700 shadow transition-all hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
             whileHover={{ scale: isLoading ? 1 : 1.02 }}
             whileTap={{ scale: isLoading ? 1 : 0.98 }}
           >
