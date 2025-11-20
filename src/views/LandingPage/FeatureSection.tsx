@@ -24,8 +24,8 @@ const FeatureSection = () => {
     },
   };
   return (
-    <section className="py-16 bg-gradient-to-b from-green-50 to-white">
-      <div className="container mx-auto px-6 lg:px-12">
+    <section className="py-12 sm:py-16 bg-gradient-to-b from-green-50 to-white">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-12">
         <motion.div
           className="text-center"
           initial={{ opacity: 0, y: 30 }}
@@ -33,24 +33,24 @@ const FeatureSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          <h2 className="lg:text-6xl font-extrabold text-neutral-800 md:text-5xl text-2xl">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-neutral-800">
             Fitur Unggulan Kami
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl lg:text-lg md:text-2xl text-[15px] font-semibold text-neutral-600">
+          <p className="mx-auto mt-4 max-w-2xl text-base sm:text-lg md:text-xl font-semibold text-neutral-600 px-4">
             Dibangun dengan teknologi terkini untuk memberikan hasil presisi dan
             efisiensi maksimal di lahan Anda.
           </p>
         </motion.div>
 
         <motion.div
-          className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3"
+          className="mt-12 sm:mt-16 grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-3"
           variants={featureContainerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
         >
           <motion.div
-            className="flex flex-col gap-4 rounded-2xl border border-neutral-200 bg-white p-8 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+            className="flex flex-col gap-4 rounded-2xl border border-neutral-200 bg-white p-6 sm:p-8 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
             variants={featureItemVariants}
           >
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600">

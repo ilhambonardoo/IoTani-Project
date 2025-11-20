@@ -89,7 +89,7 @@ const Register = ({
 
   return (
     <div className="flex min-h-screen w-full bg-gradient-to-br from-neutral-50 to-neutral-100">
-      <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-gradient-to-br from-green-600 to-green-700 p-10 text-white md:flex">
+      <div className="relative hidden lg:flex w-1/2 flex-col justify-between overflow-hidden bg-gradient-to-br from-green-600 to-green-700 p-10 text-white">
         <div className="z-10 text-3xl font-bold">
           IoTani<span className="text-green-200">.</span>
         </div>
@@ -143,7 +143,7 @@ const Register = ({
         </AnimatePresence>
         <div className="absolute inset-0 z-0 bg-gradient-to-b from-green-900/40 to-green-800/60"></div>
       </div>
-      <div className="flex w-full items-center justify-center p-6 md:w-1/2 md:p-10">
+      <div className="flex w-full items-center justify-center p-4 sm:p-6 lg:w-1/2 lg:p-10">
         <motion.div
           className="relative w-full max-w-md flex flex-col"
           initial={{ opacity: 0, y: 20 }}

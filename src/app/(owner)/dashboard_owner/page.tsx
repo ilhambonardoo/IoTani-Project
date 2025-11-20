@@ -14,17 +14,17 @@ const OwnerDashboard = () => {
   const { data: session } = useSession();
 
   const performance = {
-    harvestYield: "2,450 kg",
+    harvestYield: "532 kg",
     yieldIncrease: "+15%",
     efficiency: "92%",
-    operationalCost: "Rp 12.5M",
+    operationalCost: "Rp 600,000",
     costReduction: "-8%",
   };
 
   const recentHarvests = [
-    { id: 1, date: "2024-01-15", yield: "850 kg", zone: "Zona A" },
-    { id: 2, date: "2024-01-10", yield: "720 kg", zone: "Zona B" },
-    { id: 3, date: "2024-01-05", yield: "880 kg", zone: "Zona C" },
+    { id: 1, date: "2024-01-15", yield: "124 kg", zone: "Zona A" },
+    { id: 2, date: "2024-01-10", yield: "279 kg", zone: "Zona B" },
+    { id: 3, date: "2024-01-05", yield: "129 kg", zone: "Zona C" },
   ];
 
   const containerVariants = {
@@ -50,18 +50,18 @@ const OwnerDashboard = () => {
   };
 
   return (
-    <div className="bg-linear-to-br from-neutral-50 to-neutral-100 p-6 lg:p-8 ">
+    <div className="bg-linear-to-br from-neutral-50 to-neutral-100 p-4 sm:p-6 lg:p-8 pt-16 md:pt-4">
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
-          <h1 className="text-3xl font-bold text-neutral-800 lg:text-4xl">
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-800 lg:text-4xl text-center md:text-left">
             Dashboard Owner
           </h1>
-          <p className="mt-2 text-neutral-600">
+          <p className="mt-2 text-sm sm:text-base text-neutral-600 text-center md:text-left">
             Selamat datang, {session?.user?.name || "Owner"}! Ringkasan performa
             lahan
           </p>
@@ -72,11 +72,11 @@ const OwnerDashboard = () => {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4"
+          className="mb-6 sm:mb-8 grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4"
         >
           <motion.div
             variants={itemVariants}
-            className="rounded-2xl bg-linear-to-br from-green-500 to-green-600 p-6 text-white shadow-lg"
+            className="rounded-2xl bg-linear-to-br from-green-500 to-green-600 p-4 sm:p-6 text-white shadow-lg"
           >
             <div className="mb-4 flex items-center justify-between">
               <div className="rounded-lg bg-white/20 p-3">
@@ -131,7 +131,7 @@ const OwnerDashboard = () => {
                 <FaRobot size={24} />
               </div>
             </div>
-            <h3 className="text-3xl font-bold">24</h3>
+            <h3 className="text-3xl font-bold">3</h3>
             <p className="text-sm text-purple-100">Robot Aktif</p>
           </motion.div>
         </motion.div>
@@ -140,7 +140,7 @@ const OwnerDashboard = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl bg-white p-6 shadow-lg"
+          className="rounded-2xl bg-white p-4 sm:p-6 shadow-lg"
         >
           <h2 className="mb-6 text-xl font-semibold text-neutral-800">
             Hasil Panen Terbaru

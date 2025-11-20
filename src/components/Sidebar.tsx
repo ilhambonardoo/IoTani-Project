@@ -1,20 +1,21 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useMemo } from "react";
 import { IoIosHome } from "react-icons/io";
 import { BiSolidLogOut } from "react-icons/bi";
+import { FaPeopleGroup, FaUser, FaCamera, FaEnvelope } from "react-icons/fa6";
 import {
-  FaPeopleGroup,
-  FaUser,
-  FaCamera,
-  FaComments,
-  FaEnvelope,
-} from "react-icons/fa6";
-import { MdAdminPanelSettings, MdContentCopy, MdInbox } from "react-icons/md";
+  MdAdminPanelSettings,
+  MdContentCopy,
+  MdInbox,
+  MdMessage,
+} from "react-icons/md";
+import { FaBook } from "react-icons/fa";
 import { HiOutlineChartBar } from "react-icons/hi";
 import { FaRobot, FaFileExport } from "react-icons/fa";
 import Image from "next/legacy/image";
-import { GiHamburgerMenu } from "react-icons/gi";
+import { GiHamburgerMenu, GiPlantRoots } from "react-icons/gi";
 import { signOut, useSession } from "next-auth/react";
 import { motion } from "framer-motion";
 
@@ -32,92 +33,117 @@ const Sidebar = ({
   toggleSideBar: () => void;
   isOpenSideBar: boolean;
 }) => {
-  const { data: session }: { data: any } = useSession();
-  const userRole = session?.user?.role || "user";
+  const { data: session, status }: { data: any; status: string } = useSession();
   const pathname = usePathname();
 
-  const menuItems: MenuItem[] = [
-    // Common items
-    {
-      href:
-        userRole === "admin"
-          ? "/dashboard_admin"
-          : userRole === "owner"
-          ? "/dashboard_owner"
-          : "/dashboard",
-      icon: <IoIosHome size={24} />,
-      label: "Dashboard",
-      roles: ["user", "admin", "owner"],
-    },
-    // User items
-    {
-      href: "/data",
-      icon: <HiOutlineChartBar size={24} />,
-      label: "Grafik Real-time",
-      roles: ["user", "owner"],
-    },
-    {
-      href: "/camera",
-      icon: <FaCamera size={24} />,
-      label: "Kamera",
-      roles: ["user", "owner"],
-    },
-    {
-      href: "/forum",
-      icon: <FaComments size={24} />,
-      label: "Forum QnA",
-      roles: ["user"],
-    },
-    {
-      href: "/message",
-      icon: <FaEnvelope size={24} />,
-      label: "Pesan",
-      roles: ["user", "owner"],
-    },
-    // Admin items
-    {
-      href: "/user-management",
-      icon: <MdAdminPanelSettings size={24} />,
-      label: "Manajemen User",
-      roles: ["admin"],
-    },
-    {
-      href: "/content",
-      icon: <MdContentCopy size={24} />,
-      label: "Manajemen Konten",
-      roles: ["admin"],
-    },
-    {
-      href: "/inbox",
-      icon: <MdInbox size={24} />,
-      label: "Inbox",
-      roles: ["admin"],
-    },
-    // Owner items
-    {
-      href: "/export",
-      icon: <FaFileExport size={24} />,
-      label: "Export Database",
-      roles: ["owner"],
-    },
-    {
-      href: "/operational",
-      icon: <FaRobot size={24} />,
-      label: "Status Operasional",
-      roles: ["owner"],
-    },
-    // Common items
-    {
-      href: "/profile",
-      icon: <FaUser size={24} />,
-      label: "Profile",
-      roles: ["user", "admin", "owner"],
-    },
-  ];
+  const userRole = useMemo(() => {
+    if (status === "loading") return "user"; // Default saat loading
+    return (session?.user?.role as string) || "user";
+  }, [session?.user?.role, status]);
 
-  const filteredMenuItems = menuItems.filter((item) =>
-    item.roles.includes(userRole)
+  const menuItems: MenuItem[] = useMemo(
+    () => [
+      // Common items
+      {
+        href:
+          userRole === "admin"
+            ? "/dashboard_admin"
+            : userRole === "owner"
+            ? "/dashboard_owner"
+            : "/dashboard",
+        icon: <IoIosHome size={24} />,
+        label: "Dashboard",
+        roles: ["user", "admin", "owner"],
+      },
+      // User items
+      {
+        href: "/data",
+        icon: <HiOutlineChartBar size={24} />,
+        label: "Grafik Real-time",
+        roles: ["user", "owner"],
+      },
+      {
+        href: "/camera",
+        icon: <FaCamera size={24} />,
+        label: "Kamera",
+        roles: ["user", "owner"],
+      },
+      {
+        href: "/forumEdukasi",
+        icon: <FaBook size={24} />,
+        label: "Edukasi",
+        roles: ["user"],
+      },
+      {
+        href: "/message",
+        icon: <FaEnvelope size={24} />,
+        label: "Pesan",
+        roles: ["user"],
+      },
+      // Admin items
+      {
+        href: "/user-management",
+        icon: <MdAdminPanelSettings size={24} />,
+        label: "Manajemen User",
+        roles: ["admin"],
+      },
+      {
+        href: "/content",
+        icon: <MdContentCopy size={24} />,
+        label: "Manajemen Konten",
+        roles: ["admin"],
+      },
+      {
+        href: "/chilies",
+        icon: <GiPlantRoots size={24} />,
+        label: "Manajemen Cabai",
+        roles: ["admin"],
+      },
+      {
+        href: "/admin-message",
+        icon: <MdInbox size={24} />,
+        label: "Inbox",
+        roles: ["admin"],
+      },
+      {
+        href: "/templates",
+        icon: <MdMessage size={24} />,
+        label: "pesan pengingat",
+        roles: ["admin"],
+      },
+      // Owner items
+      {
+        href: "/export",
+        icon: <FaFileExport size={24} />,
+        label: "Export Database",
+        roles: ["owner"],
+      },
+      {
+        href: "/owner-message",
+        icon: <MdInbox size={24} />,
+        label: "Inbox",
+        roles: ["owner"],
+      },
+      {
+        href: "/operational",
+        icon: <FaRobot size={24} />,
+        label: "Status Operasional",
+        roles: ["owner"],
+      },
+      // Common items
+      {
+        href: "/profile",
+        icon: <FaUser size={24} />,
+        label: "Profile",
+        roles: ["user", "admin", "owner"],
+      },
+    ],
+    [userRole]
   );
+
+  const filteredMenuItems = useMemo(() => {
+    return menuItems.filter((item) => item.roles.includes(userRole));
+  }, [menuItems, userRole]);
 
   const getLinkClasses = (path: string) => {
     const isActive = pathname === path || pathname.startsWith(path + "/");
@@ -130,14 +156,27 @@ const Sidebar = ({
 
   return (
     <>
+      {/* Mobile Backdrop */}
+      {isOpenSideBar && (
+        <div
+          className="fixed inset-0 z-10 bg-black/50 md:hidden"
+          onClick={toggleSideBar}
+          aria-hidden="true"
+        />
+      )}
+      
       <nav
         className={`fixed left-0 top-0 z-20 flex h-screen ${
           isOpenSideBar
             ? "w-64 transition-all duration-300 bg-white shadow-xl border-r border-neutral-200"
             : "w-20 transition-all duration-300 bg-white shadow-xl border-r border-neutral-200"
-        } flex-col`}
+        } flex-col ${
+          isOpenSideBar
+            ? "translate-x-0"
+            : "-translate-x-full md:translate-x-0"
+        }`}
       >
-        <div className="flex items-center justify-between p-4 border-b border-neutral-200">
+        <div className="flex items-center hidden md:block justify-between p-4 border-b border-neutral-200">
           <GiHamburgerMenu
             size={24}
             className="text-neutral-700 cursor-pointer hover:text-green-600 transition-colors"
@@ -157,6 +196,12 @@ const Sidebar = ({
         <Link
           href={isOpenSideBar ? "/dashboard" : "/dashboard"}
           className="p-4 border-b border-neutral-200"
+          onClick={() => {
+            // Close sidebar on mobile when logo is clicked
+            if (window.innerWidth < 768) {
+              toggleSideBar();
+            }
+          }}
         >
           <div className="flex items-center justify-center">
             <Image
@@ -172,7 +217,16 @@ const Sidebar = ({
         <ul className="flex flex-col flex-1 overflow-y-auto p-2">
           {filteredMenuItems.map((item) => (
             <li key={item.href}>
-              <Link href={item.href} className={getLinkClasses(item.href)}>
+              <Link 
+                href={item.href} 
+                className={getLinkClasses(item.href)}
+                onClick={() => {
+                  // Close sidebar on mobile when link is clicked
+                  if (window.innerWidth < 768) {
+                    toggleSideBar();
+                  }
+                }}
+              >
                 <span className="flex-shrink-0">{item.icon}</span>
                 {isOpenSideBar && (
                   <motion.span

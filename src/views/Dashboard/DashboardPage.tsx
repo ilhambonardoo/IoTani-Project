@@ -4,7 +4,7 @@ import { motion, type Variants } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { useState, useEffect, useMemo } from "react";
 import { WiDaySunny, WiRain, WiCloudy } from "react-icons/wi";
-import { FaTemperatureHigh, FaTint, FaRobot } from "react-icons/fa";
+import { FaTemperatureHigh, FaTint, FaRobot, FaBell } from "react-icons/fa";
 import { IoMdNotifications } from "react-icons/io";
 import { HiOutlineChartBar } from "react-icons/hi";
 import {
@@ -23,6 +23,13 @@ import {
   checkMoistureStatus,
   checkTemperatureStatus,
 } from "@/lib/utils/sensorStatus";
+import {
+  generateData,
+  generateNewDataPoint,
+  getLatestSensorData,
+  type SensorDataPoint,
+  generateWeatherData,
+} from "@/lib/utils/sensorDataGenerator";
 
 interface WeatherData {
   temperature: number;
@@ -45,9 +52,25 @@ interface RobotStatus {
   battery: number;
 }
 
+interface Template {
+  id: string;
+  name: string;
+  title: string;
+  content: string;
+  category: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 const DashboardPage = () => {
-  const { data: session }: { session: String } = useSession();
+  const { data: session }: { data: any } = useSession();
   const [role, setRole] = useState("");
+  
+  useEffect(() => {
+    if (session?.user?.role) {
+      setRole(session.user.role);
+    }
+  }, [session]);
   const [weather, setWeather] = useState<WeatherData>({
     temperature: 28,
     humidity: 75,
@@ -55,10 +78,12 @@ const DashboardPage = () => {
     windSpeed: 12,
   });
 
+  // Sensor data array (synchronized with DataPage)
+  const [sensorDataArray, setSensorDataArray] = useState<SensorDataPoint[]>([]);
   const [sensorData, setSensorData] = useState<SensorData>({
-    pH: 4.2,
-    moisture: 35,
-    temperature: 38,
+    pH: 6.5,
+    moisture: 60,
+    temperature: 25,
     status: "normal",
   });
 
@@ -86,6 +111,16 @@ const DashboardPage = () => {
     }));
   }, [overallStatus]);
 
+  // Update weather data
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const newWeather = generateWeatherData();
+      setWeather(newWeather);
+    }, 3000)
+
+    return () => clearInterval(interval);
+  } , [])
+
   // Get individual sensor status
   const pHStatus = checkpHStatus(sensorData.pH);
   const moistureStatus = checkMoistureStatus(sensorData.moisture);
@@ -105,6 +140,71 @@ const DashboardPage = () => {
       battery: 92,
     },
   ]);
+
+  // Templates state
+  const [templates, setTemplates] = useState<Template[]>([]);
+  const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
+
+  // Fetch templates for user reminders
+  const fetchTemplates = async () => {
+    if (role === "admin" || role === "owner") return; // Only show for regular users
+    
+    setIsLoadingTemplates(true);
+    try {
+      const res = await fetch("/api/templates");
+      const data = await res.json();
+      if (res.ok && data.status) {
+        setTemplates(data.data || []);
+      }
+    } catch (err) {
+      console.error("Error fetching templates:", err);
+    } finally {
+      setIsLoadingTemplates(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTemplates();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [role]);
+
+  // Initialize sensor data array (same as DataPage)
+  useEffect(() => {
+    setSensorDataArray(generateData(7));
+  }, []);
+
+  // Real-time sensor data update (synchronized with DataPage)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSensorDataArray((prevData) => {
+        const newDataPoint = generateNewDataPoint();
+        const updatedData = [...prevData, newDataPoint];
+        
+        // Keep only the last 30 data points
+        const MAX_DATA_POINTS = 30;
+        if (updatedData.length > MAX_DATA_POINTS) {
+          return updatedData.slice(-MAX_DATA_POINTS);
+        }
+        
+        return updatedData;
+      });
+    }, 2000); // Update every 2 seconds (same as DataPage)
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Update sensorData from latest values in array
+  useEffect(() => {
+    if (sensorDataArray.length > 0) {
+      const latest = getLatestSensorData(sensorDataArray);
+      setSensorData((prev) => ({
+        ...prev,
+        pH: latest.pH,
+        moisture: latest.moisture,
+        temperature: latest.temperature,
+      }));
+    }
+  }, [sensorDataArray]);
 
   // Combine abnormal sensor notifications with regular notifications
   const [dismissedAlerts, setDismissedAlerts] = useState<string[]>([]);
@@ -218,18 +318,18 @@ const DashboardPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 p-6 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 p-4 sm:p-6 lg:p-8 pt-16 md:pt-4">
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
           {role === "admin" || role === "owner" ? (
             <>
               <div>
-                <h1 className="text-3xl font-bold text-neutral-800 lg:text-4xl">
+                <h1 className="text-2xl sm:text-3xl font-bold text-neutral-800 lg:text-4xl text-center md:text-left">
                   Monitoring Kelembaban tanah
                 </h1>
               </div>
@@ -237,10 +337,10 @@ const DashboardPage = () => {
           ) : (
             <>
               {" "}
-              <h1 className="text-3xl font-bold text-neutral-800 lg:text-4xl">
+              <h1 className="text-2xl sm:text-3xl font-bold text-neutral-800 lg:text-4xl text-center md:text-left">
                 Selamat Datang, {session?.user?.fullName || "Pengguna"}! 👋
               </h1>
-              <p className="mt-2 text-neutral-600">
+              <p className="mt-2 text-sm sm:text-base text-neutral-600 text-center md:text-left">
                 Pantau kondisi lahan Anda secara real-time
               </p>
             </>
@@ -260,12 +360,12 @@ const DashboardPage = () => {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 gap-6 lg:grid-cols-3"
+          className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3"
         >
           {/* Weather Card */}
           <motion.div
             variants={itemVariants}
-            className="rounded-2xl bg-white p-6 shadow-lg transition-all hover:shadow-xl"
+            className="rounded-2xl bg-white p-4 sm:p-6 shadow-lg transition-all hover:shadow-xl"
           >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-neutral-800">Cuaca</h2>
@@ -296,7 +396,7 @@ const DashboardPage = () => {
           {/* Sensor Status Card */}
           <motion.div
             variants={itemVariants}
-            className="rounded-2xl bg-white p-6 shadow-lg transition-all hover:shadow-xl"
+            className="rounded-2xl bg-white p-4 sm:p-6 shadow-lg transition-all hover:shadow-xl"
           >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-neutral-800">
@@ -412,7 +512,7 @@ const DashboardPage = () => {
           {/* Robot Status Card */}
           <motion.div
             variants={itemVariants}
-            className="rounded-2xl bg-white p-6 shadow-lg transition-all hover:shadow-xl"
+            className="rounded-2xl bg-white p-4 sm:p-6 shadow-lg transition-all hover:shadow-xl"
           >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-neutral-800">
@@ -454,14 +554,14 @@ const DashboardPage = () => {
           {/* ML Analysis Chart */}
           <motion.div
             variants={itemVariants}
-            className="rounded-2xl bg-white p-6 shadow-lg transition-all hover:shadow-xl lg:col-span-3"
+            className="rounded-2xl bg-white p-4 sm:p-6 shadow-lg transition-all hover:shadow-xl md:col-span-2 lg:col-span-3"
           >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-neutral-800">
                 Analisis Hama & Penyakit (Data Dummy)
               </h2>
             </div>
-            <div className="h-72 w-full">
+            <div className="h-64 sm:h-72 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -494,7 +594,7 @@ const DashboardPage = () => {
           {/* Notifications Card - Full Width */}
           <motion.div
             variants={itemVariants}
-            className="rounded-2xl bg-white p-6 shadow-lg transition-all hover:shadow-xl lg:col-span-3"
+            className="rounded-2xl bg-white p-4 sm:p-6 shadow-lg transition-all hover:shadow-xl md:col-span-2 lg:col-span-3"
           >
             <div className="mb-4 flex items-center gap-2">
               <IoMdNotifications className="text-orange-500" size={24} />
@@ -559,6 +659,65 @@ const DashboardPage = () => {
               )}
             </div>
           </motion.div>
+
+          {/* Templates Reminder Card - Only for regular users */}
+          {role !== "admin" && role !== "owner" && (
+            <motion.div
+              variants={itemVariants}
+              className="rounded-2xl bg-white p-4 sm:p-6 shadow-lg transition-all hover:shadow-xl md:col-span-2 lg:col-span-3"
+            >
+              <div className="mb-4 flex items-center gap-2">
+                <FaBell className="text-green-500" size={24} />
+                <h2 className="text-lg font-semibold text-neutral-800">
+                  Pengingat Penting
+                </h2>
+              </div>
+              {isLoadingTemplates ? (
+                <div className="flex h-40 items-center justify-center text-neutral-500">
+                  Memuat pengingat...
+                </div>
+              ) : templates.length === 0 ? (
+                <div className="flex h-40 items-center justify-center text-neutral-500">
+                  <div className="text-center">
+                    <FaBell size={48} className="mx-auto mb-2 opacity-50" />
+                    <p>Belum ada pengingat</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {templates.map((template) => (
+                    <motion.div
+                      key={template.id}
+                      className="rounded-xl border border-neutral-200 bg-gradient-to-br from-green-50 to-white p-4 shadow-sm transition-all hover:shadow-md"
+                      whileHover={{ y: -2 }}
+                    >
+                      <div className="mb-3 flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-neutral-800 text-sm">
+                            {template.name}
+                          </h3>
+                          <p className="text-xs text-neutral-500 mt-1">
+                            {template.createdAt}
+                          </p>
+                        </div>
+                        <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700 ml-2">
+                          {template.category}
+                        </span>
+                      </div>
+
+                      <p className="mb-2 text-sm font-medium text-neutral-700">
+                        {template.title}
+                      </p>
+
+                      <p className="line-clamp-3 text-xs text-neutral-600">
+                        {template.content}
+                      </p>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
         </motion.div>
       </div>
     </div>

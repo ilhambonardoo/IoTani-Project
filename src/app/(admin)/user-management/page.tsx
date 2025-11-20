@@ -298,13 +298,15 @@ export default function UserManagementPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: "spring", stiffness: 100 }}
         >
-          <div className="mb-8 flex flex-col items-center justify-between gap-4 md:flex-row">
-            <div>
-              <h1 className="flex items-center text-3xl font-bold text-neutral-800 lg:text-4xl">
-                <MdAdminPanelSettings className="mr-3 text-green-600 w-8 h-8" />
-                Manajemen Pengguna
+          <div className="mb-6 sm:mb-8 flex flex-col items-center justify-between gap-4 md:flex-row pt-16 md:pt-0">
+            <div className="w-full md:w-auto">
+              <h1 className="flex flex-col sm:flex-row items-center justify-center md:justify-start text-2xl sm:text-3xl font-bold text-neutral-800 lg:text-4xl">
+                <span className="flex items-center">
+                  <MdAdminPanelSettings className="mr-3 text-green-600 w-8 h-8" />
+                  Manajemen Pengguna
+                </span>
               </h1>
-              <p className="mt-2 text-neutral-600">
+              <p className="mt-2 text-sm sm:text-base text-neutral-600 text-center md:text-left">
                 Kelola pengguna dan peran akses sistem
               </p>
             </div>

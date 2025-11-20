@@ -36,7 +36,7 @@ const HeroSection = () => {
   };
   const { push } = useRouter();
   return (
-    <section className="container mx-auto flex min-h-screen flex-col items-center justify-center gap-12 py-20 px-6 lg:flex-row lg:justify-between lg:gap-20 lg:px-20">
+    <section className="container mx-auto flex min-h-screen flex-col items-center justify-center gap-8 sm:gap-12 py-12 sm:py-20 px-4 sm:px-6 lg:flex-row lg:justify-between lg:gap-20 lg:px-20">
       <motion.div
         className="flex w-full flex-col items-center text-center lg:w-1/2 lg:items-start lg:text-left"
         initial={{ opacity: 0, x: -30 }}
@@ -47,19 +47,19 @@ const HeroSection = () => {
           Sistem Pengukuran pH dan Kelembapan Tanah
         </span>
 
-        <h1 className="text-5xl font-bold leading-tight text-neutral-800 md:text-7xl">
+        <h1 className="text-4xl sm:text-5xl font-bold leading-tight text-neutral-800 md:text-7xl">
           IoTani
           <span className="text-green-500 animate-pulse">.</span>
         </h1>
 
-        <p className="mt-6 text-lg text-neutral-600 md:text-xl max-w-lg">
+        <p className="mt-6 text-base sm:text-lg text-neutral-600 md:text-xl max-w-lg">
           Solusi berbasis web untuk kontrol pompa otomatis dan deteksi tanaman
           menggunakan AI.
         </p>
 
-        <div className="flex justify-center items-center gap-5">
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-5">
           <motion.button
-            className="mt-10 rounded-lg bg-linear-to-r from-green-500 to-green-600 px-8 py-3 text-lg font-semibold text-white shadow-lg shadow-green-500/30 transition-all duration-300 hover:from-green-600 hover:to-green-700 hover:shadow-xl hover:shadow-green-500/40 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 cursor-pointer"
+            className="mt-6 sm:mt-10 rounded-lg bg-linear-to-r from-green-500 to-green-600 px-6 sm:px-8 py-2.5 sm:py-3 text-base sm:text-lg font-semibold text-white shadow-lg shadow-green-500/30 transition-all duration-300 hover:from-green-600 hover:to-green-700 hover:shadow-xl hover:shadow-green-500/40 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 cursor-pointer w-full sm:w-auto"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => {
@@ -69,7 +69,7 @@ const HeroSection = () => {
             Login
           </motion.button>
           <motion.button
-            className="mt-10 rounded-lg bg-linear-to-r from-green-500 to-green-600 px-8 py-3 text-lg font-semibold text-white shadow-lg shadow-green-500/30 transition-all duration-300 hover:from-green-600 hover:to-green-700 hover:shadow-xl hover:shadow-green-500/40 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 cursor-pointer"
+            className="mt-0 sm:mt-10 rounded-lg bg-linear-to-r from-green-500 to-green-600 px-6 sm:px-8 py-2.5 sm:py-3 text-base sm:text-lg font-semibold text-white shadow-lg shadow-green-500/30 transition-all duration-300 hover:from-green-600 hover:to-green-700 hover:shadow-xl hover:shadow-green-500/40 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 cursor-pointer w-full sm:w-auto"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => {

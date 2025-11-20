@@ -1,5 +1,4 @@
 import { getToken } from "next-auth/jwt";
-import { signIn } from "next-auth/react";
 import {
   NextFetchEvent,
   NextMiddleware,
@@ -10,12 +9,19 @@ import {
 const onlyAdminPage = [
   "/dashboard_admin",
   "/user-management",
-  "/inbox",
   "/content",
+  "/admin-message",
+  "/templates",
+  "/chilies",
 ];
-
-const onlyOwnerPage = ["/dashboard_owner", "/export", "/operational"];
-const guestPages = ["/", signIn(), "/login", "/register"];
+const onlyOwnerPage = [
+  "/dashboard_owner",
+  "/export",
+  "/operational",
+  "/owner-message",
+];
+const onlyUserPage = ["/message", "/edukasi"];
+const guestPages = ["/", "/login", "/register"];
 
 export default function withAuth(
   middleware: NextMiddleware,
@@ -29,6 +35,7 @@ export default function withAuth(
     });
 
     const isAuth = !!token;
+    const userRole = token?.role || "";
 
     if (requireAuth.includes(pathname)) {
       if (!isAuth) {
@@ -36,11 +43,29 @@ export default function withAuth(
         url.searchParams.set("callbackUrl", encodeURI(req.url));
         return NextResponse.redirect(url);
       }
-      if (token.role !== "admin" && onlyAdminPage.includes(pathname)) {
+
+      // Redirect jika user mencoba akses page yang bukan untuk role mereka
+      if (onlyAdminPage.includes(pathname) && userRole !== "admin") {
+        if (userRole === "owner") {
+          return NextResponse.redirect(new URL("/dashboard_owner", req.url));
+        }
         return NextResponse.redirect(new URL("/dashboard", req.url));
       }
-      if (token.role !== "owner" && onlyOwnerPage.includes(pathname)) {
+
+      if (onlyOwnerPage.includes(pathname) && userRole !== "owner") {
+        if (userRole === "admin") {
+          return NextResponse.redirect(new URL("/dashboard_admin", req.url));
+        }
         return NextResponse.redirect(new URL("/dashboard", req.url));
+      }
+
+      if (onlyUserPage.includes(pathname) && userRole !== "user") {
+        if (userRole === "admin") {
+          return NextResponse.redirect(new URL("/dashboard_admin", req.url));
+        }
+        if (userRole === "owner") {
+          return NextResponse.redirect(new URL("/dashboard_owner", req.url));
+        }
       }
     }
 

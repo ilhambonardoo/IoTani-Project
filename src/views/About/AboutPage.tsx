@@ -53,18 +53,18 @@ const AboutPage = () => {
   return (
     <div className="min-h-screen bg-linear-to-br from-neutral-50 to-neutral-100">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-linear-to-br from-green-600 to-green-700 py-20 text-white">
+      <section className="relative overflow-hidden bg-linear-to-br from-green-600 to-green-700 py-12 sm:py-16 lg:py-20 text-white">
         <div className="absolute inset-0 bg-[url('/gambar_tambahan/iot.jpg')] bg-cover bg-center opacity-10" />
-        <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center"
           >
-            <h1 className="mb-6 text-5xl font-bold lg:text-6xl">
+            <h1 className="mb-4 sm:mb-6 text-3xl sm:text-4xl md:text-5xl font-bold lg:text-6xl">
               Tentang IoTani
             </h1>
-            <p className="mx-auto max-w-3xl text-xl text-green-50">
+            <p className="mx-auto max-w-3xl text-base sm:text-lg lg:text-xl text-green-50 px-4">
               Platform IoT cerdas yang menghubungkan teknologi modern dengan
               pertanian tradisional untuk menciptakan masa depan pertanian yang
               berkelanjutan.
@@ -74,14 +74,14 @@ const AboutPage = () => {
       </section>
 
       {/* Vision & Mission */}
-      <section className="py-16">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+      <section className="py-12 sm:py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-2">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="rounded-2xl bg-white p-8 shadow-lg"
+              className="rounded-2xl bg-white p-6 sm:p-8 shadow-lg"
             >
               <div className="mb-4 flex items-center gap-3">
                 <HiOutlineSparkles className="text-green-500" size={32} />
@@ -98,7 +98,7 @@ const AboutPage = () => {
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="rounded-2xl bg-white p-8 shadow-lg"
+              className="rounded-2xl bg-white p-6 sm:p-8 shadow-lg"
             >
               <div className="mb-4 flex items-center gap-3">
                 <FaRocket className="text-blue-500" size={32} />
@@ -128,23 +128,23 @@ const AboutPage = () => {
       </section>
 
       {/* Values */}
-      <section className="py-16 bg-white">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      <section className="py-12 sm:py-16 bg-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mb-12 text-center"
+            className="mb-8 sm:mb-12 text-center"
           >
-            <h2 className="mb-4 text-4xl font-bold text-neutral-800">
+            <h2 className="mb-4 text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-800">
               Nilai-Nilai Kami
             </h2>
-            <p className="text-lg text-neutral-600">
+            <p className="text-base sm:text-lg text-neutral-600">
               Prinsip yang memandu setiap langkah kami
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-3">
             {values.map((value, index) => (
               <motion.div
                 key={index}
@@ -166,23 +166,23 @@ const AboutPage = () => {
       </section>
 
       {/* Team */}
-      <section className="py-16">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      <section className="py-12 sm:py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mb-12 text-center"
+            className="mb-8 sm:mb-12 text-center"
           >
-            <h2 className="mb-4 text-4xl font-bold text-neutral-800">
+            <h2 className="mb-4 text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-800">
               Tim Kami
             </h2>
-            <p className="text-lg text-neutral-600">
+            <p className="text-base sm:text-lg text-neutral-600">
               Orang-orang di balik IoTani
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 ">
+          <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-2">
             {teamMembers.map((member, index) => (
               <motion.div
                 key={index}
@@ -211,17 +211,17 @@ const AboutPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-linear-to-r from-green-600 to-green-700">
-        <div className="mx-auto max-w-4xl px-6 text-center text-white lg:px-8">
+      <section className="py-12 sm:py-16 bg-linear-to-r from-green-600 to-green-700">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 text-center text-white lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="mb-4 text-4xl font-bold">
+            <h2 className="mb-4 text-2xl sm:text-3xl md:text-4xl font-bold">
               Bergabunglah dengan Kami
             </h2>
-            <p className="mb-8 text-xl text-green-50">
+            <p className="mb-6 sm:mb-8 text-base sm:text-lg lg:text-xl text-green-50">
               Mari bersama-sama membangun masa depan pertanian yang lebih baik
               dengan teknologi.
             </p>

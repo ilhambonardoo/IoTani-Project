@@ -1,97 +1,246 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
-import { FaQuestionCircle, FaUser, FaCheckCircle } from "react-icons/fa";
+import { useEffect, useMemo, useState } from "react";
+import {
+  FaUser,
+  FaLeaf,
+  FaBug,
+  FaWrench,
+  FaBook,
+  FaFileAlt,
+  FaFlask,
+} from "react-icons/fa";
 import { HiOutlineSearch } from "react-icons/hi";
-import { FiMessageSquare, FiThumbsUp } from "react-icons/fi";
+import { FiRefreshCcw } from "react-icons/fi";
+import { toast } from "react-toastify";
 
-interface Question {
-  id: number;
+interface Article {
+  id: string;
   title: string;
   content: string;
-  author: string;
+  author?: string;
   category: string;
-  answers: number;
-  votes: number;
-  isAnswered: boolean;
-  timestamp: string;
+  createdAt: string;
+  updatedAt: string;
 }
+
+interface QuestionReply {
+  id: string;
+  responderName: string;
+  responderRole?: string;
+  content: string;
+  createdAt: string;
+}
+
+interface Question {
+  id: string;
+  title: string;
+  content: string;
+  category: string;
+  authorName: string;
+  authorEmail?: string;
+  createdAt: string;
+  replies?: QuestionReply[];
+}
+
+const categories = [
+  "Semua",
+  "Hama & Penyakit",
+  "Perawatan",
+  "Teknologi",
+  "Pupuk",
+  "Lainnya",
+];
+
+const selectableCategories = categories.filter(
+  (category) => category !== "Semua"
+);
+
+const getCategoryIcon = (category: string) => {
+  switch (category) {
+    case "Hama & Penyakit":
+      return <FaBug size={18} />;
+    case "Perawatan":
+      return <FaLeaf size={18} />;
+    case "Teknologi":
+      return <FaWrench size={18} />;
+    case "Pupuk":
+      return <FaFlask size={18} />;
+    case "Lainnya":
+      return <FaFileAlt size={18} />;
+    default:
+      return <FaBook size={18} />;
+  }
+};
 
 const ForumPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("Semua");
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const questions: Question[] = [
-    {
-      id: 1,
-      title: "Bagaimana cara mengatasi hama pada tanaman cabai?",
-      content:
-        "Saya mengalami masalah dengan hama pada tanaman cabai saya. Apakah ada solusi yang efektif?",
-      author: "Petani A",
-      category: "Hama & Penyakit",
-      answers: 5,
-      votes: 12,
-      isAnswered: true,
-      timestamp: "2 jam lalu",
-    },
-    {
-      id: 2,
-      title: "Kapan waktu terbaik untuk menyiram tanaman?",
-      content:
-        "Saya ingin tahu kapan waktu yang paling optimal untuk menyiram tanaman cabai.",
-      author: "Petani B",
-      category: "Perawatan",
-      answers: 3,
-      votes: 8,
-      isAnswered: true,
-      timestamp: "5 jam lalu",
-    },
-    {
-      id: 3,
-      title: "Berapa pH optimal untuk tanaman cabai?",
-      content:
-        "Saya baru menggunakan sistem IoTani dan ingin tahu pH tanah yang optimal untuk cabai.",
-      author: "Petani C",
-      category: "Teknologi",
-      answers: 2,
-      votes: 6,
-      isAnswered: false,
-      timestamp: "1 hari lalu",
-    },
-  ];
-
-  const categories = [
-    "Semua",
-    "Hama & Penyakit",
-    "Perawatan",
-    "Teknologi",
-    "Pupuk",
-    "Lainnya",
-  ];
-
-  const filteredQuestions = questions.filter((q) => {
-    const matchesSearch =
-      q.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      q.content.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory =
-      selectedCategory === "all" || q.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questionSearch, setQuestionSearch] = useState("");
+  const [questionError, setQuestionError] = useState("");
+  const [isQuestionsLoading, setIsQuestionsLoading] = useState(true);
+  const [isQuestionFormOpen, setIsQuestionFormOpen] = useState(false);
+  const [isSubmittingQuestion, setIsSubmittingQuestion] = useState(false);
+  const [questionForm, setQuestionForm] = useState({
+    authorName: "",
+    authorEmail: "",
+    title: "",
+    category: "",
+    content: "",
   });
 
+  const fetchArticles = async (withToast?: boolean) => {
+    setIsLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/content/get");
+      const data = await res.json();
+      if (!res.ok || !data.status) {
+        throw new Error(data.message || "Gagal mengambil data konten");
+      }
+      setArticles(data.data || []);
+      if (withToast) {
+        toast.success("✅ Konten edukasi diperbarui");
+      }
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Terjadi kesalahan server";
+      setError(message);
+      if (withToast) {
+        toast.error(`❌ ${message}`);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchQuestions = async (withToast?: boolean) => {
+    setIsQuestionsLoading(true);
+    setQuestionError("");
+    try {
+      const res = await fetch("/api/forum/questions");
+      const data = await res.json();
+      if (!res.ok || !data.status) {
+        throw new Error(data.message || "Gagal mengambil pertanyaan");
+      }
+      setQuestions(data.data || []);
+      if (withToast) {
+        toast.success("✅ Daftar pertanyaan diperbarui");
+      }
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Terjadi kesalahan server";
+      setQuestionError(message);
+      if (withToast) {
+        toast.error(`❌ ${message}`);
+      }
+    } finally {
+      setIsQuestionsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchArticles();
+    fetchQuestions();
+  }, []);
+
+  useEffect(() => {
+    // Trigger re-filter when selectedCategory changes
+    // This ensures articles update when switching categories
+  }, [selectedCategory]);
+
+  const filteredArticles = useMemo(() => {
+    const keyword = searchQuery.trim().toLowerCase();
+    return articles.filter((article) => {
+      const matchSearch =
+        !keyword ||
+        article.title.toLowerCase().includes(keyword) ||
+        article.content.toLowerCase().includes(keyword);
+      const matchCategory =
+        selectedCategory === "Semua" || article.category === selectedCategory;
+      return matchSearch && matchCategory;
+    });
+  }, [articles, searchQuery, selectedCategory]);
+
+  const filteredQuestions = useMemo(() => {
+    const keyword = questionSearch.trim().toLowerCase();
+    return questions.filter((question) => {
+      const matchSearch =
+        !keyword ||
+        question.title.toLowerCase().includes(keyword) ||
+        question.content.toLowerCase().includes(keyword);
+      const matchCategory =
+        selectedCategory === "Semua" || question.category === selectedCategory;
+      return matchSearch && matchCategory;
+    });
+  }, [questions, questionSearch, selectedCategory]);
+
+  const resetQuestionForm = () => {
+    setQuestionForm({
+      authorName: "",
+      authorEmail: "",
+      title: "",
+      category: "",
+      content: "",
+    });
+  };
+
+  const handleSubmitQuestion = async () => {
+    if (
+      !questionForm.authorName.trim() ||
+      !questionForm.title.trim() ||
+      !questionForm.content.trim() ||
+      !questionForm.category
+    ) {
+      toast.error("⚠️ Nama, judul, kategori, dan pertanyaan wajib diisi");
+      return;
+    }
+
+    setIsSubmittingQuestion(true);
+    try {
+      const res = await fetch("/api/forum/questions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(questionForm),
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data.status) {
+        throw new Error(data.message || "Gagal mengirim pertanyaan");
+      }
+
+      toast.success("✅ Pertanyaan berhasil dikirim");
+      resetQuestionForm();
+      setIsQuestionFormOpen(false);
+      fetchQuestions();
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Terjadi kesalahan server";
+      toast.error(`❌ ${message}`);
+    } finally {
+      setIsSubmittingQuestion(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 p-6 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 p-4 sm:p-6 lg:p-8 pt-16 md:pt-4">
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
-          <h1 className="text-3xl font-bold text-neutral-800 lg:text-4xl">
-            Forum QnA / Edukasi
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-800 lg:text-4xl text-center md:text-left">
+            Edukasi
           </h1>
-          <p className="mt-2 text-neutral-600">
+          <p className="mt-2 text-sm sm:text-base text-neutral-600 text-center md:text-left">
             Ajukan pertanyaan dan dapatkan jawaban dari penyuluh pertanian
           </p>
         </motion.div>
@@ -120,16 +269,14 @@ const ForumPage = () => {
             {categories.map((category) => (
               <button
                 key={category}
-                onClick={() =>
-                  setSelectedCategory(category === "Semua" ? "all" : category)
-                }
-                className={`rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                  (selectedCategory === "all" && category === "Semua") ||
+                onClick={() => setSelectedCategory(category)}
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
                   selectedCategory === category
                     ? "bg-green-500 text-white shadow-md"
                     : "bg-white text-neutral-700 hover:bg-neutral-100"
                 }`}
               >
+                {getCategoryIcon(category)}
                 {category}
               </button>
             ))}
@@ -143,88 +290,89 @@ const ForumPage = () => {
           className="mb-6"
         >
           <motion.button
-            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-green-500 to-green-600 px-6 py-3 font-semibold text-white shadow-lg transition-all hover:from-green-600 hover:to-green-700 hover:shadow-xl"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            onClick={() => fetchArticles(true)}
+            className="flex items-center gap-2 rounded-lg bg-white px-6 py-3 font-semibold text-green-600 shadow-md ring-1 ring-green-200 transition-all hover:bg-green-50 disabled:opacity-50"
+            whileHover={{ scale: isLoading ? 1 : 1.02 }}
+            whileTap={{ scale: isLoading ? 1 : 0.98 }}
+            disabled={isLoading}
           >
-            <FaQuestionCircle size={20} />
-            Ajukan Pertanyaan
+            <FiRefreshCcw
+              size={18}
+              className={isLoading ? "animate-spin" : "text-green-600"}
+            />
+            Muat ulang konten
           </motion.button>
         </motion.div>
 
-        {/* Questions List */}
-        <div className="space-y-4">
-          {filteredQuestions.map((question, index) => (
-            <motion.div
-              key={question.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="rounded-2xl bg-white p-6 shadow-lg transition-all hover:shadow-xl"
-            >
-              <div className="flex items-start gap-4">
-                <div className="flex flex-col items-center gap-2">
-                  <button className="flex flex-col items-center rounded-lg border border-neutral-200 p-2 transition-all hover:bg-green-50 hover:border-green-500">
-                    <FiThumbsUp size={20} className="text-neutral-600" />
-                    <span className="text-sm font-medium text-neutral-700">
-                      {question.votes}
-                    </span>
-                  </button>
-                </div>
+        {/* Content List */}
+        {error && !isLoading && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-6 text-red-700"
+          >
+            <p>{error}</p>
+          </motion.div>
+        )}
 
-                <div className="flex-1">
-                  <div className="mb-2 flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="mb-2 flex items-center gap-2">
-                        <h3 className="text-lg font-semibold text-neutral-800">
-                          {question.title}
-                        </h3>
-                        {question.isAnswered && (
-                          <FaCheckCircle className="text-green-500" size={18} />
-                        )}
-                      </div>
-                      <p className="text-neutral-600">{question.content}</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 flex flex-wrap items-center gap-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <FaUser className="text-neutral-400" size={14} />
-                      <span className="text-neutral-600">
-                        {question.author}
-                      </span>
-                    </div>
-                    <span className="rounded-full bg-green-100 px-3 py-1 text-green-700">
-                      {question.category}
-                    </span>
-                    <div className="flex items-center gap-2 text-neutral-500">
-                      <FiMessageSquare size={14} />
-                      <span>{question.answers} jawaban</span>
-                    </div>
-                    <span className="text-neutral-500">
-                      {question.timestamp}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {filteredQuestions.length === 0 && (
+        {isLoading ? (
+          <div className="flex h-60 items-center justify-center text-neutral-500">
+            <div>
+              <div className="mx-auto mb-3 h-10 w-10 animate-spin rounded-full border-4 border-green-500 border-t-transparent" />
+              <p>Memuat artikel edukasi...</p>
+            </div>
+          </div>
+        ) : filteredArticles.length === 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="rounded-2xl bg-white p-12 text-center shadow-lg"
           >
-            <FaQuestionCircle
-              className="mx-auto mb-4 text-neutral-400"
-              size={48}
-            />
+            <FaBook className="mx-auto mb-4 text-neutral-400" size={48} />
             <p className="text-lg text-neutral-600">
-              Tidak ada pertanyaan yang ditemukan
+              {articles.length === 0
+                ? "Belum ada konten yang dipublikasikan admin."
+                : "Konten tidak ditemukan, coba kata kunci lain."}
             </p>
           </motion.div>
+        ) : (
+          <div className="space-y-4">
+            {filteredArticles.map((article, index) => (
+              <motion.div
+                key={article.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className="rounded-2xl bg-white p-6 shadow-lg transition-all hover:shadow-xl"
+              >
+                <div className="mb-4 flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="mb-2 flex items-center gap-2">
+                      <span className="text-green-500">
+                        {getCategoryIcon(article.category)}
+                      </span>
+                      <h3 className="text-xl font-semibold text-neutral-800">
+                        {article.title}
+                      </h3>
+                    </div>
+                    <p className="text-neutral-600">{article.content}</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-4 text-sm text-neutral-500">
+                  <div className="flex items-center gap-2">
+                    <FaUser size={14} />
+                    <span>{article.author || "Admin"}</span>
+                  </div>
+                  <span className="rounded-full bg-green-100 px-3 py-1 text-green-700">
+                    {article.category}
+                  </span>
+                  <span>Diterbitkan: {article.createdAt}</span>
+                  <span>Diperbarui: {article.updatedAt}</span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         )}
       </div>
     </div>

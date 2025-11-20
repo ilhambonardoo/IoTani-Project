@@ -1,0 +1,125 @@
+import {
+  createTemplate,
+  getTemplates,
+  deleteTemplate,
+  updateTemplate,
+} from "@/lib/firebase/service-templates";
+import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(): Promise<NextResponse> {
+  try {
+    const res = await getTemplates();
+    return NextResponse.json(
+      { status: res.status, message: res.message, data: res.data },
+      { status: res.statusCode }
+    );
+  } catch (error) {
+    console.error("Error di API GET templates:", error);
+    return NextResponse.json(
+      { status: false, message: "Terjadi kesalahan pada server" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest): Promise<NextResponse> {
+  try {
+    const body = await request.json();
+    const { name, title, content, category } = body || {};
+
+    if (!name || !title || !content) {
+      return NextResponse.json(
+        {
+          status: false,
+          message: "Nama, judul, dan konten template wajib diisi",
+        },
+        { status: 400 }
+      );
+    }
+
+    const res = await createTemplate({
+      name,
+      title,
+      content,
+      category: category || "Umum",
+    });
+    return NextResponse.json(
+      { status: res.status, message: res.message, data: res.data },
+      { status: res.statusCode }
+    );
+  } catch (error) {
+    console.error("Error di API POST template:", error);
+    return NextResponse.json(
+      { status: false, message: "Terjadi kesalahan pada server" },
+      { status: 500 }
+    );
+  }
+}
+
+type RouteParams = {
+  params: {
+    id: string;
+  };
+};
+
+export async function PUT(
+  request: NextRequest,
+  { params }: RouteParams
+): Promise<NextResponse> {
+  try {
+    const templateId = params.id;
+    if (!templateId) {
+      return NextResponse.json(
+        { status: false, message: "ID template tidak ditemukan" },
+        { status: 400 }
+      );
+    }
+
+    const body = await request.json();
+    const { name, title, content, category } = body || {};
+
+    const res = await updateTemplate(templateId, {
+      name,
+      title,
+      content,
+      category,
+    });
+    return NextResponse.json(
+      { status: res.status, message: res.message },
+      { status: res.statusCode }
+    );
+  } catch (error) {
+    console.error("Error di API PUT template:", error);
+    return NextResponse.json(
+      { status: false, message: "Terjadi kesalahan pada server" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  _request: NextRequest,
+  { params }: RouteParams
+): Promise<NextResponse> {
+  try {
+    const templateId = params.id;
+    if (!templateId) {
+      return NextResponse.json(
+        { status: false, message: "ID template tidak ditemukan" },
+        { status: 400 }
+      );
+    }
+
+    const res = await deleteTemplate(templateId);
+    return NextResponse.json(
+      { status: res.status, message: res.message },
+      { status: res.statusCode }
+    );
+  } catch (error) {
+    console.error("Error di API DELETE template:", error);
+    return NextResponse.json(
+      { status: false, message: "Terjadi kesalahan pada server" },
+      { status: 500 }
+    );
+  }
+}

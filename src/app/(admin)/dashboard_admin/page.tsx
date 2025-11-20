@@ -71,18 +71,18 @@ const DashboardAdmin = () => {
   };
 
   return (
-    <div className="bg-linear-to-br from-neutral-50 to-neutral-100 p-6 lg:p-8">
+    <div className="bg-linear-to-br from-neutral-50 to-neutral-100 p-4 sm:p-6 lg:p-8 pt-16 md:pt-4">
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
-          <h1 className="text-3xl font-bold text-neutral-800 lg:text-4xl">
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-800 lg:text-4xl text-center md:text-left">
             Daftar platfrom
           </h1>
-          <p className="mt-2 text-neutral-600">
+          <p className="mt-2 text-sm sm:text-base text-neutral-600 text-center md:text-left">
             Selamat datang, {session?.user?.name || "Admin"}! Kelola platform
             IoTani
           </p>
@@ -93,11 +93,11 @@ const DashboardAdmin = () => {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4"
+          className="mb-6 sm:mb-8 grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4"
         >
           <motion.div
             variants={itemVariants}
-            className="rounded-2xl bg-white p-6 shadow-lg transition-all hover:shadow-xl"
+            className="rounded-2xl bg-white p-4 sm:p-6 shadow-lg transition-all hover:shadow-xl"
           >
             <div className="mb-4 flex items-center justify-between">
               <div className="rounded-lg bg-blue-100 p-3">
@@ -164,12 +164,12 @@ const DashboardAdmin = () => {
         </motion.div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-3">
           {/* Recent Messages */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="lg:col-span-2 rounded-2xl bg-white p-6 shadow-lg"
+            className="lg:col-span-2 rounded-2xl bg-white p-4 sm:p-6 shadow-lg"
           >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-xl font-semibold text-neutral-800">
@@ -219,7 +219,7 @@ const DashboardAdmin = () => {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="rounded-2xl bg-white p-6 shadow-lg"
+            className="rounded-2xl bg-white p-4 sm:p-6 shadow-lg"
           >
             <h2 className="mb-4 text-xl font-semibold text-neutral-800">
               Pengguna Online
