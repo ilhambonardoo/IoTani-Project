@@ -162,7 +162,7 @@ const Register = ({
           <div className="flex justify-center mb-4 md:hidden">
             <Link
               href="/"
-              className="text-4xl font-bold text-green-600 transition-opacity hover:opacity-80"
+              className="cursor-pointer text-4xl font-bold text-green-600 transition-opacity hover:opacity-80"
             >
               IoTani<span className="text-green-400">.</span>
             </Link>
@@ -273,7 +273,7 @@ const Register = ({
             Sudah punya akun?{" "}
             <button
               onClick={() => signIn()}
-              className="font-medium text-green-600 transition-colors hover:text-green-700 hover:underline"
+              className="cursor-pointer font-medium text-green-600 transition-colors hover:text-green-700 hover:underline"
             >
               Login
             </button>

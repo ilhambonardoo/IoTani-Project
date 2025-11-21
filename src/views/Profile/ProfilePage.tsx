@@ -223,11 +223,11 @@ const ProfilePage = () => {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: session.user.email,
-          phone: formData.phone,
-          location: formData.location,
-          bio: formData.bio,
-          instagram: formData.instagram,
+          email: session.user.email || "",
+          phone: formData.phone || "",
+          location: formData.location || "",
+          bio: formData.bio || "",
+          instagram: formData.instagram || "",
           avatarUrl: "", // Empty string means use default initials
         }),
       });

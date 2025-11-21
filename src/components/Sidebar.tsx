@@ -3,14 +3,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 import { IoIosHome } from "react-icons/io";
-import { BiSolidLogOut } from "react-icons/bi";
-import { FaPeopleGroup, FaUser, FaCamera, FaEnvelope } from "react-icons/fa6";
-import {
-  MdAdminPanelSettings,
-  MdContentCopy,
-  MdInbox,
-  MdMessage,
-} from "react-icons/md";
+import { BiBell, BiSolidLogOut } from "react-icons/bi";
+import { FaUser, FaCamera, FaEnvelope } from "react-icons/fa6";
+import { MdAdminPanelSettings, MdContentCopy, MdInbox } from "react-icons/md";
 import { FaBook } from "react-icons/fa";
 import { HiOutlineChartBar } from "react-icons/hi";
 import { FaRobot, FaFileExport } from "react-icons/fa";
@@ -37,7 +32,7 @@ const Sidebar = ({
   const pathname = usePathname();
 
   const userRole = useMemo(() => {
-    if (status === "loading") return "user"; // Default saat loading
+    if (status === "loading") return ""; // Default saat loading
     return (session?.user?.role as string) || "user";
   }, [session?.user?.role, status]);
 
@@ -107,7 +102,7 @@ const Sidebar = ({
       },
       {
         href: "/templates",
-        icon: <MdMessage size={24} />,
+        icon: <BiBell size={24} />,
         label: "pesan pengingat",
         roles: ["admin"],
       },
@@ -147,7 +142,7 @@ const Sidebar = ({
 
   const getLinkClasses = (path: string) => {
     const isActive = pathname === path || pathname.startsWith(path + "/");
-    return `flex items-center p-3 my-1 rounded-lg font-semibold transition-all duration-200 ${
+    return `cursor-pointer flex items-center p-3 my-1 rounded-lg font-semibold transition-all duration-200 ${
       isActive
         ? "bg-green-500/20 text-green-600 border-l-4 border-green-500"
         : "text-neutral-700 hover:bg-green-50 hover:text-green-600"
@@ -164,38 +159,26 @@ const Sidebar = ({
           aria-hidden="true"
         />
       )}
-      
+
       <nav
         className={`fixed left-0 top-0 z-20 flex h-screen ${
           isOpenSideBar
             ? "w-64 transition-all duration-300 bg-white shadow-xl border-r border-neutral-200"
             : "w-20 transition-all duration-300 bg-white shadow-xl border-r border-neutral-200"
         } flex-col ${
-          isOpenSideBar
-            ? "translate-x-0"
-            : "-translate-x-full md:translate-x-0"
+          isOpenSideBar ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
-        <div className="flex items-center hidden md:block justify-between p-4 border-b border-neutral-200">
+        <div className="flex items-center hidden md:block justify-between p-4 ">
           <GiHamburgerMenu
             size={24}
             className="text-neutral-700 cursor-pointer hover:text-green-600 transition-colors"
             onClick={toggleSideBar}
           />
-          {isOpenSideBar && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-xl font-bold text-green-600"
-            >
-              IoTani
-            </motion.div>
-          )}
         </div>
-
         <Link
           href={isOpenSideBar ? "/dashboard" : "/dashboard"}
-          className="p-4 border-b border-neutral-200"
+          className="cursor-pointer p-4  "
           onClick={() => {
             // Close sidebar on mobile when logo is clicked
             if (window.innerWidth < 768) {
@@ -217,8 +200,8 @@ const Sidebar = ({
         <ul className="flex flex-col flex-1 overflow-y-auto p-2">
           {filteredMenuItems.map((item) => (
             <li key={item.href}>
-              <Link 
-                href={item.href} 
+              <Link
+                href={item.href}
                 className={getLinkClasses(item.href)}
                 onClick={() => {
                   // Close sidebar on mobile when link is clicked
@@ -227,7 +210,7 @@ const Sidebar = ({
                   }
                 }}
               >
-                <span className="flex-shrink-0">{item.icon}</span>
+                <span className="shrink-0">{item.icon}</span>
                 {isOpenSideBar && (
                   <motion.span
                     initial={{ opacity: 0, x: -10 }}

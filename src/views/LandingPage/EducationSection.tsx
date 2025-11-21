@@ -132,7 +132,7 @@ const EducationSection = () => {
               {/* Close Button */}
               <button
                 onClick={() => setSelectedChili(null)}
-                className="absolute top-4 right-4 z-10 rounded-full bg-white/90 p-2 text-neutral-600 shadow-lg transition-colors hover:bg-white hover:text-neutral-900"
+                className="cursor-pointer absolute top-4 right-4 z-10 rounded-full bg-white/90 p-2 text-neutral-600 shadow-lg transition-colors hover:bg-white hover:text-neutral-900"
               >
                 <LuX size={24} />
               </button>

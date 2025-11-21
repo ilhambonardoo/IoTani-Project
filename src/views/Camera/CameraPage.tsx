@@ -188,7 +188,7 @@ const CameraPage = () => {
                         ? "Online"
                         : "Offline"}
                     </div>
-                    <button className="rounded-lg bg-blue-500 p-2 text-white transition-all hover:bg-blue-600">
+                    <button className="cursor-pointer rounded-lg bg-blue-500 p-2 text-white transition-all hover:bg-blue-600">
                       <IoMdRefresh size={20} />
                     </button>
                   </div>

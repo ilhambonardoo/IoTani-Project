@@ -85,7 +85,7 @@ export default function NotFound() {
         >
           <motion.button
             onClick={() => router.back()}
-            className="flex items-center gap-2 rounded-lg border-2 border-green-500 bg-white px-6 py-3 font-semibold text-green-600 transition-all hover:bg-green-50 hover:shadow-lg"
+            className="flex items-center gap-2 rounded-lg border-2 border-green-500 bg-white px-6 py-3 font-semibold text-green-600 transition-all hover:bg-green-50 hover:shadow-lg cursor-pointer"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -95,7 +95,7 @@ export default function NotFound() {
 
           <Link href="/">
             <motion.button
-              className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-green-500 to-green-600 px-6 py-3 font-semibold text-white shadow-lg shadow-green-500/30 transition-all hover:from-green-600 hover:to-green-700 hover:shadow-xl"
+              className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-green-500 to-green-600 px-6 py-3 font-semibold text-white shadow-lg shadow-green-500/30 transition-all hover:from-green-600 hover:to-green-700 hover:shadow-xl cursor-pointer"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >

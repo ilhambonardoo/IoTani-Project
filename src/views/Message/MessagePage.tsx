@@ -93,7 +93,7 @@ const QuestionFormModal = ({
           </div>
           <button
             onClick={onClose}
-            className="rounded-full p-2 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
+            className="cursor-pointer rounded-full p-2 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
           >
             <FaTimes />
           </button>
@@ -197,14 +197,14 @@ const QuestionFormModal = ({
           <div className="mt-6 flex justify-end gap-3">
             <button
               onClick={onClose}
-              className="rounded-lg px-4 py-2 text-sm font-medium text-neutral-600 hover:bg-neutral-100"
+              className="cursor-pointer rounded-lg px-4 py-2 text-sm font-medium text-neutral-600 hover:bg-neutral-100"
             >
               Batal
             </button>
             <button
               onClick={() => onSubmit(formData)}
               disabled={isSubmitting}
-              className="flex items-center gap-2 rounded-lg bg-green-600 px-6 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-70"
+              className="flex items-center gap-2 rounded-lg bg-green-600 px-6 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-70 cursor-pointer disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
                 "Mengirim..."
@@ -513,7 +513,7 @@ const MessagePage = () => {
                         toast.success("✅ Pesan terbaru dimuat");
                       }}
                       disabled={isLoading}
-                      className="flex w-full items-center justify-center gap-2 rounded-lg border border-green-100 bg-green-50 px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-100 disabled:opacity-50"
+                      className="flex w-full items-center justify-center gap-2 rounded-lg border border-green-100 bg-green-50 px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-100 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
                     >
                       <FiRefreshCcw
                         className={isLoading ? "animate-spin" : ""}
@@ -538,7 +538,7 @@ const MessagePage = () => {
                           <button
                             key={thread.id}
                             onClick={() => setSelectedThreadId(thread.id)}
-                            className={`w-full p-4 text-left transition-colors hover:bg-neutral-50 ${
+                            className={`cursor-pointer w-full p-4 text-left transition-colors hover:bg-neutral-50 ${
                               selectedThreadId === thread.id
                                 ? "bg-green-50/60 hover:bg-green-50"
                                 : ""
@@ -611,7 +611,7 @@ const MessagePage = () => {
                         <button
                           onClick={handleDeleteMessage}
                           disabled={isDeletingMessage}
-                          className="flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-xs font-medium text-red-600 transition-colors hover:bg-red-100 disabled:opacity-50"
+                          className="flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-xs font-medium text-red-600 transition-colors hover:bg-red-100 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
                         >
                           <FaTrash />
                           {isDeletingMessage ? "..." : "Hapus"}
@@ -685,7 +685,7 @@ const MessagePage = () => {
                                     disabled={
                                       isDeletingReply === bubble.replyId
                                     }
-                                    className="absolute -right-8 top-2 opacity-0 transition-opacity group-hover:opacity-100 disabled:opacity-50 text-red-400 hover:text-red-600"
+                                    className="cursor-pointer absolute -right-8 top-2 opacity-0 transition-opacity group-hover:opacity-100 disabled:opacity-50 text-red-400 hover:text-red-600 disabled:cursor-not-allowed"
                                     title="Hapus balasan ini"
                                   >
                                     <FaTrash size={12} />

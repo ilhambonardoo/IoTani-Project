@@ -270,7 +270,7 @@ const ForumPage = () => {
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
+                className={`cursor-pointer flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
                   selectedCategory === category
                     ? "bg-green-500 text-white shadow-md"
                     : "bg-white text-neutral-700 hover:bg-neutral-100"
@@ -291,7 +291,7 @@ const ForumPage = () => {
         >
           <motion.button
             onClick={() => fetchArticles(true)}
-            className="flex items-center gap-2 rounded-lg bg-white px-6 py-3 font-semibold text-green-600 shadow-md ring-1 ring-green-200 transition-all hover:bg-green-50 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg bg-white px-6 py-3 font-semibold text-green-600 shadow-md ring-1 ring-green-200 transition-all hover:bg-green-50 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
             whileHover={{ scale: isLoading ? 1 : 1.02 }}
             whileTap={{ scale: isLoading ? 1 : 0.98 }}
             disabled={isLoading}
