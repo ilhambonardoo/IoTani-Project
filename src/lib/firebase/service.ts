@@ -295,6 +295,181 @@ export async function getUser() {
   return userList;
 }
 
+// FORGOT PASSWORD & RESET PASSWORD
+export async function checkEmailExists(email: string): Promise<boolean> {
+  try {
+    const q = query(
+      collection(firestore, "auth"),
+      where("email", "==", email)
+    );
+
+    const snapshot = await getDocs(q);
+    return snapshot.docs.length > 0;
+  } catch (error) {
+    console.error("Error checking email:", error);
+    return false;
+  }
+}
+
+export async function saveResetToken(
+  email: string,
+  token: string
+): Promise<ServiceResponse> {
+  try {
+    // Set expiry to 1 hour from now
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + 1);
+
+    await addDoc(collection(firestore, "password_resets"), {
+      email,
+      token,
+      createdAt: serverTimestamp(),
+      expiresAt: Timestamp.fromDate(expiresAt),
+      used: false,
+    });
+
+    return {
+      status: true,
+      statusCode: 200,
+      message: "Reset token saved successfully",
+    };
+  } catch (error) {
+    console.error("Error saving reset token:", error);
+    return {
+      status: false,
+      statusCode: 500,
+      message: "Failed to save reset token",
+      error,
+    };
+  }
+}
+
+export async function verifyResetToken(token: string): Promise<
+  ServiceResponse<{
+    email: string;
+    tokenDocId: string;
+  }>
+> {
+  try {
+    const q = query(
+      collection(firestore, "password_resets"),
+      where("token", "==", token),
+      where("used", "==", false)
+    );
+
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      return {
+        status: false,
+        statusCode: 400,
+        message: "Token tidak valid atau sudah digunakan",
+      };
+    }
+
+    const tokenData = snapshot.docs[0].data();
+    const expiresAt = tokenData.expiresAt as Timestamp;
+
+    // Check if token is expired
+    if (expiresAt.toDate() < new Date()) {
+      return {
+        status: false,
+        statusCode: 400,
+        message: "Token sudah kedaluwarsa",
+      };
+    }
+
+    return {
+      status: true,
+      statusCode: 200,
+      message: "Token valid",
+      data: {
+        email: tokenData.email as string,
+        tokenDocId: snapshot.docs[0].id,
+      },
+    };
+  } catch (error) {
+    console.error("Error verifying reset token:", error);
+    return {
+      status: false,
+      statusCode: 500,
+      message: "Failed to verify reset token",
+      error,
+    };
+  }
+}
+
+export async function markTokenAsUsed(tokenDocId: string): Promise<ServiceResponse> {
+  try {
+    const tokenDoc = doc(firestore, "password_resets", tokenDocId);
+    await updateDoc(tokenDoc, {
+      used: true,
+    });
+
+    return {
+      status: true,
+      statusCode: 200,
+      message: "Token marked as used",
+    };
+  } catch (error) {
+    console.error("Error marking token as used:", error);
+    return {
+      status: false,
+      statusCode: 500,
+      message: "Failed to mark token as used",
+      error,
+    };
+  }
+}
+
+export async function updatePasswordByEmail(
+  email: string,
+  newPassword: string
+): Promise<ServiceResponse> {
+  try {
+    // Find user by email
+    const q = query(
+      collection(firestore, "auth"),
+      where("email", "==", email)
+    );
+
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      return {
+        status: false,
+        statusCode: 404,
+        message: "User tidak ditemukan",
+      };
+    }
+
+    const userDoc = snapshot.docs[0];
+    const userDocRef = doc(firestore, "auth", userDoc.id);
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password
+    await updateDoc(userDocRef, {
+      password: hashedPassword,
+    });
+
+    return {
+      status: true,
+      statusCode: 200,
+      message: "Password berhasil diupdate",
+    };
+  } catch (error) {
+    console.error("Error updating password:", error);
+    return {
+      status: false,
+      statusCode: 500,
+      message: "Gagal mengupdate password",
+      error,
+    };
+  }
+}
+
 // MANAGEMENT KONTEN
 export async function addContent(
   data: ContentPayload

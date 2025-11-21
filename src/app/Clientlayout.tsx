@@ -5,7 +5,7 @@ import Footer from "../components/Footer";
 import { useState, useEffect, useRef } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 
-const disableNavigation = ["/login", "/register", "/", "/about"];
+const disableNavigation = ["/login", "/register", "/", "/about", "/forgot-password", "/reset-password"];
 
 const ClientLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
