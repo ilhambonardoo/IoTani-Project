@@ -69,7 +69,7 @@ const Chatbot = () => {
     <>
       <motion.button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-green-600 text-white shadow-lg shadow-green-500/50 transition-all hover:shadow-xl hover:shadow-green-500/60 hover:scale-110"
+        className="cursor-pointer fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-green-600 text-white shadow-lg shadow-green-500/50 transition-all hover:shadow-xl hover:shadow-green-500/60 hover:scale-110"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         initial={{ scale: 0 }}
@@ -103,7 +103,7 @@ const Chatbot = () => {
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-white hover:text-neutral-100 transition-colors"
+                className="cursor-pointer text-white hover:text-neutral-100 transition-colors"
               >
                 <IoClose size={24} />
               </button>
@@ -146,7 +146,7 @@ const Chatbot = () => {
                 />
                 <motion.button
                   onClick={handleSendMessage}
-                  className="flex items-center justify-center rounded-lg bg-green-500 px-4 py-2 text-white transition-colors hover:bg-green-600"
+                  className="cursor-pointer flex items-center justify-center rounded-lg bg-green-500 px-4 py-2 text-white transition-colors hover:bg-green-600"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >

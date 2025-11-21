@@ -92,30 +92,30 @@ const CameraPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 p-6 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 p-4 sm:p-6 lg:p-8 pt-16 md:pt-4">
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
-          <h1 className="text-3xl font-bold text-neutral-800 lg:text-4xl">
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-800 lg:text-4xl text-center md:text-left">
             Kamera Pendeteksi
           </h1>
-          <p className="mt-2 text-neutral-600">
+          <p className="mt-2 text-sm sm:text-base text-neutral-600 text-center md:text-left">
             Pantau lahan Anda secara real-time dengan AI detection
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-4">
           {/* Camera List */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="space-y-4 lg:col-span-1"
+            className="space-y-4 lg:col-span-1 order-2 lg:order-1"
           >
-            <div className="rounded-2xl bg-white p-4 shadow-lg">
+            <div className="rounded-2xl bg-white p-3 sm:p-4 shadow-lg">
               <h2 className="mb-4 text-lg font-semibold text-neutral-800">
                 Daftar Kamera
               </h2>
@@ -163,16 +163,16 @@ const CameraPage = () => {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="lg:col-span-3"
+            className="lg:col-span-3 order-1 lg:order-2"
           >
             {selectedCamera && (
-              <div className="rounded-2xl bg-white p-6 shadow-lg">
-                <div className="mb-4 flex items-center justify-between">
+              <div className="rounded-2xl bg-white p-4 sm:p-6 shadow-lg">
+                <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                   <div>
-                    <h2 className="text-xl font-semibold text-neutral-800">
+                    <h2 className="text-lg sm:text-xl font-semibold text-neutral-800">
                       {selectedCamera.name}
                     </h2>
-                    <p className="text-sm text-neutral-600">
+                    <p className="text-xs sm:text-sm text-neutral-600">
                       {selectedCamera.location}
                     </p>
                   </div>
@@ -188,7 +188,7 @@ const CameraPage = () => {
                         ? "Online"
                         : "Offline"}
                     </div>
-                    <button className="rounded-lg bg-blue-500 p-2 text-white transition-all hover:bg-blue-600">
+                    <button className="cursor-pointer rounded-lg bg-blue-500 p-2 text-white transition-all hover:bg-blue-600">
                       <IoMdRefresh size={20} />
                     </button>
                   </div>
@@ -228,7 +228,7 @@ const CameraPage = () => {
                         initial={{ x: 16, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ duration: 0.35 }}
-                        className="absolute right-4 top-4 w-72 rounded-xl border border-cyan-400/30 bg-black/50 p-4 text-white backdrop-blur"
+                        className="absolute right-2 sm:right-4 top-4 w-64 sm:w-72 rounded-xl border border-cyan-400/30 bg-black/50 p-3 sm:p-4 text-white backdrop-blur"
                       >
                         <h3 className="mb-2 text-sm font-semibold text-cyan-300">
                           Hasil Deteksi
@@ -283,11 +283,11 @@ const CameraPage = () => {
                 </div>
 
                 {/* Upload controls */}
-                <div className="mt-4 flex items-center justify-between">
+                <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <button
                       onClick={onPick}
-                      className="rounded-lg bg-cyan-500 px-4 py-2 text-sm font-semibold text-black hover:bg-cyan-400"
+                      className="rounded-lg bg-cyan-500 px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-black hover:bg-cyan-400"
                     >
                       Unggah Gambar
                     </button>

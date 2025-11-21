@@ -150,18 +150,18 @@ const OperationalStatusPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 p-6 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 p-4 sm:p-6 lg:p-8 pt-16 md:pt-4">
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
-          <h1 className="text-3xl font-bold text-neutral-800 lg:text-4xl">
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-800 lg:text-4xl text-center md:text-left">
             Status Operasional
           </h1>
-          <p className="mt-2 text-neutral-600">
+          <p className="mt-2 text-sm sm:text-base text-neutral-600 text-center md:text-left">
             Pantau status real-time semua aset dan peralatan
           </p>
         </motion.div>
