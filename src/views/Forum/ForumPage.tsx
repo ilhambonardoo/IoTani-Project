@@ -232,7 +232,7 @@ const ForumPage = () => {
                         {article.title}
                       </h3>
                     </div>
-                    <p className="text-neutral-600">{article.content}</p>
+                    <p className="text-neutral-600 whitespace-pre-wrap">{article.content}</p>
                   </div>
                 </div>
 

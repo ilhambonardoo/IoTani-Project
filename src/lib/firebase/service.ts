@@ -150,10 +150,13 @@ export async function login(data: { email: string }) {
   );
 
   const snapshot = await getDocs(q);
-  const user = snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
+  const user = snapshot.docs.map((doc) => {
+    const userData = doc.data();
+    return {
+      id: doc.id,
+      ...sanitizeUserData(userData),
+    };
+  });
 
   if (user) {
     return user[0];
@@ -177,10 +180,13 @@ export async function loginWithGoogle(data: GoogleUserPayload) {
   );
 
   const snapshot = await getDocs(q);
-  const user = snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
+  const user = snapshot.docs.map((doc) => {
+    const userData = doc.data();
+    return {
+      id: doc.id,
+      ...sanitizeUserData(userData),
+    };
+  });
 
   if (user.length > 0) {
     const userData = user[0] as Record<string, unknown>;
@@ -257,10 +263,13 @@ export async function addUserAdmin(data: {
   );
 
   const snapshot = await getDocs(q);
-  const users = snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
+  const users = snapshot.docs.map((doc) => {
+    const userData = doc.data();
+    return {
+      id: doc.id,
+      ...sanitizeUserData(userData),
+    };
+  });
 
   if (users.length > 0) {
     return {
@@ -1121,3 +1130,45 @@ export async function deleteQuestionReply(
     };
   }
 }
+
+interface FirestoreTimestamp {
+  toDate: () => Date;
+  seconds?: number;
+}
+
+interface UserData {
+  updatedAt?: FirestoreTimestamp;
+  createdAt?: FirestoreTimestamp;
+  [key: string]: unknown;
+}
+
+// Helper function to convert Firestore Timestamp to ISO string
+const convertTimestamp = (timestamp: FirestoreTimestamp): string | null => {
+  if (!timestamp) return null;
+  if (timestamp.toDate && typeof timestamp.toDate === "function") {
+    return timestamp.toDate().toISOString();
+  }
+  if (timestamp.seconds) {
+    return new Date(timestamp.seconds * 1000).toISOString();
+  }
+  return null;
+};
+
+// Helper function to sanitize user data (remove Timestamps or convert them)
+const sanitizeUserData = (
+  data: UserData
+): Omit<UserData, "updatedAt" | "createdAt"> & {
+  updatedAt?: string | null;
+  createdAt?: string | null;
+} => {
+  const { updatedAt, createdAt, ...rest } = data;
+  return {
+    ...rest,
+    ...(updatedAt && {
+      updatedAt: convertTimestamp(updatedAt as FirestoreTimestamp),
+    }),
+    ...(createdAt && {
+      createdAt: convertTimestamp(createdAt as FirestoreTimestamp),
+    }),
+  };
+};

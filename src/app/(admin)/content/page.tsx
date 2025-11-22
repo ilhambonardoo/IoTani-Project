@@ -351,7 +351,7 @@ const ContentManagementPage = () => {
                             {article.title}
                           </h3>
                         </div>
-                        <p className="mb-3 text-neutral-600">
+                        <p className="mb-3 whitespace-pre-wrap text-neutral-600 leading-relaxed">
                           {article.content}
                         </p>
                         <div className="flex flex-wrap items-center gap-3 text-sm">

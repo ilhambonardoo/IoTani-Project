@@ -76,18 +76,16 @@ const getAvatarColor = (name: string | null | undefined): string => {
 };
 
 interface ExtendedSession {
-  user: {
-    fullName?: string;
-    email?: string;
-    role?: string;
-    status?: string | null;
-  };
+  fullName?: string;
+  email?: string;
+  role?: string;
 }
 
 const ProfilePage = () => {
   const [profileData, setProfileData] = useState(defaultProfile);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(defaultProfile);
+  const [fullName, setFullName] = useState<string>("");
   const [uploadPreview, setUploadPreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -127,7 +125,12 @@ const ProfilePage = () => {
           };
           setProfileData(profile);
           setFormData(profile);
+          // Set fullName from profile data or session
+          setFullName(data.data.fullName || sessionUser?.fullName || "");
           setImageError(false); // Reset error state
+        } else {
+          // If no profile data, use session fullName
+          setFullName(sessionUser?.fullName || "");
         }
       } catch (error) {
         console.error("Error fetching profile:", error);
@@ -138,7 +141,7 @@ const ProfilePage = () => {
     };
 
     fetchProfile();
-  }, [session?.user?.email]);
+  }, [sessionUser?.email]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -458,9 +461,11 @@ const ProfilePage = () => {
                           avatarSrc &&
                           avatarSrc.startsWith("/profiles/") &&
                           !imageError;
-                        const fullName = sessionUser?.user.fullName || "";
-                        const initials = getInitials(fullName);
-                        const color = getAvatarColor(fullName);
+                        const displayName = isEditing
+                          ? fullName || sessionUser?.fullName || ""
+                          : sessionUser?.fullName || fullName || "";
+                        const initials = getInitials(displayName);
+                        const color = getAvatarColor(displayName);
 
                         if (hasCustomAvatar) {
                           // Use Next.js Image for uploaded photos
@@ -536,35 +541,13 @@ const ProfilePage = () => {
                   />
                 )}
 
-                {isEditing ? (
-                  <input
-                    type="text"
-                    name="name"
-                    value={sessionUser?.user.fullName || ""}
-                    onChange={handleInputChange}
-                    className="mb-2 text-center text-2xl sm:text-3xl font-bold text-white focus:outline-none focus:ring-2 focus:ring-white/50 rounded-lg px-4 py-2 bg-white/20 backdrop-blur-sm md:text-4xl"
-                    placeholder="Nama Lengkap"
-                  />
-                ) : (
-                  <h2 className="mb-2 text-2xl sm:text-3xl font-bold text-white md:text-4xl">
-                    {sessionUser?.user.fullName || "Pengguna"}
-                  </h2>
-                )}
+                <h2 className="mb-2 text-2xl sm:text-3xl font-bold text-white md:text-4xl">
+                  {sessionUser?.fullName || fullName || "Pengguna"}
+                </h2>
 
-                {isEditing ? (
-                  <input
-                    type="text"
-                    name="role"
-                    value={sessionUser?.user.role || ""}
-                    onChange={handleInputChange}
-                    className="text-center text-lg font-medium text-green-100 focus:outline-none focus:ring-2 focus:ring-white/50 rounded-lg px-3 py-1 bg-white/20 backdrop-blur-sm"
-                    placeholder="Role"
-                  />
-                ) : (
-                  <p className="text-lg font-medium text-green-100">
-                    {sessionUser?.user.role || "User"}
-                  </p>
-                )}
+                <p className="text-lg font-medium text-green-100">
+                  {sessionUser?.role || "User"}
+                </p>
               </div>
             </motion.div>
 

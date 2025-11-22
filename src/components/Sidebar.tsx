@@ -40,7 +40,7 @@ const Sidebar = ({
   const userRole = useMemo(() => {
     if (status === "loading") return ""; // Default saat loading
     return (sessionUser?.role as string) || "user";
-  }, [status]);
+  }, [status, sessionUser?.role]);
 
   const menuItems: MenuItem[] = useMemo(
     () => [
@@ -175,7 +175,7 @@ const Sidebar = ({
           isOpenSideBar ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
-        <div className="flex items-center hidden md:block justify-between p-4 ">
+        <div className="items-center hidden md:block justify-between p-4 ">
           <GiHamburgerMenu
             size={24}
             className="text-neutral-700 cursor-pointer hover:text-green-600 transition-colors"
