@@ -3,7 +3,6 @@
 import {
   collection,
   doc,
-  getDoc,
   getDocs,
   getFirestore,
   query,
@@ -41,10 +40,7 @@ export async function getUserProfile(
   email: string
 ): Promise<ServiceResponse<ProfileData>> {
   try {
-    const q = query(
-      collection(firestore, "auth"),
-      where("email", "==", email)
-    );
+    const q = query(collection(firestore, "auth"), where("email", "==", email));
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) {
@@ -60,7 +56,7 @@ export async function getUserProfile(
 
     // Normalize avatarUrl - empty string means use default initials
     let avatarUrl = userData.avatarUrl || "";
-    
+
     // Fix old paths to empty string (use initials instead)
     if (avatarUrl === "/icons/people.png" || avatarUrl === "/icon/people.png") {
       avatarUrl = "";
@@ -134,6 +130,12 @@ export async function uploadProfileImage(
       await mkdir(profilesDir, { recursive: true });
     } catch (error) {
       // Directory might already exist, that's okay
+      return {
+        status: false,
+        statusCode: 500,
+        message: "Gagal membuat direktori untuk menyimpan foto",
+        error,
+      };
     }
 
     // Convert File to Buffer
@@ -225,10 +227,7 @@ export async function updateUserProfile(
   data: Partial<ProfileData>
 ): Promise<ServiceResponse> {
   try {
-    const q = query(
-      collection(firestore, "auth"),
-      where("email", "==", email)
-    );
+    const q = query(collection(firestore, "auth"), where("email", "==", email));
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) {
@@ -261,4 +260,3 @@ export async function updateUserProfile(
     };
   }
 }
-

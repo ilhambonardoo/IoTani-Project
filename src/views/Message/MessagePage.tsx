@@ -11,6 +11,12 @@ import ConfirmationModal from "@/components/ConfirmationModal/page";
 
 // --- Tipe Data ---
 
+interface SessionUser {
+  fullName?: string;
+  email?: string;
+  [key: string]: unknown;
+}
+
 const CATEGORIES = [
   "Hama & Penyakit",
   "Perawatan",
@@ -50,6 +56,13 @@ interface ChatBubble {
 
 // --- Sub-Component: Modal Form ---
 
+interface FormData {
+  title: string;
+  category: string;
+  content: string;
+  recipientRole: string;
+}
+
 const QuestionFormModal = ({
   isOpen,
   onClose,
@@ -60,7 +73,7 @@ const QuestionFormModal = ({
 }: {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: any) => void;
+  onSubmit: (data: FormData) => void;
   isSubmitting: boolean;
   userName: string;
   userEmail: string;
@@ -224,12 +237,12 @@ const QuestionFormModal = ({
 // --- Main Component ---
 
 const MessagePage = () => {
-  const { data: session }: { data: any } = useSession();
+  const { data: session } = useSession();
+  const sessionUser = session?.user as SessionUser | undefined;
   const [threads, setThreads] = useState<QuestionThread[]>([]);
   const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeletingMessage, setIsDeletingMessage] = useState(false);
@@ -241,8 +254,8 @@ const MessagePage = () => {
     replyId: "",
   });
 
-  const userName = session?.user?.fullName || "";
-  const userEmail = session?.user?.email || "";
+  const userName = sessionUser?.fullName || "";
+  const userEmail = sessionUser?.email || "";
 
   // --- Data Fetching ---
 
@@ -252,7 +265,6 @@ const MessagePage = () => {
       return;
     }
     setIsLoading(true);
-    setError("");
     try {
       const res = await fetch(
         `/api/forum/questions/user?email=${encodeURIComponent(userEmail)}`
@@ -274,7 +286,7 @@ const MessagePage = () => {
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Terjadi kesalahan server";
-      setError(message);
+      toast.error(`❌ ${message}`);
     } finally {
       setIsLoading(false);
     }
@@ -330,7 +342,7 @@ const MessagePage = () => {
 
   // --- Handlers ---
 
-  const handleCreateQuestion = async (formData: any) => {
+  const handleCreateQuestion = async (formData: FormData) => {
     if (!userName || !userEmail) {
       toast.error("Lengkapi profil Anda terlebih dahulu.");
       return;
@@ -455,7 +467,7 @@ const MessagePage = () => {
         </p>
       </ConfirmationModal>
 
-      <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 p-4 sm:p-6 lg:p-8 pt-16 md:pt-4">
+      <div className="min-h-screen bg-linear-to-br from-neutral-50 to-neutral-100 p-4 sm:p-6 lg:p-8 pt-16 md:pt-4">
         <div className="mx-auto max-w-7xl">
           {/* Header Section */}
           <motion.div
@@ -545,7 +557,7 @@ const MessagePage = () => {
                             }`}
                           >
                             <div className="flex items-start gap-3">
-                              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-green-400 to-green-600 text-white shadow-sm">
+                              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-green-400 to-green-600 text-white shadow-sm">
                                 <FaUser size={14} />
                               </div>
                               <div className="min-w-0 flex-1">

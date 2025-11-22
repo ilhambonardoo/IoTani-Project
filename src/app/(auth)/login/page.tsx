@@ -1,11 +1,12 @@
 import Login from "@/views/Login/LoginPage";
 
-const LoginPage = ({
+const LoginPage = async ({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  return <Login searchParams={searchParams} />;
+  const resolvedSearchParams = await searchParams;
+  return <Login searchParams={resolvedSearchParams} />;
 };
 
 export default LoginPage;

@@ -17,6 +17,13 @@ import {
 import { toast } from "react-toastify";
 import ConfirmationModal from "../../../components/ConfirmationModal/page";
 
+interface User {
+  id: string;
+  fullName: string;
+  email: string;
+  role: string;
+}
+
 const RoleBadge = ({ role }: { role: string }) => {
   // Normalize role to handle both lowercase and capitalized
   const normalizedRole = role
@@ -47,19 +54,17 @@ const RoleBadge = ({ role }: { role: string }) => {
 
 export default function UserManagementPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // const { data: session }: { data: any } = useSession();
-  // const isAdmin = session?.user?.role === "admin";
 
   const [isModalOpen, setisModalOpen] = useState(false);
   const [userToDelete, setuserToDelete] = useState<string | null>(null);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [userToEdit, setUserToEdit] = useState<any | null>(null);
+  const [userToEdit, setUserToEdit] = useState<User | null>(null);
   const [editFormData, setEditFormData] = useState({
     fullName: "",
     email: "",
@@ -81,6 +86,7 @@ export default function UserManagementPage() {
         setUsers(userList);
       } catch (err) {
         setError("Gagal mengambil data pengguna");
+        return err;
       } finally {
         setLoading(false);
       }
@@ -135,7 +141,7 @@ export default function UserManagementPage() {
     }
   };
 
-  const showEditModal = (user: any) => {
+  const showEditModal = (user: User) => {
     setUserToEdit(user);
     setEditFormData({
       fullName: user.fullName || "",
@@ -393,7 +399,7 @@ export default function UserManagementPage() {
                         >
                           <FiEdit size={18} />
                         </motion.button>
-                        {user.role !== "admin" && (
+                        {user.role !== "admin" && user.role !== "owner" && (
                           <motion.button
                             onClick={() => showDeleteConfirm(user.id)}
                             className="text-red-500 transition-colors hover:text-red-600"

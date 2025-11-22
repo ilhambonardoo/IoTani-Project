@@ -1,52 +1,88 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { useSession } from "next-auth/react";
-import { FaUsers, FaEnvelope, FaChartLine, FaRobot } from "react-icons/fa";
-import { IoMdNotifications } from "react-icons/io";
+import { useEffect, useState } from "react";
+import { FaUsers, FaEnvelope, FaRobot, FaUser } from "react-icons/fa";
 import { HiOutlineUserGroup } from "react-icons/hi";
+
+interface QuestionMessage {
+  id: string;
+  authorName: string;
+  authorEmail?: string;
+  authorRole?: string;
+  category: string;
+  title: string;
+  content: string;
+  createdAt: string;
+}
 
 const DashboardAdmin = () => {
   const { data: session } = useSession();
-
-  const stats = {
-    totalUsers: 156,
-    activeUsers: 142,
-    totalMessages: 89,
-    pendingMessages: 12,
+  const [recentMessages, setRecentMessages] = useState<QuestionMessage[]>([]);
+  const [isLoadingMessages, setIsLoadingMessages] = useState(true);
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    activeUsers: 0,
+    totalMessages: 0,
+    pendingMessages: 0,
     totalLands: 89,
-    activeRobots: 24,
-  };
-
-  const recentMessages = [
-    {
-      id: 1,
-      from: "Petani A",
-      subject: "Pertanyaan tentang pH tanah",
-      time: "5 menit lalu",
-      unread: true,
-    },
-    {
-      id: 2,
-      from: "Petani B",
-      subject: "Masalah dengan sensor",
-      time: "15 menit lalu",
-      unread: true,
-    },
-    {
-      id: 3,
-      from: "Petani C",
-      subject: "Terima kasih atas bantuannya",
-      time: "1 jam lalu",
-      unread: false,
-    },
-  ];
+    activeRobots: 3,
+  });
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
 
   const onlineUsers = [
-    { id: 1, name: "Petani A", role: "User" },
-    { id: 2, name: "Petani B", role: "User" },
-    { id: 3, name: "Owner X", role: "Owner" },
+    { id: 1, name: "Petani A", role: "user" },
+    { id: 2, name: "Petani B", role: "user" },
+    { id: 3, name: "Owner X", role: "owner" },
   ];
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      // Fetch stats
+      try {
+        const statsRes = await fetch(`/api/dashboard/stats`);
+        const statsData = await statsRes.json();
+        if (statsRes.ok && statsData.status && statsData.data) {
+          setStats((prev) => ({
+            ...prev,
+            totalUsers: statsData.data.totalUsers,
+            activeUsers: statsData.data.activeUsers,
+            totalMessages: statsData.data.totalMessages,
+            pendingMessages: statsData.data.pendingMessages,
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      } finally {
+        setIsLoadingStats(false);
+      }
+
+      // Fetch recent messages
+      try {
+        const res = await fetch(`/api/forum/questions?recipientRole=admin`);
+        const data = await res.json();
+        if (res.ok && data.status && Array.isArray(data.data)) {
+          // Ambil 5 pesan terbaru
+          const sortedMessages = data.data
+            .sort((a: QuestionMessage, b: QuestionMessage) => {
+              return (
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+              );
+            })
+            .slice(0, 5);
+          setRecentMessages(sortedMessages);
+        }
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      } finally {
+        setIsLoadingMessages(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -58,13 +94,13 @@ const DashboardAdmin = () => {
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 100,
       },
     },
@@ -80,7 +116,7 @@ const DashboardAdmin = () => {
           className="mb-6 sm:mb-8"
         >
           <h1 className="text-2xl sm:text-3xl font-bold text-neutral-800 lg:text-4xl text-center md:text-left">
-            Daftar platfrom
+            Dashboard Platform
           </h1>
           <p className="mt-2 text-sm sm:text-base text-neutral-600 text-center md:text-left">
             Selamat datang, {session?.user?.name || "Admin"}! Kelola platform
@@ -106,30 +142,30 @@ const DashboardAdmin = () => {
               <span className="text-sm font-medium text-green-600">+12%</span>
             </div>
             <h3 className="text-2xl font-bold text-neutral-800">
-              {stats.totalUsers}
+              {isLoadingStats ? "..." : stats.totalUsers}
             </h3>
             <p className="text-sm text-neutral-600">Total Pengguna</p>
           </motion.div>
 
           <motion.div
             variants={itemVariants}
-            className="rounded-2xl bg-white p-6 shadow-lg transition-all hover:shadow-xl"
+            className="rounded-2xl bg-white p-4 sm:p-6 shadow-lg transition-all hover:shadow-xl"
           >
             <div className="mb-4 flex items-center justify-between">
               <div className="rounded-lg bg-green-100 p-3">
                 <HiOutlineUserGroup className="text-green-500" size={24} />
               </div>
-              <span className="text-sm font-medium text-green-600">
-                {stats.activeUsers}
-              </span>
+              <span className="text-sm font-medium text-green-600">+8%</span>
             </div>
-            <h3 className="text-2xl font-bold text-neutral-800">Aktif</h3>
-            <p className="text-sm text-neutral-600">Pengguna Online</p>
+            <h3 className="text-2xl font-bold text-neutral-800">
+              {isLoadingStats ? "..." : stats.activeUsers}
+            </h3>
+            <p className="text-sm text-neutral-600">Pengguna Aktif</p>
           </motion.div>
 
           <motion.div
             variants={itemVariants}
-            className="rounded-2xl bg-white p-6 shadow-lg transition-all hover:shadow-xl"
+            className="rounded-2xl bg-white p-4 sm:p-6 shadow-lg transition-all hover:shadow-xl"
           >
             <div className="mb-4 flex items-center justify-between">
               <div className="rounded-lg bg-orange-100 p-3">
@@ -142,14 +178,14 @@ const DashboardAdmin = () => {
               )}
             </div>
             <h3 className="text-2xl font-bold text-neutral-800">
-              {stats.totalMessages}
+              {isLoadingStats ? "..." : stats.totalMessages}
             </h3>
             <p className="text-sm text-neutral-600">Total Pesan</p>
           </motion.div>
 
           <motion.div
             variants={itemVariants}
-            className="rounded-2xl bg-white p-6 shadow-lg transition-all hover:shadow-xl"
+            className="rounded-2xl bg-white p-4 sm:p-6 shadow-lg transition-all hover:shadow-xl"
           >
             <div className="mb-4 flex items-center justify-between">
               <div className="rounded-lg bg-purple-100 p-3">
@@ -176,42 +212,70 @@ const DashboardAdmin = () => {
                 Pesan Terbaru
               </h2>
               <a
-                href="/admin/inbox"
+                href="/admin-message"
                 className="text-sm font-medium text-green-600 hover:text-green-700"
               >
                 Lihat Semua
               </a>
             </div>
-            <div className="space-y-3">
-              {recentMessages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`rounded-lg border p-4 transition-all hover:bg-neutral-50 ${
-                    message.unread
-                      ? "border-green-200 bg-green-50"
-                      : "border-neutral-200"
-                  }`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="mb-1 flex items-center gap-2">
-                        <h3 className="font-semibold text-neutral-800">
-                          {message.from}
-                        </h3>
-                        {message.unread && (
-                          <span className="h-2 w-2 rounded-full bg-green-500" />
-                        )}
+            <div className="space-y-3 max-h-[500px] overflow-y-auto">
+              {isLoadingMessages ? (
+                <div className="flex h-40 items-center justify-center text-sm text-neutral-500">
+                  Memuat pesan...
+                </div>
+              ) : recentMessages.length === 0 ? (
+                <div className="p-6 text-center text-sm text-neutral-500">
+                  Tidak ada pesan terbaru.
+                </div>
+              ) : (
+                recentMessages.map((message) => (
+                  <div
+                    key={message.id}
+                    className="rounded-lg border border-neutral-200 p-4 transition-all hover:bg-neutral-50"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500 text-white shrink-0">
+                        <FaUser size={16} />
                       </div>
-                      <p className="text-sm text-neutral-600">
-                        {message.subject}
-                      </p>
-                      <p className="mt-1 text-xs text-neutral-400">
-                        {message.time}
-                      </p>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2">
+                          <h3 className="truncate font-semibold text-neutral-800">
+                            {message.authorName}
+                          </h3>
+                        </div>
+                        <p className="mt-1 truncate text-sm text-neutral-600">
+                          {message.title}
+                        </p>
+                        <p className="mt-1 text-xs text-neutral-400">
+                          {message.createdAt}
+                        </p>
+                        <div className="mt-2 flex items-center gap-2 flex-wrap">
+                          <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-[11px] font-medium text-green-700">
+                            {message.category}
+                          </span>
+                          {message.authorRole && (
+                            <span
+                              className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${
+                                message.authorRole === "user"
+                                  ? "bg-blue-100 text-blue-700"
+                                  : message.authorRole === "admin"
+                                  ? "bg-purple-100 text-purple-700"
+                                  : "bg-orange-100 text-orange-700"
+                              }`}
+                            >
+                              {message.authorRole === "user"
+                                ? "User"
+                                : message.authorRole === "admin"
+                                ? "Admin"
+                                : "Owner"}
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </motion.div>
 
@@ -224,24 +288,34 @@ const DashboardAdmin = () => {
             <h2 className="mb-4 text-xl font-semibold text-neutral-800">
               Pengguna Online
             </h2>
-            <div className="space-y-3">
-              {onlineUsers.map((user) => (
-                <div
-                  key={user.id}
-                  className="flex items-center gap-3 rounded-lg border border-neutral-200 p-3"
-                >
-                  <div className="relative">
-                    <div className="h-10 w-10 rounded-full bg-green-500 flex items-center justify-center text-white font-semibold">
-                      {user.name.charAt(0)}
-                    </div>
-                    <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-green-500" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-neutral-800">{user.name}</p>
-                    <p className="text-xs text-neutral-500">{user.role}</p>
-                  </div>
+            <div className="space-y-3 max-h-[500px] overflow-y-auto">
+              {onlineUsers.length === 0 ? (
+                <div className="p-6 text-center text-sm text-neutral-500">
+                  Tidak ada pengguna online.
                 </div>
-              ))}
+              ) : (
+                onlineUsers.map((user) => (
+                  <div
+                    key={user.id}
+                    className="flex items-center gap-3 rounded-lg border border-neutral-200 p-3 transition-all hover:bg-neutral-50"
+                  >
+                    <div className="relative flex-shrink-0">
+                      <div className="h-10 w-10 rounded-full bg-green-500 flex items-center justify-center text-white font-semibold">
+                        {user.name.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-green-500" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-neutral-800 truncate">
+                        {user.name}
+                      </p>
+                      <p className="text-xs text-neutral-500 capitalize">
+                        {user.role}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </motion.div>
         </div>

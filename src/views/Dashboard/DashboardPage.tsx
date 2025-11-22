@@ -62,21 +62,37 @@ interface Template {
   updatedAt: string;
 }
 
+interface ExtendedSessionUser {
+  fullName?: string | null;
+  role?: string | null;
+}
+
 const DashboardPage = () => {
-  const { data: session }: { data: any } = useSession();
+  const { data: session } = useSession();
+  const sessionUser = session?.user as ExtendedSessionUser | undefined;
   const [role, setRole] = useState("");
-  
+
   useEffect(() => {
-    if (session?.user?.role) {
-      setRole(session.user.role);
+    if (sessionUser?.role) {
+      setRole(sessionUser.role);
     }
-  }, [session]);
+  }, [sessionUser?.role]);
   const [weather, setWeather] = useState<WeatherData>({
     temperature: 28,
     humidity: 75,
     condition: "sunny",
     windSpeed: 12,
   });
+
+  // Zone selection
+  const zones = [
+    { id: "1", name: "Zona A", location: "Lahan Utara", status: "online" },
+    { id: "2", name: "Zona B", location: "Lahan Selatan", status: "online" },
+    { id: "3", name: "Zona C", location: "Lahan Timur", status: "online" },
+    { id: "4", name: "Zona D", location: "Lahan Barat", status: "online" },
+  ];
+  const [selectedZoneId, setSelectedZoneId] = useState<string>(zones[0].id);
+  const selectedZone = zones.find((z) => z.id === selectedZoneId) || zones[0];
 
   // Sensor data array (synchronized with DataPage)
   const [sensorDataArray, setSensorDataArray] = useState<SensorDataPoint[]>([]);
@@ -116,10 +132,10 @@ const DashboardPage = () => {
     const interval = setInterval(() => {
       const newWeather = generateWeatherData();
       setWeather(newWeather);
-    }, 3000)
+    }, 3000);
 
     return () => clearInterval(interval);
-  } , [])
+  }, []);
 
   // Get individual sensor status
   const pHStatus = checkpHStatus(sensorData.pH);
@@ -139,6 +155,12 @@ const DashboardPage = () => {
       status: "idle",
       battery: 92,
     },
+    {
+      id: "3",
+      name: "Robot Semprot C",
+      status: "charging",
+      battery: 45,
+    },
   ]);
 
   // Templates state
@@ -148,7 +170,7 @@ const DashboardPage = () => {
   // Fetch templates for user reminders
   const fetchTemplates = async () => {
     if (role === "admin" || role === "owner") return; // Only show for regular users
-    
+
     setIsLoadingTemplates(true);
     try {
       const res = await fetch("/api/templates");
@@ -179,13 +201,13 @@ const DashboardPage = () => {
       setSensorDataArray((prevData) => {
         const newDataPoint = generateNewDataPoint();
         const updatedData = [...prevData, newDataPoint];
-        
+
         // Keep only the last 30 data points
         const MAX_DATA_POINTS = 30;
         if (updatedData.length > MAX_DATA_POINTS) {
           return updatedData.slice(-MAX_DATA_POINTS);
         }
-        
+
         return updatedData;
       });
     }, 2000); // Update every 2 seconds (same as DataPage)
@@ -211,7 +233,7 @@ const DashboardPage = () => {
   const [regularNotifications] = useState([
     {
       id: 1,
-      message: "Robot Semprot A sedang bekerja di Zona 1",
+      message: "Robot Semprot A sedang bekerja di Zona A",
       type: "info" as const,
       time: "15 menit lalu",
     },
@@ -318,7 +340,7 @@ const DashboardPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 p-4 sm:p-6 lg:p-8 pt-16 md:pt-4">
+    <div className="min-h-screen bg-linear-to-br from-neutral-50 to-neutral-100 p-4 sm:p-6 lg:p-8 pt-16 md:pt-4">
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <motion.div
@@ -338,13 +360,45 @@ const DashboardPage = () => {
             <>
               {" "}
               <h1 className="text-2xl sm:text-3xl font-bold text-neutral-800 lg:text-4xl text-center md:text-left">
-                Selamat Datang, {session?.user?.fullName || "Pengguna"}! 👋
+                Selamat Datang, {sessionUser?.fullName || "Pengguna"}! 👋
               </h1>
               <p className="mt-2 text-sm sm:text-base text-neutral-600 text-center md:text-left">
                 Pantau kondisi lahan Anda secara real-time
               </p>
             </>
           )}
+
+          {/* Zone Selector */}
+          <div className="mt-4 flex flex-wrap gap-2">
+            {zones.map((zone) => (
+              <button
+                key={zone.id}
+                onClick={() => setSelectedZoneId(zone.id)}
+                className={`rounded-lg border-2 px-4 py-2 text-sm font-medium transition-all ${
+                  selectedZoneId === zone.id
+                    ? "border-green-500 bg-green-50 text-green-700"
+                    : "border-neutral-200 bg-white text-neutral-700 hover:border-green-300"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span>{zone.name}</span>
+                  <div
+                    className={`h-2 w-2 rounded-full ${
+                      zone.status === "online" ? "bg-green-500" : "bg-red-500"
+                    }`}
+                  />
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* Selected Zone Info */}
+          <div className="mt-3 rounded-lg bg-blue-50 border border-blue-200 px-4 py-2">
+            <p className="text-sm text-blue-800">
+              <span className="font-semibold">Lahan yang dipilih:</span>{" "}
+              {selectedZone.name} - {selectedZone.location}
+            </p>
+          </div>
         </motion.div>
 
         {/* Sensor Alert Banner */}
@@ -399,9 +453,14 @@ const DashboardPage = () => {
             className="rounded-2xl bg-white p-4 sm:p-6 shadow-lg transition-all hover:shadow-xl"
           >
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-neutral-800">
-                Status Sensor
-              </h2>
+              <div>
+                <h2 className="text-lg font-semibold text-neutral-800">
+                  Status Sensor
+                </h2>
+                <p className="text-xs text-neutral-500 mt-1">
+                  {selectedZone.name} - {selectedZone.location}
+                </p>
+              </div>
               <div
                 className={`h-3 w-3 rounded-full ${
                   sensorData.status === "normal"
@@ -688,7 +747,7 @@ const DashboardPage = () => {
                   {templates.map((template) => (
                     <motion.div
                       key={template.id}
-                      className="rounded-xl border border-neutral-200 bg-gradient-to-br from-green-50 to-white p-4 shadow-sm transition-all hover:shadow-md"
+                      className="rounded-xl border border-neutral-200 bg-linear-to-br from-green-50 to-white p-4 shadow-sm transition-all hover:shadow-md"
                       whileHover={{ y: -2 }}
                     >
                       <div className="mb-3 flex items-start justify-between">

@@ -25,6 +25,7 @@ const OwnerDashboard = () => {
     { id: 1, date: "2024-01-15", yield: "850 kg", zone: "Zona A" },
     { id: 2, date: "2024-01-10", yield: "720 kg", zone: "Zona B" },
     { id: 3, date: "2024-01-05", yield: "880 kg", zone: "Zona C" },
+    { id: 4, date: "2024-01-03", yield: "650 kg", zone: "Zona D" },
   ];
 
   const containerVariants = {
@@ -43,7 +44,7 @@ const OwnerDashboard = () => {
       opacity: 1,
       y: 0,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 100,
       },
     },

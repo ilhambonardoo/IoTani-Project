@@ -2,11 +2,21 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, FormEvent } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { IoPlayBack } from "react-icons/io5";
 import { login } from "@/lib/firebase/service";
+
+interface LoginUserData {
+  id: string;
+  email: string;
+  password: string;
+  role?: string;
+  fullName?: string;
+  [key: string]: unknown;
+}
 
 const Login = ({
   searchParams,
@@ -24,7 +34,7 @@ const Login = ({
     setMounted(true);
   }, []);
 
-  let defaultDashboardUrl =
+  const defaultDashboardUrl =
     role === "admin"
       ? "/dashboard_admin"
       : role === "owner"
@@ -53,9 +63,9 @@ const Login = ({
       const password = formData.get("password")?.toString() ?? "";
 
       // Fetch user data untuk mendapatkan role sebenarnya
-      let userData: any;
+      let userData: LoginUserData | null;
       try {
-        userData = await login({ email });
+        userData = await login({ email }) as LoginUserData | null;
       } catch (error) {
         console.error("Error fetching user data:", error);
         setError(
@@ -238,10 +248,12 @@ const Login = ({
             />
           </AnimatePresence>
         ) : (
-          <img
+          <Image
             src={slides[0].src}
             alt={slides[0].title}
-            className="absolute inset-0 z-0 h-full w-full object-cover"
+            fill
+            className="object-cover"
+            priority
           />
         )}
         <div className="absolute inset-0 z-0 bg-gradient-to-b from-green-900/40 to-green-800/60"></div>

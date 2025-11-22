@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
@@ -86,7 +87,10 @@ const ResetPassword = () => {
       } else {
         setError(data.message || "Terjadi kesalahan. Silakan coba lagi.");
         // If token invalid, mark token as invalid
-        if (data.message?.includes("Token") || data.message?.includes("token")) {
+        if (
+          data.message?.includes("Token") ||
+          data.message?.includes("token")
+        ) {
           setTokenValid(false);
         }
       }
@@ -129,8 +133,8 @@ const ResetPassword = () => {
   }, [mounted, slides.length]);
 
   return (
-    <div className="flex min-h-screen w-full bg-gradient-to-br from-neutral-50 to-neutral-100">
-      <div className="relative hidden lg:flex w-1/2 flex-col justify-between overflow-hidden bg-gradient-to-br from-green-600 to-green-700 p-10 text-white">
+    <div className="flex min-h-screen w-full bg-linear-to-br from-neutral-50 to-neutral-100">
+      <div className="relative hidden lg:flex w-1/2 flex-col justify-between overflow-hidden bg-linear-to-br from-green-600 to-green-700 p-10 text-white">
         <div className="z-10 text-3xl font-bold">
           IoTani<span className="text-green-200">.</span>
         </div>
@@ -177,25 +181,33 @@ const ResetPassword = () => {
 
         {mounted ? (
           <AnimatePresence mode="wait">
-            <motion.img
+            <motion.div
               key={currentSlide}
-              src={slides[currentSlide].src}
-              alt={slides[currentSlide].title}
               initial={{ opacity: 0, scale: 1.1 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.1 }}
               transition={{ duration: 0.8, ease: "easeInOut" }}
-              className="absolute inset-0 z-0 h-full w-full object-cover"
-            />
+              className="absolute inset-0 z-0"
+            >
+              <Image
+                src={slides[currentSlide].src}
+                alt={slides[currentSlide].title}
+                fill
+                priority={currentSlide === 0}
+                className="object-cover"
+              />
+            </motion.div>
           </AnimatePresence>
         ) : (
-          <img
+          <Image
             src={slides[0].src}
             alt={slides[0].title}
-            className="absolute inset-0 z-0 h-full w-full object-cover"
+            fill
+            priority
+            className="object-cover"
           />
         )}
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-green-900/40 to-green-800/60"></div>
+        <div className="absolute inset-0 z-0 bg-linear-to-b from-green-900/40 to-green-800/60"></div>
       </div>
 
       <div className="flex w-full items-center justify-center p-4 sm:p-6 lg:w-1/2 lg:p-10">
@@ -325,4 +337,3 @@ const ResetPassword = () => {
 };
 
 export default ResetPassword;
-

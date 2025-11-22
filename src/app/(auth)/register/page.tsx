@@ -1,11 +1,12 @@
 import Register from "@/views/Register/RegisterPage";
 
-const RegisterPage = ({
+const RegisterPage = async ({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  return <Register searchParams={searchParams} />;
+  const resolvedSearchParams = await searchParams;
+  return <Register searchParams={resolvedSearchParams} />;
 };
 
 export default RegisterPage;

@@ -54,7 +54,10 @@ export const AnimatedChart = ({
     if (data.length === 0) return;
 
     // Check if this is a real-time update (new data added to existing data)
-    if (data.length > prevDataLengthRef.current && prevDataLengthRef.current > 0) {
+    if (
+      data.length > prevDataLengthRef.current &&
+      prevDataLengthRef.current > 0
+    ) {
       // Real-time update: directly show all data
       setIsRealTime(true);
       setDisplayData(data);
@@ -88,7 +91,7 @@ export const AnimatedChart = ({
     return () => clearInterval(interval);
   }, [data, isAnimating, delayPerPoint, isRealTime]);
 
-  const containerVariants: any = {
+  const containerVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
@@ -170,7 +173,7 @@ export const AnimatedChart = ({
               <Line
                 key={line.key}
                 type="monotone"
-                dataKey={line.key as any}
+                dataKey={line.key}
                 stroke={line.color}
                 strokeWidth={3}
                 fill={`url(#gradient-${line.key})`}

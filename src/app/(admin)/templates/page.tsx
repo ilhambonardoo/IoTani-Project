@@ -17,8 +17,16 @@ interface Template {
   updatedAt: string;
 }
 
+interface ExtendedSessionUser {
+  email?: string | null;
+  name?: string | null;
+  fullName?: string | null;
+  role?: string | null;
+}
+
 const TemplateManagementPage = () => {
-  const { data: session }: { data: any } = useSession();
+  const { data: session } = useSession();
+  const sessionUser = session?.user as ExtendedSessionUser | undefined;
   const [templates, setTemplates] = useState<Template[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -40,7 +48,7 @@ const TemplateManagementPage = () => {
   });
 
   const senderName =
-    session?.user?.fullName || session?.user?.name || "Admin System";
+    sessionUser?.fullName || sessionUser?.name || "Admin System";
 
   // Fetch templates
   const fetchTemplates = async () => {

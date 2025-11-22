@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { useSession } from "next-auth/react";
 import {
   FaChartLine,
@@ -25,6 +25,7 @@ const OwnerDashboard = () => {
     { id: 1, date: "2024-01-15", yield: "124 kg", zone: "Zona A" },
     { id: 2, date: "2024-01-10", yield: "279 kg", zone: "Zona B" },
     { id: 3, date: "2024-01-05", yield: "129 kg", zone: "Zona C" },
+    { id: 4, date: "2024-01-03", yield: "198 kg", zone: "Zona D" },
   ];
 
   const containerVariants = {
@@ -37,13 +38,13 @@ const OwnerDashboard = () => {
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 100,
       },
     },

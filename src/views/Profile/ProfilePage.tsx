@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 
 import { motion } from "framer-motion";
 
@@ -32,9 +32,6 @@ const defaultProfile = {
 
 const inputStyle =
   "w-full p-2 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition-all bg-white text-neutral-800";
-
-const inlineInputStyle =
-  "w-full text-base text-neutral-800 border-b-2 border-green-300 focus:outline-none focus:border-green-500";
 
 // Generate initials from name
 const getInitials = (name: string | null | undefined): string => {
@@ -78,6 +75,15 @@ const getAvatarColor = (name: string | null | undefined): string => {
   return colors[Math.abs(hash) % colors.length];
 };
 
+interface ExtendedSession {
+  user: {
+    fullName?: string;
+    email?: string;
+    role?: string;
+    status?: string | null;
+  };
+}
+
 const ProfilePage = () => {
   const [profileData, setProfileData] = useState(defaultProfile);
   const [isEditing, setIsEditing] = useState(false);
@@ -90,7 +96,8 @@ const ProfilePage = () => {
   const [imageError, setImageError] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const onPick = () => fileRef.current?.click();
-  const { data: session }: { data: any } = useSession();
+  const { data: session } = useSession();
+  const sessionUser = session?.user as ExtendedSession | undefined;
 
   // Fetch profile data on mount
   useEffect(() => {
@@ -133,7 +140,9 @@ const ProfilePage = () => {
     fetchProfile();
   }, [session?.user?.email]);
 
-  const handleInputChange = (e: any) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
 
     setFormData((prev) => ({
@@ -371,7 +380,7 @@ const ProfilePage = () => {
         </div>
       </ConfirmationModal>
 
-      <section className="min-h-screen bg-gradient-to-br from-green-50 via-neutral-50 to-green-50 py-6 sm:py-8 md:py-12 pt-20 md:pt-6">
+      <section className="min-h-screen bg-linear-to-br from-green-50 via-neutral-50 to-green-50 py-6 sm:py-8 md:py-12 pt-20 md:pt-6">
         <div className="container mx-auto px-4 sm:px-6">
           {/* Header Section with Gradient */}
           <motion.div
@@ -393,7 +402,7 @@ const ProfilePage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 p-6 sm:p-8 shadow-2xl md:p-12"
+              className="relative overflow-hidden rounded-3xl bg-linear-to-br from-green-500 via-green-600 to-emerald-600 p-6 sm:p-8 shadow-2xl md:p-12"
             >
               {/* Edit Button */}
               <div className="absolute top-4 right-4 sm:top-6 sm:right-6 flex gap-2">
@@ -449,7 +458,7 @@ const ProfilePage = () => {
                           avatarSrc &&
                           avatarSrc.startsWith("/profiles/") &&
                           !imageError;
-                        const fullName = session?.user?.fullName || "";
+                        const fullName = sessionUser?.user.fullName || "";
                         const initials = getInitials(fullName);
                         const color = getAvatarColor(fullName);
 
@@ -471,7 +480,7 @@ const ProfilePage = () => {
                               />
                               {imageError && (
                                 <div
-                                  className={`absolute inset-0 flex items-center justify-center bg-gradient-to-br ${color} text-white text-5xl font-bold`}
+                                  className={`absolute inset-0 flex items-center justify-center bg-linear-to-br ${color} text-white text-5xl font-bold`}
                                 >
                                   {initials}
                                 </div>
@@ -482,7 +491,7 @@ const ProfilePage = () => {
                           // Show initials for default avatar
                           return (
                             <div
-                              className={`h-full w-full flex items-center justify-center bg-gradient-to-br ${color} text-white text-5xl font-bold`}
+                              className={`h-full w-full flex items-center justify-center bg-linear-to-br ${color} text-white text-5xl font-bold`}
                             >
                               {initials}
                             </div>
@@ -531,14 +540,14 @@ const ProfilePage = () => {
                   <input
                     type="text"
                     name="name"
-                    value={session?.user?.fullName}
+                    value={sessionUser?.user.fullName || ""}
                     onChange={handleInputChange}
                     className="mb-2 text-center text-2xl sm:text-3xl font-bold text-white focus:outline-none focus:ring-2 focus:ring-white/50 rounded-lg px-4 py-2 bg-white/20 backdrop-blur-sm md:text-4xl"
                     placeholder="Nama Lengkap"
                   />
                 ) : (
                   <h2 className="mb-2 text-2xl sm:text-3xl font-bold text-white md:text-4xl">
-                    {session?.user?.fullName || "Pengguna"}
+                    {sessionUser?.user.fullName || "Pengguna"}
                   </h2>
                 )}
 
@@ -546,14 +555,14 @@ const ProfilePage = () => {
                   <input
                     type="text"
                     name="role"
-                    value={session?.user?.role || ""}
+                    value={sessionUser?.user.role || ""}
                     onChange={handleInputChange}
                     className="text-center text-lg font-medium text-green-100 focus:outline-none focus:ring-2 focus:ring-white/50 rounded-lg px-3 py-1 bg-white/20 backdrop-blur-sm"
                     placeholder="Role"
                   />
                 ) : (
                   <p className="text-lg font-medium text-green-100">
-                    {session?.user?.role || "User"}
+                    {sessionUser?.user.role || "User"}
                   </p>
                 )}
               </div>
