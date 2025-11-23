@@ -1,18 +1,12 @@
 import { sendTemplateToUsers } from "@/lib/firebase/service-templates";
 import { NextRequest, NextResponse } from "next/server";
 
-type RouteParams = {
-  params: {
-    id: string;
-  };
-};
-
 export async function POST(
   request: NextRequest,
-  { params }: RouteParams
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse> {
   try {
-    const templateId = params.id;
+    const { id: templateId } = await params;
     if (!templateId) {
       return NextResponse.json(
         { status: false, message: "ID template tidak ditemukan" },

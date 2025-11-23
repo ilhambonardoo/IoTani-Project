@@ -25,25 +25,6 @@ interface Article {
   updatedAt: string;
 }
 
-interface QuestionReply {
-  id: string;
-  responderName: string;
-  responderRole?: string;
-  content: string;
-  createdAt: string;
-}
-
-interface Question {
-  id: string;
-  title: string;
-  content: string;
-  category: string;
-  authorName: string;
-  authorEmail?: string;
-  createdAt: string;
-  replies?: QuestionReply[];
-}
-
 const categories = [
   "Semua",
   "Hama & Penyakit",
@@ -52,10 +33,6 @@ const categories = [
   "Pupuk",
   "Lainnya",
 ];
-
-const selectableCategories = categories.filter(
-  (category) => category !== "Semua"
-);
 
 const getCategoryIcon = (category: string) => {
   switch (category) {
@@ -80,20 +57,6 @@ const ForumPage = () => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [questionSearch, setQuestionSearch] = useState("");
-  const [questionError, setQuestionError] = useState("");
-  const [isQuestionsLoading, setIsQuestionsLoading] = useState(true);
-  const [isQuestionFormOpen, setIsQuestionFormOpen] = useState(false);
-  const [isSubmittingQuestion, setIsSubmittingQuestion] = useState(false);
-  const [questionForm, setQuestionForm] = useState({
-    authorName: "",
-    authorEmail: "",
-    title: "",
-    category: "",
-    content: "",
-  });
 
   const fetchArticles = async (withToast?: boolean) => {
     setIsLoading(true);
@@ -120,34 +83,8 @@ const ForumPage = () => {
     }
   };
 
-  const fetchQuestions = async (withToast?: boolean) => {
-    setIsQuestionsLoading(true);
-    setQuestionError("");
-    try {
-      const res = await fetch("/api/forum/questions");
-      const data = await res.json();
-      if (!res.ok || !data.status) {
-        throw new Error(data.message || "Gagal mengambil pertanyaan");
-      }
-      setQuestions(data.data || []);
-      if (withToast) {
-        toast.success("✅ Daftar pertanyaan diperbarui");
-      }
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Terjadi kesalahan server";
-      setQuestionError(message);
-      if (withToast) {
-        toast.error(`❌ ${message}`);
-      }
-    } finally {
-      setIsQuestionsLoading(false);
-    }
-  };
-
   useEffect(() => {
     fetchArticles();
-    fetchQuestions();
   }, []);
 
   useEffect(() => {
@@ -167,66 +104,6 @@ const ForumPage = () => {
       return matchSearch && matchCategory;
     });
   }, [articles, searchQuery, selectedCategory]);
-
-  const filteredQuestions = useMemo(() => {
-    const keyword = questionSearch.trim().toLowerCase();
-    return questions.filter((question) => {
-      const matchSearch =
-        !keyword ||
-        question.title.toLowerCase().includes(keyword) ||
-        question.content.toLowerCase().includes(keyword);
-      const matchCategory =
-        selectedCategory === "Semua" || question.category === selectedCategory;
-      return matchSearch && matchCategory;
-    });
-  }, [questions, questionSearch, selectedCategory]);
-
-  const resetQuestionForm = () => {
-    setQuestionForm({
-      authorName: "",
-      authorEmail: "",
-      title: "",
-      category: "",
-      content: "",
-    });
-  };
-
-  const handleSubmitQuestion = async () => {
-    if (
-      !questionForm.authorName.trim() ||
-      !questionForm.title.trim() ||
-      !questionForm.content.trim() ||
-      !questionForm.category
-    ) {
-      toast.error("⚠️ Nama, judul, kategori, dan pertanyaan wajib diisi");
-      return;
-    }
-
-    setIsSubmittingQuestion(true);
-    try {
-      const res = await fetch("/api/forum/questions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(questionForm),
-      });
-      const data = await res.json();
-
-      if (!res.ok || !data.status) {
-        throw new Error(data.message || "Gagal mengirim pertanyaan");
-      }
-
-      toast.success("✅ Pertanyaan berhasil dikirim");
-      resetQuestionForm();
-      setIsQuestionFormOpen(false);
-      fetchQuestions();
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Terjadi kesalahan server";
-      toast.error(`❌ ${message}`);
-    } finally {
-      setIsSubmittingQuestion(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 p-4 sm:p-6 lg:p-8 pt-16 md:pt-4">
@@ -355,7 +232,7 @@ const ForumPage = () => {
                         {article.title}
                       </h3>
                     </div>
-                    <p className="text-neutral-600">{article.content}</p>
+                    <p className="text-neutral-600 whitespace-pre-wrap">{article.content}</p>
                   </div>
                 </div>
 

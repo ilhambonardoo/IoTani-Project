@@ -150,10 +150,13 @@ export async function login(data: { email: string }) {
   );
 
   const snapshot = await getDocs(q);
-  const user = snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
+  const user = snapshot.docs.map((doc) => {
+    const userData = doc.data();
+    return {
+      id: doc.id,
+      ...sanitizeUserData(userData),
+    };
+  });
 
   if (user) {
     return user[0];
@@ -163,20 +166,31 @@ export async function login(data: { email: string }) {
 }
 
 // LOGIN WITH GOOGLE
-export async function loginWithGoogle(data: any) {
+type GoogleUserPayload = {
+  email: string;
+  fullName: string;
+  type?: string;
+  role?: string;
+};
+
+export async function loginWithGoogle(data: GoogleUserPayload) {
   const q = query(
     collection(firestore, "auth"),
     where("email", "==", data.email)
   );
 
   const snapshot = await getDocs(q);
-  const user = snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as any[];
+  const user = snapshot.docs.map((doc) => {
+    const userData = doc.data();
+    return {
+      id: doc.id,
+      ...sanitizeUserData(userData),
+    };
+  });
 
   if (user.length > 0) {
-    data.role = (user[0] as any).role || "user";
+    const userData = user[0] as Record<string, unknown>;
+    data.role = (userData.role as string) || "user";
     await updateDoc(doc(firestore, "auth", user[0].id), {
       fullName: data.fullName,
       email: data.email,
@@ -249,10 +263,13 @@ export async function addUserAdmin(data: {
   );
 
   const snapshot = await getDocs(q);
-  const users = snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
+  const users = snapshot.docs.map((doc) => {
+    const userData = doc.data();
+    return {
+      id: doc.id,
+      ...sanitizeUserData(userData),
+    };
+  });
 
   if (users.length > 0) {
     return {
@@ -298,10 +315,7 @@ export async function getUser() {
 // FORGOT PASSWORD & RESET PASSWORD
 export async function checkEmailExists(email: string): Promise<boolean> {
   try {
-    const q = query(
-      collection(firestore, "auth"),
-      where("email", "==", email)
-    );
+    const q = query(collection(firestore, "auth"), where("email", "==", email));
 
     const snapshot = await getDocs(q);
     return snapshot.docs.length > 0;
@@ -399,7 +413,9 @@ export async function verifyResetToken(token: string): Promise<
   }
 }
 
-export async function markTokenAsUsed(tokenDocId: string): Promise<ServiceResponse> {
+export async function markTokenAsUsed(
+  tokenDocId: string
+): Promise<ServiceResponse> {
   try {
     const tokenDoc = doc(firestore, "password_resets", tokenDocId);
     await updateDoc(tokenDoc, {
@@ -428,10 +444,7 @@ export async function updatePasswordByEmail(
 ): Promise<ServiceResponse> {
   try {
     // Find user by email
-    const q = query(
-      collection(firestore, "auth"),
-      where("email", "==", email)
-    );
+    const q = query(collection(firestore, "auth"), where("email", "==", email));
 
     const snapshot = await getDocs(q);
 
@@ -565,7 +578,15 @@ export async function getContents(): Promise<
       orderBy("createdAt", "desc")
     );
     const snapshot = await getDocs(q);
-    const contents: any[] = [];
+    const contents: Array<{
+      id: string;
+      title: string;
+      category: string;
+      content: string;
+      author?: string;
+      createdAt: string;
+      updatedAt: string;
+    }> = [];
     snapshot.forEach((docSnapshot) => {
       const data = docSnapshot.data();
       contents.push({
@@ -599,9 +620,7 @@ export async function getContents(): Promise<
 }
 
 // MANAGEMENT CABAI
-export async function addChili(
-  data: ChiliPayload
-): Promise<ServiceResponse> {
+export async function addChili(data: ChiliPayload): Promise<ServiceResponse> {
   try {
     const chiliCollection = collection(firestore, "chilies");
 
@@ -693,7 +712,16 @@ export async function getChilies(): Promise<
       orderBy("createdAt", "desc")
     );
     const snapshot = await getDocs(q);
-    const chilies: any[] = [];
+    const chilies: Array<{
+      id: string;
+      name: string;
+      description: string;
+      imageUrl?: string;
+      characteristics?: string;
+      uses?: string;
+      createdAt: string;
+      updatedAt: string;
+    }> = [];
     snapshot.forEach((docSnapshot) => {
       const data = docSnapshot.data();
       chilies.push({
@@ -811,7 +839,7 @@ export async function getQuestions(
     const snapshot = await getDocs(q);
 
     // Sort di memory jika menggunakan where tanpa orderBy
-    let sortedDocs = [...snapshot.docs];
+    const sortedDocs = [...snapshot.docs];
     if (recipientRole || authorRole) {
       sortedDocs.sort((a, b) => {
         const aMillis = getMillisecondsFromTimestamp(
@@ -1102,3 +1130,45 @@ export async function deleteQuestionReply(
     };
   }
 }
+
+interface FirestoreTimestamp {
+  toDate: () => Date;
+  seconds?: number;
+}
+
+interface UserData {
+  updatedAt?: FirestoreTimestamp;
+  createdAt?: FirestoreTimestamp;
+  [key: string]: unknown;
+}
+
+// Helper function to convert Firestore Timestamp to ISO string
+const convertTimestamp = (timestamp: FirestoreTimestamp): string | null => {
+  if (!timestamp) return null;
+  if (timestamp.toDate && typeof timestamp.toDate === "function") {
+    return timestamp.toDate().toISOString();
+  }
+  if (timestamp.seconds) {
+    return new Date(timestamp.seconds * 1000).toISOString();
+  }
+  return null;
+};
+
+// Helper function to sanitize user data (remove Timestamps or convert them)
+const sanitizeUserData = (
+  data: UserData
+): Omit<UserData, "updatedAt" | "createdAt"> & {
+  updatedAt?: string | null;
+  createdAt?: string | null;
+} => {
+  const { updatedAt, createdAt, ...rest } = data;
+  return {
+    ...rest,
+    ...(updatedAt && {
+      updatedAt: convertTimestamp(updatedAt as FirestoreTimestamp),
+    }),
+    ...(createdAt && {
+      createdAt: convertTimestamp(createdAt as FirestoreTimestamp),
+    }),
+  };
+};

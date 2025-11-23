@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState, useRef } from "react";
 import { IoPlayBack } from "react-icons/io5";
@@ -154,10 +155,12 @@ const ForgotPassword = () => {
             />
           </AnimatePresence>
         ) : (
-          <img
+          <Image
             src={slides[0].src}
             alt={slides[0].title}
-            className="absolute inset-0 z-0 h-full w-full object-cover"
+            fill
+            className="object-cover"
+            priority
           />
         )}
         <div className="absolute inset-0 z-0 bg-gradient-to-b from-green-900/40 to-green-800/60"></div>

@@ -40,7 +40,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 export async function PUT(request: NextRequest): Promise<NextResponse> {
   try {
     const body = await request.json();
-    const { email, phone, location, bio, avatarUrl, instagram } = body || {};
+    const { email, fullName, phone, location, bio, avatarUrl, instagram } = body || {};
 
     if (!email) {
       return NextResponse.json(
@@ -53,6 +53,7 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
     }
 
     const res = await updateUserProfile(email, {
+      fullName,
       phone,
       location,
       bio,

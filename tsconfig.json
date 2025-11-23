@@ -29,5 +29,5 @@
     ".next/types/**/*.ts",
     "src/app/api/auth/register"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "ml-service"]
 }

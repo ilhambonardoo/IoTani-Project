@@ -1,18 +1,12 @@
 import { deleteQuestion } from "@/lib/firebase/service";
 import { NextRequest, NextResponse } from "next/server";
 
-type RouteParams = {
-  params: {
-    id: string;
-  };
-};
-
 export async function DELETE(
   _request: NextRequest,
-  { params }: RouteParams
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse> {
   try {
-    const questionId = params.id;
+    const { id: questionId } = await params;
     if (!questionId) {
       return NextResponse.json(
         { status: false, message: "ID pertanyaan tidak ditemukan" },

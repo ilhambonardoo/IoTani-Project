@@ -1,38 +1,54 @@
-# IoTani ML Service (FastAPI)
+# ML Service - IoTani Project
 
-Minimal FastAPI app to serve ML image analysis for chili detection (ripeness, disease, pests).
+Service Machine Learning untuk analisis gambar tanaman cabai menggunakan TensorFlow.
 
-## Run locally
+## Requirements
 
+- Python 3.8+
+- TensorFlow 2.15.0
+- FastAPI
+- Uvicorn
+
+## Instalasi
+
+1. Install dependencies:
 ```bash
-python -m venv .venv
-. .venv/bin/activate  # or .venv\Scripts\activate on Windows
 pip install -r requirements.txt
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-The service exposes:
-- `GET /` health check
-- `POST /analyze` (multipart form field `file`) returns dummy JSON:
+## Menjalankan Service
 
-```json
-{
-  "objek": "Cabai Rawit",
-  "kematangan": "Matang Sempurna (92%)",
-  "penyakit": "Sehat (98%)"
-}
+Jalankan service dengan salah satu perintah berikut:
+
+**Cara 1: Menggunakan Python langsung (Recommended)**
+```bash
+# Dari direktori ml-service
+python main.py
 ```
 
-## Integrating from Next.js
+**Cara 2: Menggunakan uvicorn**
+```bash
+# Dari direktori ml-service
+python -m uvicorn main:app --reload --host 127.0.0.1 --port 8000
 
-Set the frontend env:
+# Atau menggunakan uvicorn langsung (jika sudah di PATH)
+uvicorn main:app --reload --host 127.0.0.1 --port 8000
 ```
-NEXT_PUBLIC_ML_API_BASE=http://127.0.0.1:8000
-```
 
-The camera page sends a multipart request to `/analyze` and renders the returned fields.
+Service akan berjalan di: `http://127.0.0.1:8000`
 
+**Catatan Penting:**
+- Pastikan service berjalan di terminal terpisah sebelum menggunakan aplikasi frontend
+- Jangan tutup terminal saat service berjalan
+- Jika melihat error saat loading model, service tetap akan berjalan tapi fitur analisis tidak tersedia
 
+## Endpoints
 
+- `GET /` - Status service
+- `GET /health` - Health check endpoint
+- `POST /analyze` - Analisis gambar (menerima file image)
 
+## Catatan
+
+Pastikan file `model_cabai.h5` ada di direktori `ml-service` sebelum menjalankan service.
 

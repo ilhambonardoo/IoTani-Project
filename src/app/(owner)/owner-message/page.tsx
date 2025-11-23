@@ -31,10 +31,17 @@ interface QuestionMessage {
   replies?: QuestionReply[];
 }
 
-const OwnerMessagePage = () => {
-  const { data: session }: { data: any } = useSession();
+interface ExtendedSessionUser {
+  email?: string | null;
+  name?: string | null;
+  fullName?: string | null;
+  role?: string | null;
+}
 
-  // --- State Management ---
+const OwnerMessagePage = () => {
+
+  const { data: session } = useSession();
+  const sessionUser = session?.user as ExtendedSessionUser | undefined
   const [selectedMessage, setSelectedMessage] =
     useState<QuestionMessage | null>(null);
   const [replyText, setReplyText] = useState("");
@@ -42,7 +49,6 @@ const OwnerMessagePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [senderRoleFilter, setSenderRoleFilter] = useState<string>("all");
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
   const [isSendingReply, setIsSendingReply] = useState(false);
 
   // State untuk Delete
@@ -56,10 +62,7 @@ const OwnerMessagePage = () => {
 
   // --- Responder Info (Owner) ---
   const responderName =
-    session?.user?.fullName ||
-    session?.user?.name ||
-    session?.user?.email ||
-    "Owner";
+  sessionUser?.fullName || sessionUser?.name || sessionUser?.email || "Owner";
 
   // Hardcoded role untuk halaman ini
   const responderRole = "Owner";
@@ -70,7 +73,6 @@ const OwnerMessagePage = () => {
     focusMessageId?: string
   ) => {
     setIsLoading(true);
-    setError("");
     try {
       // Logic khusus Owner: recipientRole selalu 'owner'
       const url =
@@ -106,7 +108,6 @@ const OwnerMessagePage = () => {
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Terjadi kesalahan server";
-      setError(message);
       if (withToast) {
         toast.error(`❌ ${message}`);
       }

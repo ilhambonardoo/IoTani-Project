@@ -34,13 +34,6 @@ type TemplatePayload = {
   category?: string;
 };
 
-type SendTemplatePayload = {
-  templateId: string;
-  targetRole: "user" | "admin" | "owner" | "all";
-  senderName: string;
-  senderRole: string;
-};
-
 // CREATE TEMPLATE
 export async function createTemplate(
   data: TemplatePayload
@@ -88,24 +81,32 @@ export async function getTemplates(): Promise<
   try {
     const templatesCollection = collection(firestore, "templates");
     const snapshot = await getDocs(templatesCollection);
-    const templates: any[] = [];
+    const templates: Array<{
+      id: string;
+      name: string;
+      title: string;
+      content: string;
+      category: string;
+      createdAt: string;
+      updatedAt: string;
+    }> = [];
 
     snapshot.forEach((docSnapshot) => {
       const data = docSnapshot.data();
       templates.push({
         id: docSnapshot.id,
-        name: data.name,
-        title: data.title,
-        content: data.content,
-        category: data.category || "Umum",
+        name: data.name as string,
+        title: data.title as string,
+        content: data.content as string,
+        category: (data.category as string) || "Umum",
         createdAt:
           data.createdAt instanceof Timestamp
             ? data.createdAt.toDate().toISOString().split("T")[0]
-            : data.createdAt || "-",
+            : (data.createdAt as string) || "-",
         updatedAt:
           data.updatedAt instanceof Timestamp
             ? data.updatedAt.toDate().toISOString().split("T")[0]
-            : data.updatedAt || "-",
+            : (data.updatedAt as string) || "-",
       });
     });
 
@@ -277,7 +278,7 @@ export async function sendTemplateToUsers(
           category: template.category || "Umum",
           authorName: senderName,
           authorEmail: user.email,
-          authorRole: "admin", // System message
+          authorRole: senderRole || "admin", // System message
           recipientRole: user.role,
           createdAt: serverTimestamp(),
           isTemplateMessage: true,

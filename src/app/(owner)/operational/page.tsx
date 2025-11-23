@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { FaRobot, FaWifi, FaBatteryFull, FaExclamationTriangle } from "react-icons/fa";
+import { FaRobot, FaBatteryFull, FaExclamationTriangle } from "react-icons/fa";
 import { IoMdRefresh } from "react-icons/io";
 import { HiOutlineClock } from "react-icons/hi";
 
@@ -58,14 +58,6 @@ const OperationalStatusPage = () => {
       location: "Stasiun Pengisian",
       lastUpdate: "10 menit lalu",
     },
-    {
-      id: "4",
-      name: "Robot Siram D",
-      status: "offline",
-      battery: 0,
-      location: "Zona D",
-      lastUpdate: "1 jam lalu",
-    },
   ]);
 
   const [sensors] = useState<SensorStatus[]>([
@@ -92,6 +84,14 @@ const OperationalStatusPage = () => {
       status: "offline",
       lastReading: "15 menit lalu",
       value: 0,
+    },
+    {
+      id: "4",
+      name: "Sensor pH Zona D",
+      type: "pH",
+      status: "online",
+      lastReading: "3 menit lalu",
+      value: 6.5,
     },
   ]);
 

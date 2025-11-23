@@ -21,6 +21,10 @@ interface MenuItem {
   roles: string[];
 }
 
+interface ExtendedSession {
+  role?: string | null;
+}
+
 const Sidebar = ({
   toggleSideBar,
   isOpenSideBar,
@@ -28,13 +32,15 @@ const Sidebar = ({
   toggleSideBar: () => void;
   isOpenSideBar: boolean;
 }) => {
-  const { data: session, status }: { data: any; status: string } = useSession();
+  const { data: session, status } = useSession();
+  const sessionUser = session?.user as ExtendedSession | undefined;
+
   const pathname = usePathname();
 
   const userRole = useMemo(() => {
     if (status === "loading") return ""; // Default saat loading
-    return (session?.user?.role as string) || "user";
-  }, [session?.user?.role, status]);
+    return (sessionUser?.role as string) || "user";
+  }, [status, sessionUser?.role]);
 
   const menuItems: MenuItem[] = useMemo(
     () => [
@@ -169,7 +175,7 @@ const Sidebar = ({
           isOpenSideBar ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
-        <div className="flex items-center hidden md:block justify-between p-4 ">
+        <div className="items-center hidden md:block justify-between p-4 ">
           <GiHamburgerMenu
             size={24}
             className="text-neutral-700 cursor-pointer hover:text-green-600 transition-colors"

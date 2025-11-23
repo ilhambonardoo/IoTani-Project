@@ -30,7 +30,7 @@ export const generatePDFContent = (
 ): string => {
   const today = new Date().toLocaleDateString("id-ID");
 
-  let tableHTML = `
+  const tableHTML = `
     <html>
       <head>
         <meta charset="UTF-8">
@@ -152,16 +152,31 @@ export const downloadCSV = (data: ExportData[], dataType: string) => {
   document.body.removeChild(link);
 };
 
+interface Html2PdfOptions {
+  margin: number;
+  filename: string;
+  image: { type: string; quality: number };
+  html2canvas: { scale: number };
+  jsPDF: { orientation: string; unit: string; format: string };
+}
+
+interface Html2PdfInstance {
+  set(options: Html2PdfOptions): Html2PdfInstance;
+  from(element: HTMLElement): Html2PdfInstance;
+  save(): void;
+}
+
 // Download PDF using html2pdf library
 export const downloadPDF = async (data: ExportData[], dataType: string) => {
   try {
     // Dynamic import html2pdf
-    const html2pdf = (await import("html2pdf.js" as any)).default as any;
+    const html2pdfModule = await import("html2pdf.js");
+    const html2pdf = html2pdfModule.default as () => Html2PdfInstance;
 
     const element = document.createElement("div");
     element.innerHTML = generatePDFContent(data, dataType);
 
-    const opt = {
+    const opt: Html2PdfOptions = {
       margin: 10,
       filename: `iotani-data-${dataType}-${
         new Date().toISOString().split("T")[0]

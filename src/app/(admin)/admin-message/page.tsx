@@ -30,8 +30,16 @@ interface QuestionMessage {
   replies?: QuestionReply[];
 }
 
+interface ExtendedSessionUser {
+  email?: string | null;
+  name?: string | null;
+  fullName?: string | null;
+  role?: string | null;
+}
+
 const AdminInboxPage = () => {
-  const { data: session }: { data: any } = useSession();
+  const { data: session } = useSession();
+  const sessionUser = session?.user as ExtendedSessionUser | undefined;
   const [selectedMessage, setSelectedMessage] =
     useState<QuestionMessage | null>(null);
   const [replyText, setReplyText] = useState("");
@@ -39,7 +47,6 @@ const AdminInboxPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [senderRoleFilter, setSenderRoleFilter] = useState<string>("all");
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
   const [isSendingReply, setIsSendingReply] = useState(false);
   const [isDeletingMessage, setIsDeletingMessage] = useState(false);
   const [isDeletingReply, setIsDeletingReply] = useState<string | null>(null);
@@ -50,20 +57,19 @@ const AdminInboxPage = () => {
   });
 
   const responderName =
-    session?.user?.fullName ||
-    session?.user?.name ||
-    session?.user?.email ||
+    sessionUser?.fullName ||
+    sessionUser?.name ||
+    sessionUser?.email ||
     "Admin";
-  const responderRole = session?.user?.role === "owner" ? "Owner" : "Admin";
+  const responderRole = sessionUser?.role === "owner" ? "Owner" : "Admin";
 
-  const currentUserRole = session?.user?.role || "admin";
+  const currentUserRole = sessionUser?.role || "admin";
 
   const fetchMessages = async (
     withToast?: boolean,
     focusMessageId?: string
   ) => {
     setIsLoading(true);
-    setError("");
     try {
       // Filter berdasarkan recipientRole untuk mendapatkan pesan yang ditujukan ke user saat ini
       const recipientRole = currentUserRole === "owner" ? "owner" : "admin";
@@ -94,7 +100,6 @@ const AdminInboxPage = () => {
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Terjadi kesalahan server";
-      setError(message);
       if (withToast) {
         toast.error(`❌ ${message}`);
       }

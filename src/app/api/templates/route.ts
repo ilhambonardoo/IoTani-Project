@@ -56,27 +56,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 }
 
-type RouteParams = {
-  params: {
-    id: string;
-  };
-};
-
-export async function PUT(
-  request: NextRequest,
-  { params }: RouteParams
-): Promise<NextResponse> {
+export async function PUT(request: NextRequest): Promise<NextResponse> {
   try {
-    const templateId = params.id;
+    const body = await request.json();
+    const { id: templateId, name, title, content, category } = body || {};
+
     if (!templateId) {
       return NextResponse.json(
         { status: false, message: "ID template tidak ditemukan" },
         { status: 400 }
       );
     }
-
-    const body = await request.json();
-    const { name, title, content, category } = body || {};
 
     const res = await updateTemplate(templateId, {
       name,
@@ -97,12 +87,11 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  _request: NextRequest,
-  { params }: RouteParams
-): Promise<NextResponse> {
+export async function DELETE(request: NextRequest): Promise<NextResponse> {
   try {
-    const templateId = params.id;
+    const body = await request.json();
+    const { id: templateId } = body || {};
+
     if (!templateId) {
       return NextResponse.json(
         { status: false, message: "ID template tidak ditemukan" },

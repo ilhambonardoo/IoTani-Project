@@ -1,19 +1,12 @@
 import { deleteQuestionReply } from "@/lib/firebase/service";
 import { NextRequest, NextResponse } from "next/server";
 
-type RouteParams = {
-  params: {
-    id: string;
-    replyId: string;
-  };
-};
-
 export async function DELETE(
   _request: NextRequest,
-  { params }: RouteParams
+  { params }: { params: Promise<{ id: string; replyId: string }> }
 ): Promise<NextResponse> {
   try {
-    const { id: questionId, replyId } = params;
+    const { id: questionId, replyId } = await params;
 
     if (!questionId || !replyId) {
       return NextResponse.json(
