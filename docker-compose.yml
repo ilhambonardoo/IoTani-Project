@@ -1,0 +1,14 @@
+version:'3.8'
+
+services:
+  ml-service:
+    build: 
+      context: ./ml-service
+      dockerfile: dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      -PYTHONUNBUFFERED=1
+    volumes:
+      - ./ml-service:/app
+    restart: unless-stopped
