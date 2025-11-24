@@ -23,7 +23,7 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
 
 // Base URL untuk ML API
 const getMLBaseURL = () => {
-  return process.env.NEXT_PUBLIC_ML_API_BASE || "http://127.0.0.1:8000";
+  return process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 };
 
 // Interface untuk response analisis ML
@@ -545,7 +545,9 @@ const CameraPage = () => {
                     <div className="space-y-2.5 text-sm">
                       {mlResult ? (
                         mlResult.error ? (
-                          <p className="text-red-600 font-medium">{mlResult.error}</p>
+                          <p className="text-red-600 font-medium">
+                            {mlResult.error}
+                          </p>
                         ) : (
                           <>
                             <div className="flex justify-between items-center border-b border-cyan-200 pb-2">
@@ -555,9 +557,7 @@ const CameraPage = () => {
                               </span>
                             </div>
                             <div className="flex justify-between items-center border-b border-cyan-200 pb-2">
-                              <span className="text-neutral-600">
-                                Diagnosa
-                              </span>
+                              <span className="text-neutral-600">Diagnosa</span>
                               <span className="font-semibold text-yellow-600">
                                 {mlResult.penyakit}
                               </span>
