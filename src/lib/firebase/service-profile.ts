@@ -11,9 +11,6 @@ import {
   where,
 } from "firebase/firestore";
 import { app } from "./init";
-import { writeFile, mkdir, unlink } from "fs/promises";
-import { join } from "path";
-import { existsSync } from "fs";
 
 const firestore = getFirestore(app);
 
@@ -66,8 +63,8 @@ export async function getUserProfile(
         await updateDoc(docRef, {
           avatarUrl: "",
         });
-      } catch (error) {
-        console.warn("Failed to update avatarUrl in database:", error);
+      } catch {
+        // Continue even if update fails
       }
     }
 
@@ -96,67 +93,63 @@ export async function getUserProfile(
 
 // UPLOAD PROFILE IMAGE
 export async function uploadProfileImage(
-  file: File,
-  userId: string
-): Promise<ServiceResponse<{ url: string }>> {
+  file: Partial<ProfileData>,
+  email: string
+): Promise<ServiceResponse> {
   try {
-    // Validate file type
-    if (!file.type.startsWith("image/")) {
+    // Find user by email (same pattern as getUserProfile)
+    const q = query(collection(firestore, "auth"), where("email", "==", email));
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
       return {
         status: false,
-        statusCode: 400,
-        message: "File harus berupa gambar",
+        statusCode: 404,
+        message: "User tidak ditemukan",
       };
     }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      return {
-        status: false,
-        statusCode: 400,
-        message: "Ukuran file maksimal 5MB",
-      };
+    const userDoc = snapshot.docs[0];
+    const docRef = doc(firestore, "auth", userDoc.id);
+    const currentData = userDoc.data();
+    const oldAvatarUrl = currentData.avatarUrl || "";
+    const newImageUrl = file.avatarUrl || "";
+
+    // Delete old profile image from Supabase if exists
+    if (
+      oldAvatarUrl &&
+      newImageUrl &&
+      oldAvatarUrl !== newImageUrl &&
+      oldAvatarUrl.includes("supabase.co")
+    ) {
+      const { getSupabaseAdmin } = await import("@/lib/supabase/client");
+      const supabase = getSupabaseAdmin();
+      const bucketName = "IoTani_Bucket";
+
+      const urlParts = oldAvatarUrl.split("/IoTani_Bucket/");
+      if (urlParts.length >= 2) {
+        const filePath = urlParts[1];
+        const { error: deleteError } = await supabase.storage
+          .from(bucketName)
+          .remove([filePath]);
+        if (deleteError) {
+          // Continue even if deletion fails
+        }
+      }
     }
 
-    // Convert email to safe filename
-    const safeUserId = userId.replace(/[^a-zA-Z0-9]/g, "_");
-    const timestamp = Date.now();
-    const fileExtension = file.name.split(".").pop() || "jpg";
-    const fileName = `${safeUserId}_${timestamp}.${fileExtension}`;
-
-    // Create profiles directory if it doesn't exist
-    const profilesDir = join(process.cwd(), "public", "profiles");
-    try {
-      await mkdir(profilesDir, { recursive: true });
-    } catch (error) {
-      // Directory might already exist, that's okay
-      return {
-        status: false,
-        statusCode: 500,
-        message: "Gagal membuat direktori untuk menyimpan foto",
-        error,
-      };
-    }
-
-    // Convert File to Buffer
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
-    // Save file to public/profiles folder
-    const filePath = join(profilesDir, fileName);
-    await writeFile(filePath, buffer);
-
-    // Return public URL
-    const publicUrl = `/profiles/${fileName}`;
+    // Update database with new avatarUrl
+    await updateDoc(docRef, {
+      avatarUrl: newImageUrl,
+      updatedAt: serverTimestamp(),
+    });
 
     return {
       status: true,
       statusCode: 200,
-      message: "Foto berhasil diupload",
-      data: { url: publicUrl },
+      message: "Foto profile berhasil diupdate",
     };
   } catch (error) {
-    console.error("Error uploading profile image:", error);
     return {
       status: false,
       statusCode: 500,
@@ -167,55 +160,69 @@ export async function uploadProfileImage(
 }
 
 // DELETE PROFILE IMAGE
+
 export async function deleteProfileImage(
   avatarUrl: string
 ): Promise<ServiceResponse> {
   try {
-    // Only delete if it's a profile image (starts with /profiles/)
-    if (!avatarUrl || !avatarUrl.startsWith("/profiles/")) {
-      return {
-        status: true,
-        statusCode: 200,
-        message: "Foto bukan dari upload profile, tidak perlu dihapus",
-      };
-    }
-
-    // Extract filename from URL
-    const fileName = avatarUrl.split("/profiles/")[1];
-    if (!fileName) {
+    if (!avatarUrl || avatarUrl === "") {
       return {
         status: false,
         statusCode: 400,
-        message: "URL foto tidak valid",
+        message: "Avatar URL tidak boleh kosong",
       };
     }
 
-    // Get file path
-    const filePath = join(process.cwd(), "public", "profiles", fileName);
+    // Check if it's a Supabase URL
+    if (avatarUrl.includes("supabase.co")) {
+      const { getSupabaseAdmin } = await import("@/lib/supabase/client");
+      const supabase = getSupabaseAdmin();
+      const bucketName = "IoTani_Bucket";
 
-    // Check if file exists
-    if (!existsSync(filePath)) {
+      const urlParts = avatarUrl.split("/IoTani_Bucket/");
+
+      if (urlParts.length >= 2) {
+        const filePath = urlParts[1];
+
+        // Delete from storage
+        const { error: deleteError } = await supabase.storage
+          .from(bucketName)
+          .remove([filePath]);
+
+        if (deleteError) {
+          return {
+            status: false,
+            statusCode: 500,
+            message: "Gagal menghapus file fisik di storage",
+            error: deleteError,
+          };
+        }
+      } else {
+        return {
+          status: false,
+          statusCode: 400,
+          message: "Format URL tidak valid",
+        };
+      }
+
       return {
         status: true,
         statusCode: 200,
-        message: "File sudah tidak ada",
+        message: "Foto profil berhasil dihapus",
       };
     }
 
-    // Delete file
-    await unlink(filePath);
-
+    // If it's not a Supabase URL, just return success
     return {
       status: true,
       statusCode: 200,
-      message: "Foto berhasil dihapus",
+      message: "Tidak ada foto Supabase yang perlu dihapus",
     };
   } catch (error) {
-    console.error("Error deleting profile image:", error);
     return {
       status: false,
       statusCode: 500,
-      message: "Gagal menghapus foto",
+      message: "Terjadi kesalahan internal",
       error,
     };
   }
@@ -241,10 +248,19 @@ export async function updateUserProfile(
     const userDoc = snapshot.docs[0];
     const docRef = doc(firestore, "auth", userDoc.id);
 
-    await updateDoc(docRef, {
-      ...data,
+    // Filter out undefined values to avoid Firestore errors
+    const updateData: Record<string, string | ReturnType<typeof serverTimestamp>> = {
       updatedAt: serverTimestamp(),
+    };
+    
+    Object.keys(data).forEach((key) => {
+      const value = data[key as keyof ProfileData];
+      if (value !== undefined) {
+        updateData[key] = value as string;
+      }
     });
+
+    await updateDoc(docRef, updateData);
 
     return {
       status: true,

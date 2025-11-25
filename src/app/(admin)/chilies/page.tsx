@@ -60,6 +60,9 @@ const ChiliesManagementPage = () => {
       const chiliesList: Chili[] = Array.isArray(result.data)
         ? result.data
         : [];
+      
+      // Debug: Log image URLs
+      
       setChilies(chiliesList);
       if (withToast) {
         toast.success("✅ Data cabai berhasil diperbarui");
@@ -441,12 +444,32 @@ const ChiliesManagementPage = () => {
               >
                 <div className="relative mb-4 aspect-video w-full overflow-hidden rounded-xl bg-neutral-100">
                   {chili.imageUrl ? (
-                    <Image
-                      src={chili.imageUrl}
-                      alt={chili.name}
-                      layout="fill"
-                      className="object-cover"
-                    />
+                    chili.imageUrl.includes('supabase.co') ? (
+                      // Use regular img tag for Supabase URLs
+                      <Image
+                        src={chili.imageUrl}
+                        alt={chili.name}
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                        onError={(e) => {
+                          // Show placeholder instead of hiding
+                          const target = e.currentTarget;
+                          target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23e5e7eb" width="400" height="300"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="16" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EGambar tidak dapat dimuat%3C/text%3E%3C/svg%3E';
+                          target.onerror = null; // Prevent infinite loop
+                        }}
+                      />
+                    ) : (
+                      // Use Next.js Image for local URLs
+                      <Image
+                        src={chili.imageUrl}
+                        alt={chili.name}
+                        layout="fill"
+                        className="object-cover"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    )
                   ) : (
                     <div className="flex h-full items-center justify-center">
                       <FaImage className="text-neutral-400" size={48} />

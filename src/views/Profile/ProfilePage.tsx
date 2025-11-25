@@ -132,8 +132,7 @@ const ProfilePage = () => {
           // If no profile data, use session fullName
           setFullName(sessionUser?.fullName || "");
         }
-      } catch (error) {
-        console.error("Error fetching profile:", error);
+      } catch {
         toast.error("Gagal memuat data profile");
       } finally {
         setIsFetching(false);
@@ -141,7 +140,7 @@ const ProfilePage = () => {
     };
 
     fetchProfile();
-  }, [sessionUser?.email]);
+  }, [sessionUser?.email, sessionUser?.fullName]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -196,7 +195,13 @@ const ProfilePage = () => {
 
     // Check if there's a photo to delete
     const currentAvatar = uploadPreview || formData.avatarUrl;
-    if (!currentAvatar || !currentAvatar.startsWith("/profiles/")) {
+    if (
+      !currentAvatar ||
+      currentAvatar === "" ||
+      (!currentAvatar.startsWith("/profiles/") &&
+        !currentAvatar.includes("supabase.co") &&
+        !currentAvatar.startsWith("blob:"))
+    ) {
       toast.info("Tidak ada foto untuk dihapus");
       return;
     }
@@ -226,7 +231,6 @@ const ProfilePage = () => {
 
       const deleteData = await deleteRes.json();
       if (!deleteRes.ok || !deleteData.status) {
-        console.warn("Warning deleting image:", deleteData.message);
         // Continue even if file deletion fails
       }
 
@@ -259,7 +263,6 @@ const ProfilePage = () => {
         throw new Error(updateData.message || "Gagal menghapus foto");
       }
     } catch (error) {
-      console.error("Error deleting photo:", error);
       toast.error(
         error instanceof Error ? error.message : "Gagal menghapus foto"
       );
@@ -282,7 +285,12 @@ const ProfilePage = () => {
       if (selectedFile) {
         // Delete old image if exists
         const oldAvatar = profileData.avatarUrl;
-        if (oldAvatar && oldAvatar.startsWith("/profiles/")) {
+        if (
+          oldAvatar &&
+          oldAvatar !== "" &&
+          (oldAvatar.startsWith("/profiles/") ||
+            oldAvatar.includes("supabase.co"))
+        ) {
           try {
             await fetch(
               `/api/profile/delete-image?avatarUrl=${encodeURIComponent(
@@ -290,15 +298,14 @@ const ProfilePage = () => {
               )}`,
               { method: "DELETE" }
             );
-          } catch (error) {
+          } catch {
             // Ignore deletion errors
-            console.warn("Error deleting old image:", error);
           }
         }
 
         const uploadFormData = new FormData();
         uploadFormData.append("file", selectedFile);
-        uploadFormData.append("userId", session.user.email);
+        uploadFormData.append("email", session.user.email);
 
         const uploadRes = await fetch("/api/profile/upload", {
           method: "POST",
@@ -319,6 +326,7 @@ const ProfilePage = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: session.user.email,
+          fullName: fullName,
           phone: formData.phone,
           location: formData.location,
           bio: formData.bio,
@@ -343,7 +351,6 @@ const ProfilePage = () => {
         throw new Error(updateData.message || "Gagal memperbarui profile");
       }
     } catch (error) {
-      console.error("Error saving profile:", error);
       toast.error(
         error instanceof Error ? error.message : "Gagal menyimpan profile"
       );
@@ -457,9 +464,14 @@ const ProfilePage = () => {
                       {(() => {
                         const avatarSrc =
                           uploadPreview || profileData.avatarUrl;
+                        // Check if there's a custom avatar (either preview, local path, or Supabase URL)
                         const hasCustomAvatar =
                           avatarSrc &&
-                          avatarSrc.startsWith("/profiles/") &&
+                          avatarSrc !== "" &&
+                          (avatarSrc.startsWith("/profiles/") ||
+                            avatarSrc.includes("supabase.co") ||
+                            avatarSrc.startsWith("blob:") ||
+                            avatarSrc.startsWith("http")) &&
                           !imageError;
                         const displayName = isEditing
                           ? fullName || sessionUser?.fullName || ""
@@ -468,6 +480,20 @@ const ProfilePage = () => {
                         const color = getAvatarColor(displayName);
 
                         if (hasCustomAvatar) {
+                          // Use Next.js Image for uploaded photos (Supabase URLs)
+                          // For blob URLs (preview), use regular img tag
+                          if (avatarSrc.startsWith("blob:")) {
+                            return (
+                              <Image
+                                src={avatarSrc}
+                                alt="Profile Preview"
+                                className="h-full w-full object-cover"
+                                onError={() => {
+                                  setImageError(true);
+                                }}
+                              />
+                            );
+                          }
                           // Use Next.js Image for uploaded photos
                           return (
                             <>
@@ -504,7 +530,7 @@ const ProfilePage = () => {
                         }
                       })()}
                       {isEditing && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity hover:opacity-100">
+                        <div className="flex absolute inset-0 items-center justify-center bg-black/50 transition-opacity md:opacity-0 md:hover:opacity-100">
                           <span className="text-sm font-medium text-white">
                             Ubah Foto
                           </span>
@@ -516,7 +542,11 @@ const ProfilePage = () => {
                     (() => {
                       const currentAvatar = uploadPreview || formData.avatarUrl;
                       const hasUploadedPhoto =
-                        currentAvatar && currentAvatar.startsWith("/profiles/");
+                        currentAvatar &&
+                        currentAvatar !== "" &&
+                        (currentAvatar.startsWith("/profiles/") ||
+                          currentAvatar.includes("supabase.co") ||
+                          currentAvatar.startsWith("blob:"));
                       return hasUploadedPhoto ? (
                         <motion.button
                           onClick={handleDeletePhotoClick}

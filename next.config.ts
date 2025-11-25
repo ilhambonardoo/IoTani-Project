@@ -5,18 +5,20 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "urrwaycwwgdaihnpyocz.supabase.co",
+        hostname: process.env.NEXT_PUBLIC_SUPABASE_URL || "*.supabase.co",
+        pathname: "/storage/v1/object/public/**",
       },
     ],
+    unoptimized: false,
   },
   // Exclude ml-service directory and Python files from build
   webpack: (config, { isServer }) => {
     // Ignore Python files
     config.module.rules.push({
       test: /\.py$/,
-      use: 'ignore-loader',
+      use: "ignore-loader",
     });
-    
+
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
@@ -28,11 +30,11 @@ const nextConfig: NextConfig = {
     return config;
   },
   // Only process TypeScript and JavaScript files
-  pageExtensions: ['ts', 'tsx', 'js', 'jsx'],
+  pageExtensions: ["ts", "tsx", "js", "jsx"],
   // Optimize build output
-  output: 'standalone',
+  output: "standalone",
   // Exclude ml-service from build
-  distDir: '.next',
+  distDir: ".next",
 };
 
 export default nextConfig;

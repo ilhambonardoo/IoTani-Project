@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import { join } from "path";
-import { existsSync } from "fs";
+import { getSupabaseAdmin } from "@/lib/supabase/client";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File;
-    const folder = formData.get("folder") as string || "chilies";
+    const folder = (formData.get("folder") as string) || "chilies";
 
     if (!file) {
       return NextResponse.json(
@@ -41,23 +39,61 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    // Initialize Supabase client (using admin for server-side upload)
+    const supabase = getSupabaseAdmin();
 
     // Generate unique filename
     const timestamp = Date.now();
-    const filename = `${timestamp}-${file.name}`;
-    const uploadDir = join(process.cwd(), "public", folder);
+    const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+    const filename = `${timestamp}-${sanitizedFileName}`;
+    const filePath = `${folder}/${filename}`;
 
-    // Create directory if it doesn't exist
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
+    // Convert File to ArrayBuffer
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    // Upload to Supabase Storage
+    // Bucket name should match the folder or use a default bucket
+    const bucketName = "IoTani_Bucket";
+
+    const { error: uploadError } = await supabase.storage
+      .from(bucketName)
+      .upload(filePath, buffer, {
+        contentType: file.type,
+        upsert: false, // Don't overwrite existing files
+      });
+
+    if (uploadError) {
+      // More detailed error message
+      let errorMessage = "Gagal mengupload file ke storage";
+      if (uploadError.message?.includes("Bucket not found")) {
+        errorMessage = `Bucket "${bucketName}" tidak ditemukan. Pastikan bucket sudah dibuat di Supabase Dashboard → Storage dan policy sudah di-set.`;
+      } else if (
+        uploadError.message?.includes("new row violates row-level security")
+      ) {
+        errorMessage =
+          "Akses ditolak. Pastikan bucket policy mengizinkan upload. Gunakan Service Role Key untuk server-side upload.";
+      }
+
+      return NextResponse.json(
+        {
+          status: false,
+          message: errorMessage,
+          error: uploadError.message,
+          bucketName: bucketName,
+        },
+        { status: 500 }
+      );
     }
 
-    const filepath = join(uploadDir, filename);
-    await writeFile(filepath, buffer);
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from(bucketName)
+      .getPublicUrl(filePath);
 
-    const url = `/${folder}/${filename}`;
+    const url = urlData.publicUrl;
+
+    // Debug: Log the uploaded URL
 
     return NextResponse.json(
       {
@@ -67,8 +103,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       },
       { status: 200 }
     );
-  } catch (error) {
-    console.error("Error di API POST upload chili image:", error);
+  } catch {
     return NextResponse.json(
       {
         status: false,
@@ -78,4 +113,3 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     );
   }
 }
-

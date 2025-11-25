@@ -5,6 +5,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   getFirestore,
   orderBy,
@@ -319,8 +320,7 @@ export async function checkEmailExists(email: string): Promise<boolean> {
 
     const snapshot = await getDocs(q);
     return snapshot.docs.length > 0;
-  } catch (error) {
-    console.error("Error checking email:", error);
+  } catch {
     return false;
   }
 }
@@ -348,7 +348,6 @@ export async function saveResetToken(
       message: "Reset token saved successfully",
     };
   } catch (error) {
-    console.error("Error saving reset token:", error);
     return {
       status: false,
       statusCode: 500,
@@ -403,7 +402,6 @@ export async function verifyResetToken(token: string): Promise<
       },
     };
   } catch (error) {
-    console.error("Error verifying reset token:", error);
     return {
       status: false,
       statusCode: 500,
@@ -428,7 +426,6 @@ export async function markTokenAsUsed(
       message: "Token marked as used",
     };
   } catch (error) {
-    console.error("Error marking token as used:", error);
     return {
       status: false,
       statusCode: 500,
@@ -473,7 +470,6 @@ export async function updatePasswordByEmail(
       message: "Password berhasil diupdate",
     };
   } catch (error) {
-    console.error("Error updating password:", error);
     return {
       status: false,
       statusCode: 500,
@@ -651,7 +647,53 @@ export async function updateChili(
   data: Partial<ChiliPayload>
 ): Promise<ServiceResponse> {
   try {
+    // Get current chili data to check for old image
     const docRef = doc(firestore, "chilies", id);
+    const chiliDoc = await getDoc(docRef);
+
+    if (!chiliDoc.exists()) {
+      return {
+        status: false,
+        statusCode: 404,
+        message: "Cabai tidak ditemukan",
+      };
+    }
+
+    const currentData = chiliDoc.data();
+    const oldImageUrl = currentData.imageUrl;
+    const newImageUrl = data.imageUrl;
+
+    // Delete old image from Supabase Storage if image is being updated
+    if (
+      oldImageUrl &&
+      newImageUrl &&
+      oldImageUrl !== newImageUrl &&
+      oldImageUrl.includes("supabase.co")
+    ) {
+      try {
+        const { getSupabaseAdmin } = await import("@/lib/supabase/client");
+        const supabase = getSupabaseAdmin();
+        const bucketName = "IoTani_Bucket";
+
+        // Extract file path from old URL
+        // URL format: https://xxx.supabase.co/storage/v1/object/public/IoTani_Bucket/chilies/filename
+        const urlParts = oldImageUrl.split("/IoTani_Bucket/");
+        if (urlParts.length >= 2) {
+          const filePath = urlParts[1];
+          const { error: deleteError } = await supabase.storage
+            .from(bucketName)
+            .remove([filePath]);
+
+          if (deleteError) {
+            // Continue with update even if image deletion fails
+          }
+        }
+      } catch {
+        // Continue with update even if image deletion fails
+      }
+    }
+
+    // Update document in Firestore
     await updateDoc(docRef, {
       ...data,
       updatedAt: serverTimestamp(),
@@ -674,7 +716,46 @@ export async function updateChili(
 
 export async function deleteChili(id: string): Promise<ServiceResponse> {
   try {
+    // Get chili data first to delete image from storage
     const docRef = doc(firestore, "chilies", id);
+    const chiliDoc = await getDoc(docRef);
+
+    if (!chiliDoc.exists()) {
+      return {
+        status: false,
+        statusCode: 404,
+        message: "Cabai tidak ditemukan",
+      };
+    }
+
+    const chiliData = chiliDoc.data();
+    const imageUrl = chiliData.imageUrl;
+
+    // Delete image from Supabase Storage if exists
+    if (imageUrl && imageUrl.includes("supabase.co")) {
+      try {
+        const { getSupabaseAdmin } = await import("@/lib/supabase/client");
+        const supabase = getSupabaseAdmin();
+        const bucketName = "IoTani_Bucket";
+
+        // Extract file path from URL
+        const urlParts = imageUrl.split("/IoTani_Bucket/");
+        if (urlParts.length >= 2) {
+          const filePath = urlParts[1];
+          const { error: deleteError } = await supabase.storage
+            .from(bucketName)
+            .remove([filePath]);
+
+          if (deleteError) {
+            // Continue even if image deletion fails
+          }
+        }
+      } catch {
+        // Continue even if image deletion fails
+      }
+    }
+
+    // Delete document from Firestore
     await deleteDoc(docRef);
 
     return {
