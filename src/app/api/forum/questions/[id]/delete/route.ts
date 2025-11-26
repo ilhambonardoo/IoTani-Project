@@ -19,8 +19,7 @@ export async function DELETE(
       { status: res.status, message: res.message },
       { status: res.statusCode }
     );
-  } catch (error) {
-    console.error("Error di API DELETE question:", error);
+  } catch {
     return NextResponse.json(
       { status: false, message: "Terjadi kesalahan pada server" },
       { status: 500 }

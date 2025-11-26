@@ -110,8 +110,7 @@ const ExportPage = () => {
         downloadPDF(filteredData, dataType);
         toast.success("✅ Data berhasil diexport ke PDF");
       }
-    } catch (error) {
-      console.error("Export error:", error);
+    } catch {
       toast.error("❌ Gagal mengexport data");
     }
   };

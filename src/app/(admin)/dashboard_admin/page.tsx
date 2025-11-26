@@ -52,8 +52,7 @@ const DashboardAdmin = () => {
             pendingMessages: statsData.data.pendingMessages,
           }));
         }
-      } catch (error) {
-        console.error("Error fetching stats:", error);
+      } catch {
       } finally {
         setIsLoadingStats(false);
       }
@@ -74,8 +73,7 @@ const DashboardAdmin = () => {
             .slice(0, 5);
           setRecentMessages(sortedMessages);
         }
-      } catch (error) {
-        console.error("Error fetching messages:", error);
+      } catch {
       } finally {
         setIsLoadingMessages(false);
       }

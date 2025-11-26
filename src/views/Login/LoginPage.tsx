@@ -66,8 +66,7 @@ const Login = ({
       let userData: LoginUserData | null;
       try {
         userData = await login({ email }) as LoginUserData | null;
-      } catch (error) {
-        console.error("Error fetching user data:", error);
+      } catch {
         setError(
           "Terjadi kesalahan saat memverifikasi akun. Silakan coba lagi."
         );
@@ -153,8 +152,7 @@ const Login = ({
           setIsLoading(false);
         }
       }
-    } catch (error) {
-      console.log("Login failed:", error);
+    } catch {
       setError("Terjadi kesalahan saat login. Silakan coba lagi.");
       setIsLoading(false);
     }

@@ -56,8 +56,7 @@ const ForgotPassword = () => {
       } else {
         setError(data.message || "Terjadi kesalahan. Silakan coba lagi.");
       }
-    } catch (err) {
-      console.error("Forgot password error:", err);
+    } catch {
       setError("Terjadi kesalahan. Silakan coba lagi.");
     } finally {
       setIsLoading(false);

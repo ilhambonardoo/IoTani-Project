@@ -82,9 +82,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Mark token as used (don't wait for this, but try to do it)
     try {
       await markTokenAsUsed(tokenDocId);
-    } catch (markError) {
-      // Log error but don't fail the request
-      console.error("Error marking token as used:", markError);
+    } catch {
+      // Don't fail the request if marking token as used fails
     }
 
     return NextResponse.json(
@@ -94,8 +93,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       },
       { status: 200 }
     );
-  } catch (error) {
-    console.error("Error in reset-password API:", error);
+  } catch {
     return NextResponse.json(
       {
         status: false,

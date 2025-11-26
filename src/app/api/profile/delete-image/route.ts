@@ -24,8 +24,7 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
       },
       { status: res.statusCode }
     );
-  } catch (error) {
-    console.error("Error di API DELETE profile image:", error);
+  } catch {
     return NextResponse.json(
       {
         status: false,

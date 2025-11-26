@@ -1,5 +1,5 @@
 import { checkEmailExists, saveResetToken } from "@/lib/firebase/service";
-import { sendResetPasswordEmail } from "@/lib/email/service";
+import { sendResetPasswordEmail } from "@/lib/email/service-email";
 import { NextRequest, NextResponse } from "next/server";
 import { randomBytes } from "crypto";
 
@@ -34,14 +34,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         // Send reset password email
         try {
           await sendResetPasswordEmail(email, resetToken);
-        } catch (emailError) {
-          // Log error but don't expose to user for security
-          console.error("Error sending reset password email:", emailError);
+        } catch {
           // Continue anyway - we still want to return success message
         }
-      } catch (tokenError) {
-        // Log error but don't expose to user for security
-        console.error("Error saving reset token:", tokenError);
+      } catch {
         // Continue anyway - we still want to return success message
       }
     }
@@ -56,8 +52,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       },
       { status: 200 }
     );
-  } catch (error) {
-    console.error("Error in forgot-password API:", error);
+  } catch {
     return NextResponse.json(
       {
         status: false,
@@ -67,4 +62,3 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     );
   }
 }
-

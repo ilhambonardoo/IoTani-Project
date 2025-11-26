@@ -51,10 +51,8 @@ const Register = ({
         const data = await res.json().catch(() => null);
         setError((data && data.message) || "Email sudah terdaftar!");
         form.reset();
-        console.log(res, data);
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       setError("Terjadi kesalahan. Silakan coba lagi.");
     } finally {
       setIsLoading(false);

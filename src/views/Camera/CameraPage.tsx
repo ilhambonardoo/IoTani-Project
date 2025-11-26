@@ -69,7 +69,6 @@ async function analyzeImage(file: File): Promise<MLAnalysisResult> {
   form.append("file", file);
 
   try {
-    console.log("Mengirim request ke:", `${base}/analyze`);
 
     const res = await fetch(`${base}/analyze`, {
       method: "POST",
@@ -77,13 +76,11 @@ async function analyzeImage(file: File): Promise<MLAnalysisResult> {
       // Jangan set Content-Type header - browser akan otomatis set boundary untuk FormData
     });
 
-    console.log("Response status:", res.status, res.statusText);
 
     if (!res.ok) {
       const errorData = await res
         .json()
         .catch(() => ({ detail: res.statusText }));
-      console.error("Error response:", errorData);
       throw new Error(
         errorData.detail ||
           `Gagal terhubung ke server ML (Status: ${res.status})`
@@ -91,10 +88,8 @@ async function analyzeImage(file: File): Promise<MLAnalysisResult> {
     }
 
     const data = await res.json();
-    console.log("Response data:", data);
     return data as MLAnalysisResult;
   } catch (error) {
-    console.error("Fetch error:", error);
 
     // Handle network errors lebih spesifik
     const errorMessage = error instanceof Error ? error.message : String(error);
@@ -211,7 +206,6 @@ const CameraPage = () => {
       const result = await analyzeImage(file);
       setMlResult(result);
     } catch (err) {
-      console.error("Analysis error:", err);
       const errorMessage =
         err instanceof Error
           ? err.message

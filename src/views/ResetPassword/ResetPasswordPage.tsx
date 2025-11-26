@@ -94,8 +94,7 @@ const ResetPassword = () => {
           setTokenValid(false);
         }
       }
-    } catch (err) {
-      console.error("Reset password error:", err);
+    } catch {
       setError("Terjadi kesalahan. Silakan coba lagi.");
     } finally {
       setIsLoading(false);

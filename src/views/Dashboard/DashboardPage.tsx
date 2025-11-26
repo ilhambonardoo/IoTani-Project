@@ -178,8 +178,7 @@ const DashboardPage = () => {
       if (res.ok && data.status) {
         setTemplates(data.data || []);
       }
-    } catch (err) {
-      console.error("Error fetching templates:", err);
+    } catch {
     } finally {
       setIsLoadingTemplates(false);
     }

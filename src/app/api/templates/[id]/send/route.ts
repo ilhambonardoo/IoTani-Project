@@ -37,8 +37,7 @@ export async function POST(
       { status: res.status, message: res.message, data: res.data },
       { status: res.statusCode }
     );
-  } catch (error) {
-    console.error("Error di API POST send template:", error);
+  } catch {
     return NextResponse.json(
       { status: false, message: "Terjadi kesalahan pada server" },
       { status: 500 }

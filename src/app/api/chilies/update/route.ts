@@ -41,8 +41,7 @@ export async function PUT(request: NextRequest) {
       },
       { status: res.statusCode }
     );
-  } catch (error) {
-    console.error("Error di API route UPDATE CHILI: ", error);
+  } catch {
     return NextResponse.json(
       {
         status: false,

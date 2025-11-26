@@ -13,8 +13,7 @@ export async function GET(): Promise<NextResponse> {
       { status: res.status, message: res.message, data: res.data },
       { status: res.statusCode }
     );
-  } catch (error) {
-    console.error("Error di API GET templates:", error);
+  } catch {
     return NextResponse.json(
       { status: false, message: "Terjadi kesalahan pada server" },
       { status: 500 }
@@ -47,8 +46,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       { status: res.status, message: res.message, data: res.data },
       { status: res.statusCode }
     );
-  } catch (error) {
-    console.error("Error di API POST template:", error);
+  } catch {
     return NextResponse.json(
       { status: false, message: "Terjadi kesalahan pada server" },
       { status: 500 }
@@ -78,8 +76,7 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
       { status: res.status, message: res.message },
       { status: res.statusCode }
     );
-  } catch (error) {
-    console.error("Error di API PUT template:", error);
+  } catch {
     return NextResponse.json(
       { status: false, message: "Terjadi kesalahan pada server" },
       { status: 500 }
@@ -104,8 +101,7 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
       { status: res.status, message: res.message },
       { status: res.statusCode }
     );
-  } catch (error) {
-    console.error("Error di API DELETE template:", error);
+  } catch {
     return NextResponse.json(
       { status: false, message: "Terjadi kesalahan pada server" },
       { status: 500 }

@@ -28,8 +28,7 @@ const EducationSection = () => {
         if (response.ok && result.status && result.data) {
           setChilies(Array.isArray(result.data) ? result.data : []);
         }
-      } catch (error) {
-        console.error("Error fetching chilies:", error);
+      } catch {
       } finally {
         setIsLoading(false);
       }
@@ -89,13 +88,16 @@ const EducationSection = () => {
                         alt={chili.name}
                         fill
                         className="object-cover"
+                        unoptimized={chili.imageUrl.includes('supabase.co')}
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
                       />
                     ) : (
                       <div className="absolute inset-0 grid place-items-center">
                         <LuImage className="h-8 w-8 text-cyan-300/40" />
                       </div>
                     )}
-                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-cyan-300/0 via-cyan-300/0 to-cyan-300/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                   </div>
 
                   <h3 className="text-lg font-semibold text-white">{chili.name}</h3>
@@ -110,6 +112,7 @@ const EducationSection = () => {
             </div>
           )}
         </div>
+        
       </section>
 
       {/* Modal Detail Cabai */}
@@ -145,11 +148,16 @@ const EducationSection = () => {
                     alt={selectedChili.name}
                     fill
                     className="object-cover"
+                    unoptimized={selectedChili.imageUrl.includes('supabase.co')}
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center">
                     <LuImage className="text-neutral-400" size={64} />
                   </div>
+
                 )}
               </div>
 

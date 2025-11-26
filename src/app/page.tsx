@@ -5,6 +5,8 @@ import FeatureSection from "@/views/LandingPage/FeatureSection";
 import HeroSection from "@/views/LandingPage/HeroSection";
 import Chatbot from "@/views/LandingPage/Chatbot";
 import EducationSection from "@/views/LandingPage/EducationSection";
+import AnimationRobot from "@/views/LandingPage/AnimationRobot";
+import RobotViewer from "@/views/LandingPage/RobotDetail";
 
 export default function Home() {
   return (
@@ -12,6 +14,8 @@ export default function Home() {
       <HeroSection />
       <EducationSection />
       <FeatureSection />
+      <RobotViewer />
+      <AnimationRobot />
       <CtaSection />
       <Chatbot />
     </main>

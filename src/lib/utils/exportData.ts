@@ -187,8 +187,7 @@ export const downloadPDF = async (data: ExportData[], dataType: string) => {
     };
 
     html2pdf().set(opt).from(element).save();
-  } catch (error) {
-    console.error("Error generating PDF:", error);
+  } catch {
     // Fallback: buka di window baru
     const pdfContent = generatePDFContent(data, dataType);
     const printWindow = window.open("", "_blank");
