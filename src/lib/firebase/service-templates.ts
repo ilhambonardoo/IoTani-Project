@@ -285,9 +285,8 @@ export async function sendTemplateToUsers(
           templateId: templateId,
         });
         sentCount++;
-      } catch (err) {
+      } catch {
         failedCount++;
-        console.error(`Failed to send template to ${user.email}:`, err);
       }
     }
 

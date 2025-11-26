@@ -2,16 +2,16 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { 
-  LuMail, 
-  LuPhone, 
-  LuMapPin, 
-  LuFacebook, 
-  LuTwitter, 
-  LuInstagram, 
+import {
+  LuMail,
+  LuPhone,
+  LuMapPin,
+  LuFacebook,
+  LuTwitter,
+  LuInstagram,
   LuLinkedin,
   LuLeaf,
-  LuArrowRight
+  LuArrowRight,
 } from "react-icons/lu";
 
 const Footer = () => {
@@ -24,22 +24,17 @@ const Footer = () => {
   const footerLinks = {
     platform: [
       { name: "Dashboard", href: "/dashboard" },
-      { name: "Tentang Kami", href: "/about" },
-      { name: "Fitur", href: "/#features" },
-      { name: "Panduan", href: "/about" },
+      { name: "Grafik", href: "/data" },
+      { name: "Camera", href: "/camera" },
+      { name: "Forum Edukasai", href: "/forumEdukasi" },
     ],
-    resources: [
-      { name: "Dokumentasi", href: "/about" },
-      { name: "Blog", href: "/about" },
-      { name: "Forum", href: "/forum" },
-      { name: "Kontak", href: "/about" },
-    ],
+
   };
 
   const socialLinks = [
-    { name: "Facebook", icon: LuFacebook, href: "#" },
+    { name: "Facebook", icon: LuFacebook, href: "" },
     { name: "Twitter", icon: LuTwitter, href: "#" },
-    { name: "Instagram", icon: LuInstagram, href: "#" },
+    { name: "Instagram", icon: LuInstagram, href: "https://www.instagram.com/tekomipb/",  },
     { name: "LinkedIn", icon: LuLinkedin, href: "#" },
   ];
 
@@ -59,7 +54,8 @@ const Footer = () => {
               </h3>
             </div>
             <p className="text-neutral-600 mb-4 leading-relaxed">
-              Platform IoT untuk pertanian modern dengan monitoring, otomatisasi, dan AI untuk hasil panen optimal.
+              Platform IoT untuk pertanian modern dengan monitoring,
+              otomatisasi, dan AI untuk hasil panen optimal.
             </p>
             <div className="flex flex-col gap-2 text-sm text-neutral-600">
               <div className="flex items-center gap-2">
@@ -89,9 +85,9 @@ const Footer = () => {
                     href={link.href}
                     className="flex items-center gap-2 text-neutral-600 hover:text-green-600 transition-colors duration-200 group"
                   >
-                    <LuArrowRight 
-                      size={16} 
-                      className="opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" 
+                    <LuArrowRight
+                      size={16}
+                      className="opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200"
                     />
                     <span>{link.name}</span>
                   </Link>
@@ -100,28 +96,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Resources Links */}
-          <div>
-            <h4 className="text-lg font-semibold text-neutral-800 mb-4">
-              Resources
-            </h4>
-            <ul className="space-y-3">
-              {footerLinks.resources.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="flex items-center gap-2 text-neutral-600 hover:text-green-600 transition-colors duration-200 group"
-                  >
-                    <LuArrowRight 
-                      size={16} 
-                      className="opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" 
-                    />
-                    <span>{link.name}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+
 
           {/* Newsletter & Social */}
           <div>
@@ -129,7 +104,8 @@ const Footer = () => {
               Tetap Terhubung
             </h4>
             <p className="text-neutral-600 text-sm mb-4">
-              Ikuti kami untuk mendapatkan update terbaru tentang teknologi pertanian.
+              Ikuti kami untuk mendapatkan update terbaru tentang teknologi
+              pertanian.
             </p>
             <div className="flex gap-3 mb-6">
               {socialLinks.map((social) => {
@@ -140,6 +116,7 @@ const Footer = () => {
                     href={social.href}
                     aria-label={social.name}
                     className="flex h-10 w-10 items-center justify-center rounded-full bg-white border border-neutral-200 text-neutral-600 hover:bg-green-600 hover:text-white hover:border-green-600 transition-all duration-300 shadow-sm hover:shadow-md hover:scale-110"
+                    target="_blank"
                   >
                     <Icon size={20} />
                   </a>
@@ -153,7 +130,9 @@ const Footer = () => {
         <div className="border-t border-green-200/50 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-neutral-600 text-center md:text-left">
-              &copy; {year ?? "2024"} <span className="font-semibold text-green-600">IoTani</span>. Semua Hak Cipta Dilindungi.
+              &copy; {year ?? "2024"}{" "}
+              <span className="font-semibold text-green-600">IoTani</span>.
+              Semua Hak Cipta Dilindungi.
             </p>
             <div className="flex flex-wrap justify-center gap-6 text-sm text-neutral-600">
               <Link

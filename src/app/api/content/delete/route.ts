@@ -17,8 +17,7 @@ export async function DELETE(request: NextRequest) {
       { status: res.status, message: res.message },
       { status: res.statusCode }
     );
-  } catch (error) {
-    console.error("Error di API route DELETE: ", error);
+  } catch {
     return NextResponse.json(
       {
         status: false,

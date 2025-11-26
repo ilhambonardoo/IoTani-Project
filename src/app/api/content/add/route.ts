@@ -25,8 +25,7 @@ export async function POST(request: NextRequest) {
       },
       { status: res.statusCode }
     );
-  } catch (error) {
-    console.error("Error di API route ADD: ", error);
+  } catch {
     return NextResponse.json(
       {
         status: false,

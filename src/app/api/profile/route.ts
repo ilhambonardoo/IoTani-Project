@@ -25,8 +25,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
       { status: res.statusCode }
     );
-  } catch (error) {
-    console.error("Error di API GET profile:", error);
+  } catch {
     return NextResponse.json(
       {
         status: false,
@@ -52,14 +51,16 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const res = await updateUserProfile(email, {
-      fullName,
-      phone,
-      location,
-      bio,
-      avatarUrl,
-      instagram,
-    });
+    // Filter out undefined values to avoid Firestore errors
+    const updateData: Record<string, string> = {};
+    if (fullName !== undefined) updateData.fullName = fullName;
+    if (phone !== undefined) updateData.phone = phone;
+    if (location !== undefined) updateData.location = location;
+    if (bio !== undefined) updateData.bio = bio;
+    if (avatarUrl !== undefined) updateData.avatarUrl = avatarUrl;
+    if (instagram !== undefined) updateData.instagram = instagram;
+
+    const res = await updateUserProfile(email, updateData);
 
     return NextResponse.json(
       {
@@ -68,8 +69,7 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
       },
       { status: res.statusCode }
     );
-  } catch (error) {
-    console.error("Error di API PUT profile:", error);
+  } catch {
     return NextResponse.json(
       {
         status: false,

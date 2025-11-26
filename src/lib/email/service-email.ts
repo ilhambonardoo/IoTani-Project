@@ -26,7 +26,6 @@ const createTransporter = () => {
 export async function sendEmail({ to, subject, html }: EmailConfig) {
   try {
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
-      console.error("Email configuration is missing");
       throw new Error("Email service is not configured");
     }
 
@@ -40,10 +39,8 @@ export async function sendEmail({ to, subject, html }: EmailConfig) {
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log("Email sent successfully:", info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error("Error sending email:", error);
     throw error;
   }
 }

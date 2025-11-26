@@ -9,8 +9,7 @@ export async function GET() {
       { status: res.status, message: "Data berhasil diambil", data: res.data },
       { status: res.statusCode }
     );
-  } catch (e) {
-    console.error("Error di API route GET: ", e);
+  } catch {
     return NextResponse.json(
       { status: "error", message: "Terjadi kesalahan pada API" },
       { status: 500 }

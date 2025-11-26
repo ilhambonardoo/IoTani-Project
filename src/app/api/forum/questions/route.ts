@@ -18,8 +18,7 @@ export async function GET(request: NextRequest) {
       },
       { status: res.statusCode }
     );
-  } catch (error) {
-    console.error("Error di API GET questions: ", error);
+  } catch {
     return NextResponse.json(
       { status: false, message: "Terjadi kesalahan pada server" },
       { status: 500 }
@@ -66,8 +65,7 @@ export async function POST(request: NextRequest) {
       { status: res.status, message: res.message, data: res.data },
       { status: res.statusCode }
     );
-  } catch (error) {
-    console.error("Error di API POST questions: ", error);
+  } catch {
     return NextResponse.json(
       { status: false, message: "Terjadi kesalahan pada server" },
       { status: 500 }

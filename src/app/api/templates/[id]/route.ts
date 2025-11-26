@@ -39,8 +39,7 @@ export async function PUT(
       { status: res.status, message: res.message },
       { status: res.statusCode }
     );
-  } catch (error) {
-    console.error("Error di API PUT template:", error);
+  } catch {
     return NextResponse.json(
       { status: false, message: "Terjadi kesalahan pada server" },
       { status: 500 }
@@ -68,8 +67,7 @@ export async function DELETE(
       { status: res.status, message: res.message },
       { status: res.statusCode }
     );
-  } catch (error) {
-    console.error("Error di API DELETE template:", error);
+  } catch {
     return NextResponse.json(
       { status: false, message: "Terjadi kesalahan pada server" },
       { status: 500 }

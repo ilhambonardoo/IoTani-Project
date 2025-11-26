@@ -28,8 +28,7 @@ export async function PUT(request: NextRequest) {
       { status: res.status, message: res.message },
       { status: res.statusCode }
     );
-  } catch (error) {
-    console.error("Error di API route UPDATE: ", error);
+  } catch {
     return NextResponse.json(
       {
         status: false,
