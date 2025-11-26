@@ -100,14 +100,14 @@ const ProfilePage = () => {
   // Fetch profile data on mount
   useEffect(() => {
     const fetchProfile = async () => {
-      if (!session?.user?.email) {
+      if (!sessionUser?.email) {
         setIsFetching(false);
         return;
       }
 
       try {
         const res = await fetch(
-          `/api/profile?email=${encodeURIComponent(session.user.email)}`
+          `/api/profile?email=${encodeURIComponent(sessionUser.email)}`
         );
         const data = await res.json();
 
@@ -464,7 +464,6 @@ const ProfilePage = () => {
                       {(() => {
                         const avatarSrc =
                           uploadPreview || profileData.avatarUrl;
-                        // Check if there's a custom avatar (either preview, local path, or Supabase URL)
                         const hasCustomAvatar =
                           avatarSrc &&
                           avatarSrc !== "" &&
@@ -480,8 +479,6 @@ const ProfilePage = () => {
                         const color = getAvatarColor(displayName);
 
                         if (hasCustomAvatar) {
-                          // Use Next.js Image for uploaded photos (Supabase URLs)
-                          // For blob URLs (preview), use regular img tag
                           if (avatarSrc.startsWith("blob:")) {
                             return (
                               <Image
@@ -494,7 +491,6 @@ const ProfilePage = () => {
                               />
                             );
                           }
-                          // Use Next.js Image for uploaded photos
                           return (
                             <>
                               <Image
@@ -505,7 +501,6 @@ const ProfilePage = () => {
                                 className="h-full w-full object-cover"
                                 objectFit="cover"
                                 onError={() => {
-                                  // If image fails, show initials instead
                                   setImageError(true);
                                 }}
                               />
@@ -519,7 +514,6 @@ const ProfilePage = () => {
                             </>
                           );
                         } else {
-                          // Show initials for default avatar
                           return (
                             <div
                               className={`h-full w-full flex items-center justify-center bg-linear-to-br ${color} text-white text-5xl font-bold`}
