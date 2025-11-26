@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase/client";
 
+// Force dynamic rendering to prevent build-time analysis errors
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const formData = await request.formData();

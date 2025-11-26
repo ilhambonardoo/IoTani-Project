@@ -2,6 +2,10 @@ import { uploadProfileImage } from "@/lib/firebase/service-profile";
 import { getSupabaseAdmin } from "@/lib/supabase/client";
 import { NextRequest, NextResponse } from "next/server";
 
+// Force dynamic rendering to prevent build-time analysis errors
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const formData = await request.formData();
