@@ -1,34 +1,12 @@
-import { login, loginWithGoogle } from "@/lib/firebase/service";
+import { login, loginWithGoogle } from "@/lib/db/firebase/service";
 import { compare } from "bcrypt";
 import { NextAuthOptions, Session } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
+import type { LoginUserData, ExtendedToken, ExtendedSession } from "@/types";
 
-interface LoginUser {
-  id: string;
-  email: string;
-  password: string;
-  fullName?: string;
-  role?: string;
-  [key: string]: unknown;
-}
-
-interface ExtendedToken extends JWT {
-  email?: string | null;
-  fullName?: string;
-  role?: string;
-}
-
-interface ExtendedSession extends Session {
-  user: {
-    email?: string | null;
-    fullName?: string;
-    role?: string;
-    name?: string | null;
-    image?: string | null;
-  };
-}
+type LoginUser = LoginUserData;
 
 export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt" },
@@ -71,7 +49,7 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, account, user }) {
-      const extendedToken = token as ExtendedToken;
+      const extendedToken = token as JWT & ExtendedToken;
       if (account?.provider === "credentials" && user) {
         extendedToken.email = user.email ?? null;
         extendedToken.fullName = (user as LoginUser).fullName;
@@ -94,8 +72,8 @@ export const authOptions: NextAuthOptions = {
       return extendedToken;
     },
     async session({ session, token }) {
-      const extendedSession = session as ExtendedSession;
-      const extendedToken = token as ExtendedToken;
+      const extendedSession = session as Session & ExtendedSession;
+      const extendedToken = token as JWT & ExtendedToken;
       if (extendedSession.user) {
         if ("email" in extendedToken && extendedToken.email !== undefined) {
           extendedSession.user.email = extendedToken.email;
@@ -117,4 +95,3 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login",
   },
 };
-

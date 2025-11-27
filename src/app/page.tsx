@@ -1,12 +1,12 @@
 "use client";
 
-import CtaSection from "@/views/LandingPage/CtaSection";
-import FeatureSection from "@/views/LandingPage/FeatureSection";
-import HeroSection from "@/views/LandingPage/HeroSection";
-import Chatbot from "@/views/LandingPage/Chatbot";
-import EducationSection from "@/views/LandingPage/EducationSection";
-import AnimationRobot from "@/views/LandingPage/AnimationRobot";
-import RobotViewer from "@/views/LandingPage/RobotDetail";
+import CtaSection from "@/views/All/LandingPage/CtaSection";
+import FeatureSection from "@/views/All/LandingPage/FeatureSection";
+import HeroSection from "@/views/All/LandingPage/HeroSection";
+import Chatbot from "@/views/All/LandingPage/Chatbot";
+import EducationSection from "@/views/All/LandingPage/EducationSection";
+import AnimationRobot from "@/views/All/LandingPage/AnimationRobot";
+import RobotViewer from "@/views/All/LandingPage/RobotDetail";
 
 export default function Home() {
   return (

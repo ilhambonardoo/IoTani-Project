@@ -1,4 +1,4 @@
-import { getQuestionsByAuthorEmail } from "@/lib/firebase/service";
+import { getQuestionsByAuthorEmail } from "@/lib/db/firebase/service";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {

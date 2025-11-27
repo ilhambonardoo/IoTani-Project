@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import ResetPassword from "@/views/ResetPassword/ResetPasswordPage";
+import ResetPassword from "@/views/Auth/ResetPassword/ResetPasswordPage";
 
 const ResetPasswordPage = () => {
   return (
@@ -10,4 +10,3 @@ const ResetPasswordPage = () => {
 };
 
 export default ResetPasswordPage;
-

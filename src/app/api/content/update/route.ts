@@ -1,4 +1,4 @@
-import { updateContent } from "@/lib/firebase/service";
+import { updateContent } from "@/lib/db/firebase/service";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(request: NextRequest) {

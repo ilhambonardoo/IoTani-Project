@@ -1,4 +1,4 @@
-import { getChilies } from "@/lib/firebase/service";
+import { getChilies } from "@/lib/db/firebase/service";
 import { NextResponse } from "next/server";
 
 export async function GET() {

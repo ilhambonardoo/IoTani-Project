@@ -1,4 +1,4 @@
-import { updateTemplate, deleteTemplate } from "@/lib/firebase/service-templates";
+import { updateTemplate, deleteTemplate } from "@/lib/db/firebase/service-templates";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(

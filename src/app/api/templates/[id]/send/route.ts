@@ -1,4 +1,4 @@
-import { sendTemplateToUsers } from "@/lib/firebase/service-templates";
+import { sendTemplateToUsers } from "@/lib/db/firebase/service-templates";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(

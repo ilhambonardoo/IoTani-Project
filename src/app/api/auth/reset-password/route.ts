@@ -2,7 +2,7 @@ import {
   verifyResetToken,
   markTokenAsUsed,
   updatePasswordByEmail,
-} from "@/lib/firebase/service";
+} from "@/lib/db/firebase/service";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {

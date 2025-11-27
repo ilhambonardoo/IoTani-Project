@@ -1,4 +1,4 @@
-import { addContent } from "@/lib/firebase/service";
+import { addContent } from "@/lib/db/firebase/service";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
