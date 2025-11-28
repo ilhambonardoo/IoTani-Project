@@ -1,3 +1,3 @@
-import ChiliesMangement from "@/views/Admin/Content/ContentManagementPage";
+import ChiliesManagementPage from "@/views/Admin/Chilies/ChiliesManagementPage";
 
-export default ChiliesMangement;
+export default ChiliesManagementPage;
