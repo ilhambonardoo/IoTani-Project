@@ -1,6 +1,5 @@
 import type { MLAnalysisResult } from "@/types";
 
-// Fungsi helper untuk convert Base64 dari webcam ke File object
 export const dataURLtoFile = (dataurl: string, filename: string): File => {
   const arr = dataurl.split(",");
   // @ts-expect-error - match() can return null, but we know the pattern exists in dataURL
@@ -14,12 +13,10 @@ export const dataURLtoFile = (dataurl: string, filename: string): File => {
   return new File([u8arr], filename, { type: mime });
 };
 
-// Base URL untuk ML API
 export const getMLBaseURL = (): string => {
   return process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 };
 
-// Fungsi untuk test koneksi ke server
 export async function testServerConnection(): Promise<{
   connected: boolean;
   message: string;
@@ -48,7 +45,6 @@ export async function testServerConnection(): Promise<{
   }
 }
 
-// Fungsi untuk analisis gambar
 export async function analyzeImage(file: File): Promise<MLAnalysisResult> {
   const base = getMLBaseURL();
   const form = new FormData();
@@ -58,7 +54,6 @@ export async function analyzeImage(file: File): Promise<MLAnalysisResult> {
     const res = await fetch(`${base}/analyze`, {
       method: "POST",
       body: form,
-      // Jangan set Content-Type header - browser akan otomatis set boundary untuk FormData
     });
 
     if (!res.ok) {
@@ -74,7 +69,6 @@ export async function analyzeImage(file: File): Promise<MLAnalysisResult> {
     const data = await res.json();
     return data as MLAnalysisResult;
   } catch (error) {
-    // Handle network errors lebih spesifik
     const errorMessage = error instanceof Error ? error.message : String(error);
     if (
       errorMessage.includes("fetch") ||
@@ -89,4 +83,3 @@ export async function analyzeImage(file: File): Promise<MLAnalysisResult> {
     throw error;
   }
 }
-

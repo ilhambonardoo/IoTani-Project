@@ -118,12 +118,6 @@ const MessageChat = ({
                     {bubble.timestamp}
                   </div>
                 </div>
-
-                {bubble.sender === "user" && !bubble.replyId && (
-                  <p className="mt-1 text-right text-[10px] text-neutral-400">
-                    Pertanyaan Anda
-                  </p>
-                )}
               </div>
             </motion.div>
           ))

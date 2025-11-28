@@ -44,7 +44,7 @@ const MessageChat = ({
     <motion.div
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
-      className="w-3/4"
+      className="lg:w-full"
     >
       <div className="flex h-[600px] flex-col rounded-2xl bg-white shadow-lg lg:w-full">
         <div className="border-b border-neutral-200 p-4">
@@ -134,7 +134,7 @@ const MessageChat = ({
           )}
         </div>
 
-        <div className="border-t border-neutral-200 bg-white p-4">
+        <div className="border-t border-neutral-200 bg-white p-4 rounded-2xl">
           <div className="flex gap-3">
             <textarea
               value={replyText}

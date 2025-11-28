@@ -7,7 +7,7 @@ import { useAuth, useMessages, useConfirmModal } from "@/hooks";
 import AdminMessageHeader from "./AdminMessageHeader";
 import MessageSidebar from "./MessageSidebar";
 import MessageChat from "./MessageChat";
-import { ChatBubble } from "@/types";
+import { formatChatBubbles } from "@/lib/utils/formatHelper";
 
 const AdminMessagePage = () => {
   const { user: sessionUser } = useAuth();
@@ -113,31 +113,10 @@ const AdminMessagePage = () => {
     }
   };
 
-  const chatBubbles = useMemo(() => {
-    if (!selectedMessage) return [];
-    const bubbles: ChatBubble[] = [
-      {
-        id: `${selectedMessage.id}-question`,
-        sender: "admin",
-        content: selectedMessage.content,
-        timestamp: selectedMessage.createdAt,
-        senderLabel: selectedMessage.authorName || "Pengguna",
-      },
-    ];
-    selectedMessage.replies?.forEach((reply) => {
-      const isUserReply = reply.responderRole === "admin";
-
-      bubbles.push({
-        id: reply.id,
-        sender: isUserReply ? "admin" : "user",
-        content: reply.content,
-        timestamp: reply.createdAt,
-        senderLabel: reply.responderName || "admin",
-        replyId: reply.id,
-      });
-    });
-    return bubbles;
-  }, [selectedMessage]);
+  const chatBubbles = useMemo(
+    () => formatChatBubbles(selectedMessage),
+    [selectedMessage]
+  );
 
   return (
     <>

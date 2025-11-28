@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { IoIosHome } from "react-icons/io";
 import { BiBell, BiSolidLogOut } from "react-icons/bi";
 import { FaUser, FaCamera, FaEnvelope } from "react-icons/fa6";
-import { MdAdminPanelSettings, MdContentCopy, MdInbox } from "react-icons/md";
+import { MdAdminPanelSettings, MdContentCopy } from "react-icons/md";
 import { FaBook } from "react-icons/fa";
 import { HiOutlineChartBar } from "react-icons/hi";
 import { FaRobot, FaFileExport } from "react-icons/fa";
@@ -109,8 +109,8 @@ const Sidebar = ({
       },
       {
         href: "/owner-message",
-        icon: <MdInbox size={24} />,
-        label: "Inbox",
+        icon: <FaEnvelope size={24} />,
+        label: "Pesan",
         roles: ["owner"],
       },
       {

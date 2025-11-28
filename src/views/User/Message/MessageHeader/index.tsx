@@ -24,7 +24,7 @@ const MessageHeader = ({ onCreateQuestion }: MessageChatProps) => {
       </div>
       <button
         onClick={onCreateQuestion}
-        className="flex items-center justify-center gap-2 rounded-xl bg-green-600 p-2 cursor-pointer text-sm font-semibold text-white shadow-lg shadow-green-600/20 transition-all hover:bg-green-700 hover:shadow-green-600/30 active:scale-[0.98]"
+        className="flex items-center justify-center gap-2 rounded-xl bg-green-600 p-2 mt-2 cursor-pointer text-sm font-semibold text-white shadow-lg shadow-green-600/20 transition-all hover:bg-green-700 hover:shadow-green-600/30 active:scale-[0.98] w-full lg:w-1/3"
       >
         <FaPaperPlane />
         Buat Pertanyaan Baru

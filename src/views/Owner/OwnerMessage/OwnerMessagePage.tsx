@@ -7,6 +7,7 @@ import { useAuth, useMessages, useConfirmModal } from "@/hooks";
 import OwnerMessageHeader from "./OwnerMessageHeader";
 import MessageSidebar from "./MessageSidebar";
 import MessageChat from "./MessageChat";
+import { formatChatBubbles } from "@/lib/utils/formatHelper";
 
 const OwnerMessagePage = () => {
   const { user: sessionUser } = useAuth();
@@ -32,8 +33,8 @@ const OwnerMessagePage = () => {
   const deleteConfirmModal = useConfirmModal();
 
   const responderName =
-    sessionUser?.fullName || sessionUser?.name || sessionUser?.email || "Owner";
-  const responderRole = "Owner";
+    sessionUser?.fullName || sessionUser?.name || sessionUser?.email || "owner";
+  const responderRole = "owner";
 
   const handleReply = async () => {
     if (!selectedMessage) {
@@ -107,36 +108,10 @@ const OwnerMessagePage = () => {
     }
   };
 
-  const chatBubbles = useMemo(() => {
-    if (!selectedMessage) return [];
-    const bubbles: Array<{
-      id: string;
-      sender: "user" | "owner";
-      content: string;
-      timestamp: string;
-      senderLabel: string;
-      replyId?: string;
-    }> = [
-      {
-        id: `${selectedMessage.id}-question`,
-        sender: "user",
-        content: selectedMessage.content,
-        timestamp: selectedMessage.createdAt,
-        senderLabel: selectedMessage.authorName || "Pengguna",
-      },
-    ];
-    selectedMessage.replies?.forEach((reply) => {
-      bubbles.push({
-        id: reply.id,
-        sender: "owner",
-        content: reply.content,
-        timestamp: reply.createdAt,
-        senderLabel: reply.responderName || "Owner",
-        replyId: reply.id,
-      });
-    });
-    return bubbles;
-  }, [selectedMessage]);
+  const chatBubbles = useMemo(
+    () => formatChatBubbles(selectedMessage),
+    [selectedMessage]
+  );
 
   return (
     <>
@@ -167,11 +142,11 @@ const OwnerMessagePage = () => {
         )}
       </ConfirmationModal>
 
-      <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 p-4 sm:p-6 lg:p-8 pt-16 md:pt-4">
+      <div className="min-h-screen bg-linear-to-br from-neutral-50 to-neutral-100 p-4 sm:p-6 lg:p-8 pt-16 md:pt-4">
         <div className="mx-auto max-w-7xl">
           <OwnerMessageHeader />
 
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-6 lg:flex lg:gap-8 mt-6 lg:mt-8">
             <MessageSidebar
               searchTerm={searchTerm}
               senderRoleFilter={senderRoleFilter}

@@ -74,7 +74,7 @@ const MessageSidebar = ({
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto min-h-0">
+        <div className="flex-1 overflow-y-auto min-h-0 rounded-2xl">
           {isLoading ? (
             <div className="flex h-32 sm:h-40 items-center justify-center text-xs sm:text-sm text-neutral-500">
               Memuat pertanyaan...

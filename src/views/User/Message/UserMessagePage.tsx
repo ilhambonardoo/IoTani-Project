@@ -10,7 +10,8 @@ import QuestionFormModal from "../../../components/ui/QuestionFormModal";
 import MessageSidebar from "./MessageSidebar";
 import MessageChat from "./MessageChat";
 import MessageAccessDenied from "./MessageAccessDenied";
-import type { ChatBubble, QuestionFormData } from "@/types";
+import type { QuestionFormData } from "@/types";
+import { formatChatBubbles } from "@/lib/utils/formatHelper";
 
 const MessagePage = () => {
   const { fullName: userName, email: userEmail } = useAuth();
@@ -47,32 +48,10 @@ const MessagePage = () => {
     [threads, selectedThreadId]
   );
 
-  const chatBubbles: ChatBubble[] = useMemo(() => {
-    if (!selectedThread) return [];
-    const threadBubbles: ChatBubble[] = [
-      {
-        id: `${selectedThread.id}-question`,
-        sender: "user",
-        content: selectedThread.content,
-        timestamp: selectedThread.createdAt,
-        senderLabel: selectedThread.authorName || userName || "Anda",
-      },
-    ];
-    selectedThread.replies.forEach((reply) => {
-      const isUserReply = reply.responderRole === "user";
-      threadBubbles.push({
-        id: reply.id,
-        sender: isUserReply ? "user" : "admin",
-        content: reply.content,
-        timestamp: reply.createdAt,
-        senderLabel:
-          reply.responderName ||
-          (reply.responderRole === "Owner" ? "Owner" : "Admin"),
-        replyId: reply.id,
-      });
-    });
-    return threadBubbles;
-  }, [selectedThread, userName]);
+  const chatBubbles = useMemo(
+    () => formatChatBubbles(selectedThread),
+    [selectedThread]
+  );
 
   const handleCreateQuestion = async (formData: QuestionFormData) => {
     if (!userName || !userEmail) {

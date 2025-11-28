@@ -33,9 +33,9 @@ const MessageSidebar = ({
     <motion.div
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      className="lg:col-span-1"
+      className="lg:col-span-1 h-full lg:h-auto"
     >
-      <div className="rounded-2xl bg-white shadow-lg">
+      <div className="rounded-xl md:rounded-2xl bg-white shadow-lg h-full lg:h-auto flex flex-col max-h-screen lg:max-h-none lg:w-[420px]">
         <div className="border-b border-neutral-200 p-4 space-y-3">
           <div className="relative">
             <HiOutlineSearch

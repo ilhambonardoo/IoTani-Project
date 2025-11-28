@@ -108,6 +108,7 @@ export interface QuestionThread {
   createdAt: string;
   authorName?: string;
   authorEmail?: string;
+  authorRole?: string;
   recipientRole?: string;
   replies: QuestionReply[];
 }

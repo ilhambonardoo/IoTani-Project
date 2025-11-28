@@ -3,15 +3,7 @@
 import { QuestionMessage } from "@/types";
 import { motion } from "framer-motion";
 import { FaUser, FaPaperPlane, FaTrash } from "react-icons/fa";
-
-interface ChatBubble {
-  id: string;
-  sender: "user" | "owner";
-  content: string;
-  timestamp: string;
-  senderLabel: string;
-  replyId?: string;
-}
+import type { ChatBubble } from "@/types";
 
 interface MessageChatProps {
   selectedMessage: QuestionMessage | null;
@@ -40,7 +32,7 @@ const MessageChat = ({
 }: MessageChatProps) => {
   if (!selectedMessage) {
     return (
-      <div className="flex h-[600px] items-center justify-center rounded-2xl bg-white shadow-lg">
+      <div className="flex h-[600px] items-center lg:w-full justify-center rounded-2xl bg-white shadow-lg">
         <p className="text-neutral-500">
           Pilih pesan untuk melihat detail dan membalas.
         </p>
@@ -52,13 +44,13 @@ const MessageChat = ({
     <motion.div
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
-      className="lg:col-span-3"
+      className="lg:w-full"
     >
-      <div className="flex h-[600px] flex-col rounded-2xl bg-white shadow-lg">
+      <div className="flex h-[600px] flex-col rounded-2xl bg-white shadow-lg lg:w-full">
         <div className="border-b border-neutral-200 p-4">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500 text-white">
+              <div className="flex h-10 lg:w-10 w-16 items-center justify-center rounded-full bg-green-500 text-white">
                 <FaUser size={18} />
               </div>
               <div>
@@ -89,47 +81,57 @@ const MessageChat = ({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className={`flex ${
-                bubble.sender === "user" ? "justify-start" : "justify-end"
+                bubble.sender === "owner" ? "justify-end" : "justify-start"
               }`}
             >
-              <div className="group relative">
-                <div
-                  className={`max-w-[70%] rounded-2xl px-4 py-3 ${
-                    bubble.sender === "user"
-                      ? "bg-white text-neutral-800 shadow-md"
-                      : "bg-green-500 text-white"
-                  }`}
-                >
-                  <div
-                    className={`text-xs font-semibold ${
-                      bubble.sender === "user"
-                        ? "text-neutral-500"
-                        : "text-green-100"
-                    }`}
-                  >
-                    {bubble.senderLabel}
-                  </div>
-                  <p className="text-sm">{bubble.content}</p>
-                  <p
-                    className={`mt-1 text-xs ${
-                      bubble.sender === "user"
-                        ? "text-neutral-400"
-                        : "text-green-100"
-                    }`}
-                  >
-                    {bubble.timestamp}
-                  </p>
-                </div>
+              <div className="flex justify-center items-center">
                 {bubble.sender !== "user" && bubble.replyId && (
                   <button
                     onClick={() => onDeleteReply(bubble.replyId!)}
                     disabled={isDeletingReply === bubble.replyId}
-                    className="absolute -right-8 top-0 rounded p-2 text-red-600 opacity-0 transition-all hover:bg-red-100 group-hover:opacity-100 disabled:opacity-50"
+                    className="rounded p-2 text-red-600 transition-all cursor-pointer flex justify-center items-center"
                     title="Hapus balasan"
                   >
                     <FaTrash size={12} />
                   </button>
                 )}
+                <div className="group relative">
+                  <div
+                    className={`max-w-full rounded-2xl px-4 py-3 ${
+                      bubble.sender === "owner"
+                        ? "bg-green-600 text-white"
+                        : "bg-white text-neutral-800 border border-neutral-100"
+                    }`}
+                  >
+                    <div
+                      className={`text-xs font-semibold ${
+                        bubble.sender === "owner"
+                          ? "text-green-100"
+                          : "text-neutral-500"
+                      }`}
+                    >
+                      {bubble.senderLabel}
+                    </div>
+                    <p className="text-sm">{bubble.content}</p>
+                    <p
+                      className={`mt-1 text-xs ${
+                        bubble.sender === "admin" || "user"
+                          ? "text-neutral-400"
+                          : "text-green-100"
+                      }`}
+                    >
+                      <span
+                        className={`${
+                          bubble.sender === "owner"
+                            ? "text-white"
+                            : "text-neutral-900"
+                        }`}
+                      >
+                        {bubble.timestamp}
+                      </span>
+                    </p>
+                  </div>
+                </div>
               </div>
             </motion.div>
           ))}
@@ -140,7 +142,7 @@ const MessageChat = ({
           )}
         </div>
 
-        <div className="border-t border-neutral-200 bg-white p-4">
+        <div className="border-t border-neutral-200 bg-white p-4 rounded-2xl">
           <div className="flex gap-3">
             <textarea
               value={replyText}
