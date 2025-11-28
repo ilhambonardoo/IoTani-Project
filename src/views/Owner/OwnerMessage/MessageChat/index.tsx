@@ -85,7 +85,7 @@ const MessageChat = ({
               }`}
             >
               <div className="flex justify-center items-center">
-                {bubble.sender !== "user" && bubble.replyId && (
+                {bubble.sender === "owner" && bubble.replyId && (
                   <button
                     onClick={() => onDeleteReply(bubble.replyId!)}
                     disabled={isDeletingReply === bubble.replyId}

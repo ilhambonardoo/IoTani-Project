@@ -42,8 +42,7 @@ export async function getUserProfile(
         await updateDoc(docRef, {
           avatarUrl: "",
         });
-      } catch {
-      }
+      } catch {}
     }
 
     return {
@@ -134,7 +133,6 @@ export async function uploadProfileImage(
 }
 
 // DELETE PROFILE IMAGE
-
 export async function deleteProfileImage(
   avatarUrl: string
 ): Promise<ServiceResponse> {
@@ -222,10 +220,13 @@ export async function updateUserProfile(
     const userDoc = snapshot.docs[0];
     const docRef = doc(firestore, "auth", userDoc.id);
 
-    const updateData: Record<string, string | ReturnType<typeof serverTimestamp>> = {
+    const updateData: Record<
+      string,
+      string | ReturnType<typeof serverTimestamp>
+    > = {
       updatedAt: serverTimestamp(),
     };
-    
+
     Object.keys(data).forEach((key) => {
       const value = data[key as keyof ProfileData];
       if (value !== undefined) {

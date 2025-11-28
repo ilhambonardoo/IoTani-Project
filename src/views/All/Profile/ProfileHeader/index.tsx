@@ -5,7 +5,11 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { LuSave, LuX, LuTrash2 } from "react-icons/lu";
 import { BiEdit } from "react-icons/bi";
-import { getInitials, getAvatarColor, hasCustomAvatar } from "@/lib/utils/profile-avatar";
+import {
+  getInitials,
+  getAvatarColor,
+  hasCustomAvatar,
+} from "@/lib/utils/profile-avatar";
 import type { ExtendedSessionUser, ProfileData } from "@/types";
 
 interface ProfileHeaderProps {
@@ -194,4 +198,3 @@ export default function ProfileHeader({
     </motion.div>
   );
 }
-

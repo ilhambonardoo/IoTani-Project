@@ -114,7 +114,7 @@ const ChiliesManagementPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 p-4 sm:p-6 lg:p-8 pt-16 md:pt-4">
+    <div className="min-h-screen bg-linear-to-br from-neutral-50 to-neutral-100 p-4 sm:p-6 lg:p-8 pt-16 md:pt-4">
       <div className="mx-auto max-w-7xl">
         <ChiliesHeader
           onAddClick={handleAdd}
@@ -198,5 +198,7 @@ const ChiliesManagementPage = () => {
 };
 
 export default ChiliesManagementPage;
+
+
 
 

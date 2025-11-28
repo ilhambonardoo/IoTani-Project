@@ -29,7 +29,7 @@ const ImageSlider = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: "spring", stiffness: 100 }}
-      className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[550px] overflow-hidden rounded-2xl mb-6 sm:mb-10"
+      className="relative w-full h-[250px] min-[375px]:h-[300px] sm:h-[400px] md:h-[500px] lg:h-[550px] xl:h-[600px] overflow-hidden rounded-lg sm:rounded-2xl mb-4 sm:mb-6 md:mb-10"
     >
       <AnimatePresence mode="wait">
         <motion.div
@@ -45,36 +45,39 @@ const ImageSlider = ({
             height={800}
             src={images[currentIndex].src}
             alt={images[currentIndex].alt}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover rounded-lg sm:rounded-2xl "
             priority
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1280px"
           />
         </motion.div>
       </AnimatePresence>
+      <div className="absolute bottom-30 left-20 right-20">
       <button
         onClick={onPrev}
-        className="absolute cursor-pointer top-1/2 left-4 z-10 -translate-y-1/2 rounded-full bg-black/40 p-2 text-white transition-all hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-lime-400"
+        className="absolute cursor-pointer top-1/2 left-2 sm:left-4 z-10 -translate-y-1/2 rounded-full bg-black/40 hover:bg-black/60 active:bg-black/70 p-1.5 sm:p-2 text-white transition-all focus:outline-none focus:ring-2 focus:ring-lime-400 touch-manipulation"
         aria-label="Previous slide"
       >
-        <LuChevronLeft size={24} />
+        <LuChevronLeft className="w-4 h-4 sm:w-6 sm:h-6" />
       </button>
       <button
         onClick={onNext}
-        className="absolute cursor-pointer top-1/2 right-4 z-10 -translate-y-1/2 rounded-full bg-black/40 p-2 text-white transition-all hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-lime-400"
+        className="absolute cursor-pointer top-1/2 right-2 sm:right-4 z-10 -translate-y-1/2 rounded-full bg-black/40 hover:bg-black/60 active:bg-black/70 p-1.5 sm:p-2 text-white transition-all focus:outline-none focus:ring-2 focus:ring-lime-400 touch-manipulation"
         aria-label="Next slide"
       >
-        <LuChevronRight size={24} />
+        <LuChevronRight className="w-4 h-4 sm:w-6 sm:h-6" />
       </button>
+      </div>
 
-      <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-2">
+      <div className="absolute bottom-30 sm:bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-1.5 sm:gap-2">
         {images.map((_, index) => (
           <button
             key={index}
             onClick={() => onDotClick(index)}
-            className={`h-2 w-2 rounded-full transition-all
+            className={`h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full transition-all touch-manipulation
               ${
                 index === currentIndex
-                  ? "w-4 bg-lime-400"
-                  : "bg-white/50 hover:bg-white/80"
+                  ? "w-3 sm:w-4 bg-lime-400"
+                  : "bg-white/50 hover:bg-white/80 active:bg-white"
               }
             `}
             aria-label={`Go to slide ${index + 1}`}

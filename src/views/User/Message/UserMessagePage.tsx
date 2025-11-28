@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { toast } from "react-toastify";
 import ConfirmationModal from "@/components/ui/ConfirmationModal/page";
 import { useAuth, useQuestions } from "@/hooks";
@@ -14,7 +14,7 @@ import type { QuestionFormData } from "@/types";
 import { formatChatBubbles } from "@/lib/utils/formatHelper";
 
 const MessagePage = () => {
-  const { fullName: userName, email: userEmail } = useAuth();
+  const { fullName: userName, email: userEmail, role: userRole, user: sessionUser } = useAuth();
   const {
     threads,
     filteredThreads,
@@ -37,9 +37,31 @@ const MessagePage = () => {
     replyId: "",
   });
 
+  const hasSetInitialThread = useRef(false);
+  const previousThreadsLength = useRef(0);
+
   useEffect(() => {
-    if (!selectedThreadId && threads.length > 0) {
+    if (!selectedThreadId && threads.length > 0 && !hasSetInitialThread.current) {
       setSelectedThreadId(threads[0].id);
+      hasSetInitialThread.current = true;
+      previousThreadsLength.current = threads.length;
+      return;
+    }
+
+    if (threads.length > 0 && selectedThreadId) {
+      const threadExists = threads.some((thread) => thread.id === selectedThreadId);
+      if (!threadExists) {
+        // Jika selectedThreadId tidak ada di threads baru, pilih yang pertama
+        setSelectedThreadId(threads[0].id);
+      }
+    }
+
+    // Jika threads kosong, reset
+    if (threads.length === 0) {
+      hasSetInitialThread.current = false;
+      previousThreadsLength.current = 0;
+    } else {
+      previousThreadsLength.current = threads.length;
     }
   }, [threads, selectedThreadId]);
 
@@ -54,10 +76,6 @@ const MessagePage = () => {
   );
 
   const handleCreateQuestion = async (formData: QuestionFormData) => {
-    if (!userName || !userEmail) {
-      toast.error("Lengkapi profil Anda terlebih dahulu.");
-      return;
-    }
     if (!formData.title.trim() || !formData.content.trim()) {
       toast.error("Judul dan pertanyaan tidak boleh kosong");
       return;
@@ -76,9 +94,9 @@ const MessagePage = () => {
           title: formData.title,
           content: formData.content,
           category: formData.category,
-          authorName: userName,
-          authorEmail: userEmail,
-          authorRole: "user",
+          authorName: userName || sessionUser?.fullName || sessionUser?.name || sessionUser?.email || "User",
+          authorEmail: userEmail || undefined,
+          authorRole: userRole || "user",
           recipientRole: formData.recipientRole,
         }),
       });
@@ -139,7 +157,10 @@ const MessagePage = () => {
       toast.success(
         `✅ ${isReply ? "Balasan" : "Pertanyaan"} berhasil dihapus`
       );
-      if (!isReply) setSelectedThreadId(null);
+      if (!isReply) {
+        setSelectedThreadId(null);
+        hasSetInitialThread.current = false;
+      }
       await refetchThreads();
     } catch (err) {
       const message =
@@ -170,8 +191,8 @@ const MessagePage = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             content: replyText,
-            responderName: userName || "User",
-            responderRole: "user",
+            responderName: userName || sessionUser?.fullName || sessionUser?.name || sessionUser?.email || "User",
+            responderRole: userRole || "user",
             responderEmail: userEmail,
           }),
         }
@@ -212,6 +233,7 @@ const MessagePage = () => {
             ? "Hapus Pertanyaan"
             : "Hapus Balasan"
         }
+        userName={userName || "User"}
       >
         <p className="text-neutral-700">
           {deleteConfirmModal.type === "message"
@@ -260,8 +282,6 @@ const MessagePage = () => {
               onClose={() => setShowForm(false)}
               onSubmit={handleCreateQuestion}
               isSubmitting={isSubmitting}
-              userName={userName}
-              userEmail={userEmail}
             />
           )}
         </AnimatePresence>

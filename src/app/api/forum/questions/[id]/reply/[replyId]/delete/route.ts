@@ -1,8 +1,10 @@
 import { deleteQuestionReply } from "@/lib/db/firebase/service";
 import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
+import type {ExtendedToken} from "@/types";
 
 export async function DELETE(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string; replyId: string }> }
 ): Promise<NextResponse> {
   try {
@@ -18,7 +20,14 @@ export async function DELETE(
       );
     }
 
-    const res = await deleteQuestionReply(questionId, replyId);
+    // Ambil role dari session
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+    const deletedByRole = (token as ExtendedToken)?.role || "user";
+
+    const res = await deleteQuestionReply(questionId, replyId, deletedByRole);
     return NextResponse.json(
       { status: res.status, message: res.message },
       { status: res.statusCode }

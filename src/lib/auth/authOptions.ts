@@ -27,7 +27,13 @@ export const authOptions: NextAuthOptions = {
         if (user) {
           const passwordConfirm = await compare(password, user.password);
           if (passwordConfirm) {
-            return user;
+            return {
+              id: user.id ?? user.email,
+              name: user.fullName ?? null,
+              email: user.email,
+              image: null,
+              role: user.role ?? "user",
+            };
           }
           return null;
         } else {

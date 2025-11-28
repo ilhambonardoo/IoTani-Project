@@ -1,11 +1,11 @@
 export interface User {
   id: string;
-  email: string;
-  fullName: string;
+  email: string | null;
+  fullName: string | null;
   role: "user" | "admin" | "owner";
-  image?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  image?: string | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
 }
 
 export interface SensorData {

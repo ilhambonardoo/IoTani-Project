@@ -1,13 +1,16 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import ConfirmationModal from "@/components/ui/ConfirmationModal/page";
 import { useAuth, useMessages, useConfirmModal } from "@/hooks";
 import OwnerMessageHeader from "./OwnerMessageHeader";
 import MessageSidebar from "./MessageSidebar";
 import MessageChat from "./MessageChat";
+import QuestionFormModal from "@/components/ui/QuestionFormModal";
 import { formatChatBubbles } from "@/lib/utils/formatHelper";
+import type { QuestionFormData } from "@/types";
 
 const OwnerMessagePage = () => {
   const { user: sessionUser } = useAuth();
@@ -21,9 +24,12 @@ const OwnerMessagePage = () => {
     senderRoleFilter,
     setSenderRoleFilter,
     refetch: fetchMessages,
-    sendReply,
     deleteMessage,
     deleteReply,
+    isModalOpen,
+    setIsModalOpen,
+    isSubmitting,
+    createMessage,
   } = useMessages("owner");
 
   const [replyText, setReplyText] = useState("");
@@ -31,6 +37,15 @@ const OwnerMessagePage = () => {
   const [isDeletingMessage, setIsDeletingMessage] = useState(false);
   const [isDeletingReply, setIsDeletingReply] = useState<string | null>(null);
   const deleteConfirmModal = useConfirmModal();
+
+  const handleCreateMessage = async (formData: QuestionFormData) => {
+    try {
+      await createMessage(formData);
+      await fetchMessages(false);
+    } catch {
+      // Error sudah di-handle di createMessage
+    }
+  };
 
   const responderName =
     sessionUser?.fullName || sessionUser?.name || sessionUser?.email || "owner";
@@ -48,17 +63,32 @@ const OwnerMessagePage = () => {
 
     setIsSendingReply(true);
     try {
-      await sendReply(
-        selectedMessage.id,
+      const res = await fetch(
+        `/api/forum/questions/${selectedMessage.id}/reply`,
         {
-          content: replyText,
-          responderName,
-          responderRole,
-        },
-        selectedMessage.id
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            content: replyText,
+            responderName,
+            responderRole,
+          }),
+        }
       );
-      setReplyText("");
-    } catch {
+
+      const data = await res.json();
+
+      if (!res.ok || !data.status) {
+        throw new Error(data.message || "Gagal mengirim balasan");
+      }
+
+      toast.success("✅ Balasan terkirim");
+      setReplyText(""); // Reset text area
+      await fetchMessages(false, selectedMessage.id); // Refresh data chat agar balasan muncul
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Gagal mengirim balasan";
+      toast.error(`❌ ${message}`);
     } finally {
       setIsSendingReply(false);
     }
@@ -128,6 +158,7 @@ const OwnerMessagePage = () => {
             ? "Hapus Pesan"
             : "Hapus Balasan"
         }
+        userName={responderName}
       >
         {deleteConfirmModal.type === "message" ? (
           <p className="text-neutral-700">
@@ -144,7 +175,7 @@ const OwnerMessagePage = () => {
 
       <div className="min-h-screen bg-linear-to-br from-neutral-50 to-neutral-100 p-4 sm:p-6 lg:p-8 pt-16 md:pt-4">
         <div className="mx-auto max-w-7xl">
-          <OwnerMessageHeader />
+          <OwnerMessageHeader onCreateMessage={() => setIsModalOpen(true)} />
 
           <div className="grid grid-cols-1 gap-6 lg:flex lg:gap-8 mt-6 lg:mt-8">
             <MessageSidebar
@@ -154,7 +185,9 @@ const OwnerMessagePage = () => {
               filteredMessages={filteredMessages}
               selectedMessage={selectedMessage}
               onSearchChange={setSearchTerm}
-              onFilterChange={setSenderRoleFilter}
+              onFilterChange={(value: string) =>
+                setSenderRoleFilter(value as "admin" | "owner" | "user" | "all")
+              }
               onRefresh={fetchMessages}
               onMessageSelect={setSelectedMessage}
             />
@@ -173,6 +206,16 @@ const OwnerMessagePage = () => {
             />
           </div>
         </div>
+        <AnimatePresence>
+          {isModalOpen && (
+            <QuestionFormModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              onSubmit={handleCreateMessage}
+              isSubmitting={isSubmitting}
+            />
+          )}
+        </AnimatePresence>
       </div>
     </>
   );

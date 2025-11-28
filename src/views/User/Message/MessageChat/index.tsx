@@ -21,11 +21,13 @@ interface MessageChatProps {
 const MessageChat = ({
   selectedThread,
   chatBubbles,
+  isDeletingMessage,
   isDeletingReply,
   replyText,
   isSendingReply,
   onReply,
   onReplyTextChange,
+  onDeleteMessage,
   onDeleteReply,
 }: MessageChatProps) => {
   if (!selectedThread) {
@@ -61,6 +63,14 @@ const MessageChat = ({
             </p>
           </div>
         </div>
+        <button
+          onClick={onDeleteMessage}
+          disabled={isDeletingMessage}
+          className="flex items-center gap-2 rounded-lg bg-red-100 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-200 transition-all disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+        >
+          <FaTrash size={12} />
+          {isDeletingMessage ? "Menghapus..." : "Hapus"}
+        </button>
       </div>
 
       <div className="flex-1 space-y-4 sm:space-y-6 overflow-y-auto bg-neutral-50/50 p-4 sm:p-6">
@@ -78,7 +88,7 @@ const MessageChat = ({
                 bubble.sender === "user" ? "justify-end" : "justify-start"
               }`}
             >
-              {bubble.sender !== "admin" && bubble.replyId && (
+              {bubble.sender === "user" && bubble.replyId && (
                 <button
                   onClick={() => onDeleteReply(bubble.replyId!)}
                   disabled={isDeletingReply === bubble.replyId}
@@ -104,6 +114,7 @@ const MessageChat = ({
                     }`}
                   >
                     {bubble.senderLabel}
+
                   </div>
                   <p className="text-sm leading-relaxed whitespace-pre-wrap">
                     {bubble.content}
