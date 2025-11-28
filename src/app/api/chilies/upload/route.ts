@@ -17,7 +17,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // Validate file type
     if (!file.type.startsWith("image/")) {
       return NextResponse.json(
         {
@@ -28,7 +27,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       return NextResponse.json(
         {

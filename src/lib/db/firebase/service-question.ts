@@ -2,8 +2,8 @@
 
 import {
   addDoc,
+  arrayUnion,
   collection,
-  deleteDoc,
   doc,
   getDocs,
   getFirestore,
@@ -11,6 +11,7 @@ import {
   query,
   serverTimestamp,
   Timestamp,
+  updateDoc,
   where,
 } from "firebase/firestore";
 
@@ -56,7 +57,8 @@ export async function addQuestion(
 
 export async function getQuestions(
   recipientRole?: string,
-  authorRole?: string
+  authorRole?: string,
+  viewerRole?: string
 ): Promise<
   ServiceResponse<
     Array<{
@@ -123,21 +125,43 @@ export async function getQuestions(
     const questionsWithReplies = await Promise.all(
       sortedDocs.map(async (docSnapshot) => {
         const data = docSnapshot.data();
+        
+        // Filter berdasarkan deletedForRoles jika viewerRole ada
+        const deletedForRoles = (data.deletedForRoles as string[]) || [];
+        if (viewerRole && deletedForRoles.includes(viewerRole)) {
+          return null; // Skip pesan yang dihapus untuk role ini
+        }
+        
         const repliesSnapshot = await getDocs(
           collection(firestore, "questions", docSnapshot.id, "replies")
         );
-        const replies = repliesSnapshot.docs.map((replyDoc) => {
-          const replyData = replyDoc.data();
-          return {
-            id: replyDoc.id,
-            responderName: replyData.responderName || "Admin",
-            responderRole: replyData.responderRole || "Admin",
-            content: replyData.content,
-            createdAt: formatDateFromTimestamp(
-              (replyData.createdAt as Timestamp) ?? undefined
-            ),
-          };
-        });
+        const replies = repliesSnapshot.docs
+          .map((replyDoc) => {
+            const replyData = replyDoc.data();
+            // Filter replies berdasarkan deletedForRoles
+            const replyDeletedForRoles = (replyData.deletedForRoles as string[]) || [];
+            if (viewerRole && replyDeletedForRoles.includes(viewerRole)) {
+              return null; // Skip reply yang dihapus untuk role ini
+            }
+            return {
+              id: replyDoc.id,
+              responderName: replyData.responderName || "Admin",
+              responderRole: replyData.responderRole || "Admin",
+              content: replyData.content,
+              createdAt: formatDateFromTimestamp(
+                (replyData.createdAt as Timestamp) ?? undefined
+              ),
+              createdAtRaw: replyData.createdAt as Timestamp | undefined,
+            };
+          })
+          .filter((reply) => reply !== null) // Filter out null replies
+          .sort((a, b) => {
+            const aMillis = getMillisecondsFromTimestamp(a.createdAtRaw);
+            const bMillis = getMillisecondsFromTimestamp(b.createdAtRaw);
+            return aMillis - bMillis; // Sort ascending (oldest first)
+          })
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          .map(({ createdAtRaw: _, ...reply }) => reply); // Remove createdAtRaw
 
         return {
           id: docSnapshot.id,
@@ -156,10 +180,13 @@ export async function getQuestions(
       })
     );
 
+    // Filter out null questions
+    const filteredQuestions = questionsWithReplies.filter((q) => q !== null);
+
     return {
       status: true,
       statusCode: 200,
-      data: questionsWithReplies,
+      data: filteredQuestions,
     };
   } catch (error) {
     return {
@@ -213,21 +240,43 @@ export async function getQuestionsByAuthorEmail(email: string): Promise<
     const questionsWithReplies = await Promise.all(
       sortedDocs.map(async (docSnapshot) => {
         const data = docSnapshot.data();
+        
+        // Filter berdasarkan deletedForRoles untuk user
+        const deletedForRoles = (data.deletedForRoles as string[]) || [];
+        if (deletedForRoles.includes("user")) {
+          return null; // Skip pesan yang dihapus untuk user
+        }
+        
         const repliesSnapshot = await getDocs(
           collection(firestore, "questions", docSnapshot.id, "replies")
         );
-        const replies = repliesSnapshot.docs.map((replyDoc) => {
-          const replyData = replyDoc.data();
-          return {
-            id: replyDoc.id,
-            responderName: replyData.responderName || "Admin",
-            responderRole: replyData.responderRole || "Admin",
-            content: replyData.content,
-            createdAt: formatDateFromTimestamp(
-              (replyData.createdAt as Timestamp) ?? undefined
-            ),
-          };
-        });
+        const replies = repliesSnapshot.docs
+          .map((replyDoc) => {
+            const replyData = replyDoc.data();
+            // Filter replies berdasarkan deletedForRoles untuk user
+            const replyDeletedForRoles = (replyData.deletedForRoles as string[]) || [];
+            if (replyDeletedForRoles.includes("user")) {
+              return null; // Skip reply yang dihapus untuk user
+            }
+            return {
+              id: replyDoc.id,
+              responderName: replyData.responderName || "Admin",
+              responderRole: replyData.responderRole || "Admin",
+              content: replyData.content,
+              createdAt: formatDateFromTimestamp(
+                (replyData.createdAt as Timestamp) ?? undefined
+              ),
+              createdAtRaw: replyData.createdAt as Timestamp | undefined,
+            };
+          })
+          .filter((reply) => reply !== null) // Filter out null replies
+          .sort((a, b) => {
+            const aMillis = getMillisecondsFromTimestamp(a.createdAtRaw);
+            const bMillis = getMillisecondsFromTimestamp(b.createdAtRaw);
+            return aMillis - bMillis; // Sort ascending (oldest first)
+          })
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          .map(({ createdAtRaw: _, ...reply }) => reply); // Remove createdAtRaw
 
         return {
           id: docSnapshot.id,
@@ -246,10 +295,13 @@ export async function getQuestionsByAuthorEmail(email: string): Promise<
       })
     );
 
+    // Filter out null questions
+    const filteredQuestions = questionsWithReplies.filter((q) => q !== null);
+
     return {
       status: true,
       statusCode: 200,
-      data: questionsWithReplies,
+      data: filteredQuestions,
     };
   } catch (error) {
     return {
@@ -308,18 +360,27 @@ export async function getQuestionReplies(questionId: string): Promise<
     const repliesSnapshot = await getDocs(
       collection(firestore, "questions", questionId, "replies")
     );
-    const replies = repliesSnapshot.docs.map((replyDoc) => {
-      const data = replyDoc.data();
-      return {
-        id: replyDoc.id,
-        responderName: data.responderName || "Admin",
-        responderRole: data.responderRole || "Admin",
-        content: data.content,
-        createdAt: formatDateFromTimestamp(
-          (data.createdAt as Timestamp) ?? undefined
-        ),
-      };
-    });
+    const replies = repliesSnapshot.docs
+      .map((replyDoc) => {
+        const data = replyDoc.data();
+        return {
+          id: replyDoc.id,
+          responderName: data.responderName || "Admin",
+          responderRole: data.responderRole || "Admin",
+          content: data.content,
+          createdAt: formatDateFromTimestamp(
+            (data.createdAt as Timestamp) ?? undefined
+          ),
+          createdAtRaw: data.createdAt as Timestamp | undefined,
+        };
+      })
+      .sort((a, b) => {
+        const aMillis = getMillisecondsFromTimestamp(a.createdAtRaw);
+        const bMillis = getMillisecondsFromTimestamp(b.createdAtRaw);
+        return aMillis - bMillis;
+      })
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      .map(({ createdAtRaw: _, ...reply }) => reply);
 
     return {
       status: true,
@@ -338,21 +399,31 @@ export async function getQuestionReplies(questionId: string): Promise<
 
 // DELETE QUESTION & REPLY
 export async function deleteQuestion(
-  questionId: string
+  questionId: string,
+  deletedByRole: string
 ): Promise<ServiceResponse> {
   try {
     const questionDocRef = doc(firestore, "questions", questionId);
 
-    // Hapus semua replies terlebih dahulu
+    // Tambahkan role ke deletedForRoles array alih-alih menghapus document
+    await updateDoc(questionDocRef, {
+      deletedForRoles: arrayUnion(deletedByRole),
+    });
+
+    // Hapus semua replies untuk role ini juga
     const repliesSnapshot = await getDocs(
       collection(firestore, "questions", questionId, "replies")
     );
 
     for (const replyDoc of repliesSnapshot.docs) {
-      await deleteDoc(replyDoc.ref);
+      const replyData = replyDoc.data();
+      const deletedForRoles = (replyData.deletedForRoles as string[]) || [];
+      if (!deletedForRoles.includes(deletedByRole)) {
+        await updateDoc(replyDoc.ref, {
+          deletedForRoles: arrayUnion(deletedByRole),
+        });
+      }
     }
-
-    await deleteDoc(questionDocRef);
 
     return {
       status: true,
@@ -371,7 +442,8 @@ export async function deleteQuestion(
 
 export async function deleteQuestionReply(
   questionId: string,
-  replyId: string
+  replyId: string,
+  deletedByRole: string
 ): Promise<ServiceResponse> {
   try {
     const replyDocRef = doc(
@@ -381,7 +453,11 @@ export async function deleteQuestionReply(
       "replies",
       replyId
     );
-    await deleteDoc(replyDocRef);
+    
+    // Tambahkan role ke deletedForRoles array alih-alih menghapus document
+    await updateDoc(replyDocRef, {
+      deletedForRoles: arrayUnion(deletedByRole),
+    });
 
     return {
       status: true,

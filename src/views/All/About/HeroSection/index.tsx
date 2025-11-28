@@ -1,12 +1,29 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { FaArrowLeft } from "react-icons/fa";
 
 const HeroSection = () => {
+  const router = useRouter();
+
   return (
     <section className="relative overflow-hidden bg-linear-to-br from-green-600 to-green-700 py-12 sm:py-16 lg:py-20 text-white">
       <div className="absolute inset-0 bg-[url('/gambar_tambahan/iot.jpg')] bg-cover bg-center opacity-10" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Back Button */}
+        <motion.button
+          onClick={() => router.back()}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="mb-6 flex items-center gap-2 rounded-lg border-2 border-white/30 bg-white/10 px-4 py-2 font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20 hover:border-white/50 cursor-pointer"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <FaArrowLeft size={18} />
+          Kembali
+        </motion.button>
+
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}

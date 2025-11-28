@@ -18,8 +18,6 @@ interface QuestionFormModalProps {
   onClose: () => void;
   onSubmit: (data: QuestionFormData) => void;
   isSubmitting: boolean;
-  userName: string | null | undefined;
-  userEmail: string | null | undefined;
 }
 
 const QuestionFormModal = ({
@@ -27,8 +25,6 @@ const QuestionFormModal = ({
   onClose,
   onSubmit,
   isSubmitting,
-  userName,
-  userEmail,
 }: QuestionFormModalProps) => {
   const [formData, setFormData] = useState<QuestionFormData>({
     title: "",
@@ -65,31 +61,6 @@ const QuestionFormModal = ({
         </div>
 
         <div className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-neutral-700">
-                Nama
-              </label>
-              <input
-                type="text"
-                value={userName || ""}
-                disabled
-                className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-2 text-sm text-neutral-500"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-neutral-700">
-                Email
-              </label>
-              <input
-                type="email"
-                value={userEmail || ""}
-                disabled
-                className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-2 text-sm text-neutral-500"
-              />
-            </div>
-          </div>
-
           <div>
             <label className="mb-1 block text-sm font-medium text-neutral-700">
               Judul Pertanyaan

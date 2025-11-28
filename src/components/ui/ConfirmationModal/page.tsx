@@ -25,6 +25,7 @@ const modalVariants: Variants = {
  * @param {function} props.onConfirm
  * @param {string} props.title
  * @param {React.ReactNode} props.children
+ * @param {string} props.userName - Nama user untuk ditampilkan di modal
  */
 const ConfirmationModal = ({
   isOpen,
@@ -32,12 +33,14 @@ const ConfirmationModal = ({
   onConfirm,
   title,
   children,
+  userName,
 }: {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
   title: string;
   children: React.ReactNode;
+  userName?: string;
 }) => {
   return (
     <AnimatePresence>
@@ -63,6 +66,12 @@ const ConfirmationModal = ({
             <h2 className="mb-4 text-2xl font-bold text-neutral-800">
               {title || "Konfirmasi Aksi"}
             </h2>
+
+            {userName && (
+              <p className="mb-2 text-sm font-medium text-neutral-500">
+                Oleh: <span className="text-neutral-700">{userName}</span>
+              </p>
+            )}
 
             <div className="mb-6 text-neutral-600">{children}</div>
 

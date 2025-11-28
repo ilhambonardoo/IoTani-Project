@@ -86,10 +86,10 @@ export const AnimatedChart = ({
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="rounded-2xl bg-white p-6 shadow-lg"
+      className="rounded-2xl bg-white p-4 sm:p-6 shadow-lg w-full"
     >
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-xl font-semibold text-neutral-800">{title}</h3>
+      <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+        <h3 className="text-lg sm:text-xl font-semibold text-neutral-800">{title}</h3>
         {isRealTime ? (
           <motion.div
             animate={{ opacity: [0.5, 1, 0.5] }}
@@ -111,9 +111,12 @@ export const AnimatedChart = ({
         ) : null}
       </div>
 
-      <div className="w-full h-80 overflow-hidden rounded-lg bg-neutral-50">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={displayData}>
+      <div className="w-full h-64 sm:h-80 md:h-96 overflow-hidden rounded-lg bg-neutral-50">
+        <ResponsiveContainer width="100%" height="100%" minHeight={256}>
+          <LineChart 
+            data={displayData} 
+            margin={{ top: 5, right: 10, left: -10, bottom: 40 }}
+          >
             <defs>
               {lines.map((line) => (
                 <linearGradient
@@ -133,26 +136,40 @@ export const AnimatedChart = ({
             <XAxis
               dataKey="date"
               stroke="#9ca3af"
-              style={{ fontSize: "12px" }}
+              style={{ fontSize: "10px" }}
+              tick={{ fontSize: "10px" }}
+              angle={-45}
+              textAnchor="end"
+              height={60}
+              interval="preserveStartEnd"
             />
-            <YAxis stroke="#9ca3af" style={{ fontSize: "12px" }} />
+            <YAxis 
+              stroke="#9ca3af" 
+              style={{ fontSize: "10px" }}
+              tick={{ fontSize: "10px" }}
+              width={50}
+            />
             <Tooltip
               contentStyle={{
                 backgroundColor: "#f9fafb",
                 border: "1px solid #e5e7eb",
                 borderRadius: "8px",
                 boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                fontSize: "12px",
               }}
               cursor={{ stroke: "#9ca3af", strokeWidth: 2 }}
             />
-            <Legend />
+            <Legend 
+              wrapperStyle={{ fontSize: "12px" }}
+              iconSize={12}
+            />
             {lines.map((line) => (
               <Line
                 key={line.key}
                 type="monotone"
                 dataKey={line.key}
                 stroke={line.color}
-                strokeWidth={3}
+                strokeWidth={2}
                 fill={`url(#gradient-${line.key})`}
                 dot={false}
                 isAnimationActive={false}

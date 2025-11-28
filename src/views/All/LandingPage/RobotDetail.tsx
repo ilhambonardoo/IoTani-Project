@@ -1,7 +1,7 @@
 "use client";
 
 import React, { Suspense, useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Canvas } from "@react-three/fiber";
 import {
   OrbitControls,
@@ -10,6 +10,7 @@ import {
   Html,
   useProgress,
 } from "@react-three/drei";
+import { LuX, LuMaximize2, LuRotateCw } from "react-icons/lu";
 
 const MODEL_URL = "/models_robot/robot.glb";
 
@@ -49,9 +50,11 @@ const Model = () => {
 };
 
 const RobotViewer = () => {
+  const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [ready, setReady] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const canvasRef = React.useRef<HTMLDivElement>(null);
+  const overlayCanvasRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setReady(true), 1000);
@@ -68,9 +71,20 @@ const RobotViewer = () => {
   }, []);
 
   useEffect(() => {
-    if (!ready) return;
+    if (isOverlayOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOverlayOpen]);
 
-    const canvasContainer = canvasRef.current;
+  useEffect(() => {
+    if (!ready || !isOverlayOpen) return;
+
+    const canvasContainer = overlayCanvasRef.current;
     if (!canvasContainer) return;
 
     const handleWheel = (e: WheelEvent) => {
@@ -94,111 +108,213 @@ const RobotViewer = () => {
     return () => {
       window.removeEventListener("wheel", handleWheel, true);
     };
-  }, [ready]);
+  }, [ready, isOverlayOpen]);
+
+  const RenderCanvas = ({}: { containerRef: React.RefObject<HTMLDivElement | null> }) => {
+    if (!ready) {
+      return (
+        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-neutral-900 to-black">
+          <div className="animate-pulse flex flex-col items-center">
+            <div className="h-20 w-20 sm:h-32 sm:w-32 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full mb-4 flex items-center justify-center">
+              <div className="h-8 w-8 sm:h-12 sm:w-12 bg-white rounded-full"></div>
+            </div>
+            <div className="h-3 w-32 sm:w-48 bg-neutral-700 rounded mb-2"></div>
+            <div className="h-2 w-24 sm:w-36 bg-neutral-700 rounded"></div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <Canvas
+        shadows
+        dpr={isMobile ? [1, 1] : [1, 1.5]}
+        camera={{
+          fov: isMobile ? 50 : 45,
+          position: [0, 0, 10],
+        }}
+        gl={{
+          antialias: !isMobile,
+          alpha: true,
+          powerPreference: "high-performance",
+          preserveDrawingBuffer: false,
+        }}
+        frameloop="always"
+        style={{
+          display: "block",
+          touchAction: "none",
+          pointerEvents: "auto",
+          position: "relative",
+          width: "100%",
+          height: "100%",
+        }}
+        onCreated={({ gl }) => {
+          gl.domElement.style.position = "relative";
+          gl.domElement.style.width = "100%";
+          gl.domElement.style.height = "100%";
+        }}
+      >
+        <Suspense fallback={<Loader />}>
+          <Stage
+            environment="city"
+            intensity={isMobile ? 0.4 : 0.6}
+            adjustCamera={isMobile ? 1.0 : 1.2}
+          >
+            <Model />
+          </Stage>
+        </Suspense>
+
+        <OrbitControls
+          enableZoom={true}
+          enablePan={true}
+          enableRotate={true}
+          autoRotate={false}
+          minPolarAngle={0}
+          maxPolarAngle={Math.PI}
+          touches={{
+            ONE: isMobile ? 0 : 1,
+            TWO: isMobile ? 1 : 2,
+          }}
+          makeDefault
+        />
+      </Canvas>
+    );
+  };
 
   return (
-    <section className="w-full py-8 sm:py-10 px-4 sm:px-6 md:px-8 flex justify-center bg-black">
-      <div className="w-full max-w-5xl">
-        <motion.div
-          className="p-4 sm:p-6 md:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
-          <div>
-            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-neutral-200">
-              Prototipe
-            </h2>
-            <p className="text-neutral-500 text-xs sm:text-sm md:text-base mt-1">
-              Visualisasi 3D Interaktif Real-time
-            </p>
-          </div>
-
-          <div className="px-3 py-1.5 sm:py-1 bg-green-50 text-green-700 text-[10px] sm:text-xs font-semibold rounded-full border border-green-100 flex items-center gap-2 shadow-sm">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            <span>System Online</span>
-          </div>
-        </motion.div>
-
-        <div
-          ref={canvasRef}
-          className="relative w-full h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] xl:h-[800px] rounded-xl sm:rounded-2xl overflow-hidden shadow-lg"
-          style={{
-            touchAction: "pan-y pinch-zoom",
-            willChange: "transform",
-            isolation: "isolate",
-            position: "relative",
-            zIndex: 1,
-          }}
-        >
-          {!ready ? (
-            <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-neutral-50 to-neutral-100">
-              <div className="animate-pulse flex flex-col items-center">
-                <div className="h-20 w-20 sm:h-32 sm:w-32 bg-linear-to-br from-blue-400 to-indigo-500 rounded-full mb-4 flex items-center justify-center">
-                  <div className="h-8 w-8 sm:h-12 sm:w-12 bg-white rounded-full"></div>
-                </div>
-                <div className="h-3 w-32 sm:w-48 bg-neutral-200 rounded mb-2"></div>
-                <div className="h-2 w-24 sm:w-36 bg-neutral-200 rounded"></div>
-              </div>
+    <>
+      <section className="w-full py-8 sm:py-10 px-4 sm:px-6 md:px-8 flex justify-center bg-gradient-to-b from-neutral-50 via-white to-neutral-50">
+        <div className="w-full max-w-5xl">
+          <motion.div
+            className="p-4 sm:p-6 md:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <div>
+              <h2 className="bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 bg-clip-text text-transparent text-5xl text-extrabold">
+                Prototipe
+              </h2>
+              <p className="text-neutral-600 text-xs sm:text-sm md:text-base mt-1">
+                Visualisasi 3D Interaktif Real-time
+              </p>
             </div>
-          ) : (
-            <Canvas
-              shadows
-              dpr={isMobile ? [1, 1] : [1, 1.5]}
-              camera={{
-                fov: isMobile ? 50 : 45,
-                position: [0, 0, 10],
-              }}
-              gl={{
-                antialias: !isMobile,
-                alpha: true,
-                powerPreference: "high-performance",
-                preserveDrawingBuffer: false,
-              }}
-              frameloop="always"
+
+            <div className="px-3 py-1.5 sm:py-1 bg-green-50 text-green-700 text-[10px] sm:text-xs font-semibold rounded-full border border-green-100 flex items-center gap-2 shadow-sm">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              <span>System Online</span>
+            </div>
+          </motion.div>
+
+          {/* Clickable Card Preview */}
+          <motion.div
+            onClick={() => setIsOverlayOpen(true)}
+            className="group relative w-full h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] xl:h-[800px] rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl cursor-pointer border-2 border-neutral-200 hover:border-green-500/50 transition-all duration-300 bg-neutral-900"
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <div
+              ref={canvasRef}
+              className="relative w-full h-full"
               style={{
-                display: "block",
-                touchAction: "none",
-                pointerEvents: "auto",
+                touchAction: "pan-y pinch-zoom",
+                willChange: "transform",
+                isolation: "isolate",
                 position: "relative",
-                width: "100%",
-                height: "100%",
-              }}
-              onCreated={({ gl }) => {
-                gl.domElement.style.position = "relative";
-                gl.domElement.style.width = "100%";
-                gl.domElement.style.height = "100%";
+                zIndex: 1,
               }}
             >
-              <Suspense fallback={<Loader />}>
-                <Stage
-                  environment="city"
-                  intensity={isMobile ? 0.4 : 0.6}
-                  adjustCamera={isMobile ? 1.0 : 1.2}
-                >
-                  <Model />
-                </Stage>
-              </Suspense>
+              <RenderCanvas containerRef={canvasRef as React.RefObject<HTMLDivElement>} />
+            </div>
 
-              <OrbitControls
-                enableZoom={!isMobile}
-                enablePan={!isMobile}
-                enableRotate={true}
-                autoRotate={false}
-                minPolarAngle={0}
-                maxPolarAngle={Math.PI}
-                touches={{
-                  ONE: isMobile ? 0 : 1,
-                  TWO: isMobile ? 1 : 2,
-                }}
-                makeDefault
-              />
-            </Canvas>
-          )}
+            {/* Overlay hint */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-8">
+              <div className="flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
+                <LuMaximize2 className="text-white" size={20} />
+                <span className="text-white font-semibold text-sm">Klik untuk melihat detail</span>
+              </div>
+            </div>
+          </motion.div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* Fullscreen Overlay */}
+      <AnimatePresence>
+        {isOverlayOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-md"
+            onClick={() => setIsOverlayOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="relative w-full h-full flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between p-4 sm:p-6 bg-gradient-to-b from-black/80 to-transparent">
+                <div>
+                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white">
+                    Prototipe Robot 3D
+                  </h3>
+                  <p className="text-sm text-neutral-400 mt-1 flex items-center gap-2">
+                    <LuRotateCw size={16} />
+                    Putar dengan mouse atau sentuh layar
+                  </p>
+                </div>
+                <motion.button
+                  onClick={() => setIsOverlayOpen(false)}
+                  className="rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md p-3 text-white transition-all duration-200 cursor-pointer border border-white/20"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <LuX size={24} />
+                </motion.button>
+              </div>
+
+              {/* Canvas Container */}
+              <div
+                ref={overlayCanvasRef}
+                className="flex-1 w-full h-full"
+                style={{
+                  touchAction: "none",
+                  willChange: "transform",
+                  isolation: "isolate",
+                }}
+              >
+                <RenderCanvas containerRef={overlayCanvasRef} />
+              </div>
+
+              {/* Footer Instructions */}
+              <div className="absolute bottom-0 left-0 right-0 z-10 p-4 sm:p-6 bg-gradient-to-t from-black/80 to-transparent">
+                <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-neutral-300">
+                  <span className="flex items-center gap-2 px-3 py-1.5 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
+                    <span>🖱️</span>
+                    <span>Klik & Drag untuk memutar</span>
+                  </span>
+                  <span className="flex items-center gap-2 px-3 py-1.5 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
+                    <span>🔍</span>
+                    <span>Scroll untuk zoom</span>
+                  </span>
+                  <span className="flex items-center gap-2 px-3 py-1.5 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
+                    <span>📱</span>
+                    <span>Pinch untuk zoom (mobile)</span>
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 

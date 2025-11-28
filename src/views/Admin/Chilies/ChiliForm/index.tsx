@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import Image from "next/legacy/image";
 import { FaSave, FaTimes, FaImage } from "react-icons/fa";
-import type { RefObject } from "react";
 
 interface ChiliFormProps {
   isEditing: boolean;
@@ -16,7 +15,7 @@ interface ChiliFormProps {
   };
   uploadPreview: string | null;
   selectedFile: File | null;
-  fileRef: RefObject<HTMLInputElement>;
+  fileRef: React.RefObject<HTMLInputElement | null>;
   isSubmitting: boolean;
   onFormDataChange: (data: ChiliFormProps["formData"]) => void;
   onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -185,5 +184,7 @@ const ChiliForm = ({
 };
 
 export default ChiliForm;
+
+
 
 
