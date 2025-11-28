@@ -26,16 +26,27 @@ const Footer = () => {
       { name: "Dashboard", href: "/dashboard" },
       { name: "Grafik", href: "/data" },
       { name: "Camera", href: "/camera" },
-      { name: "Forum Edukasai", href: "/forumEdukasi" },
+      { name: "Forum Edukasi", href: "/forumEdukasi" },
     ],
-
   };
 
   const socialLinks = [
-    { name: "Facebook", icon: LuFacebook, href: "" },
-    { name: "Twitter", icon: LuTwitter, href: "#" },
-    { name: "Instagram", icon: LuInstagram, href: "https://www.instagram.com/tekomipb/",  },
-    { name: "LinkedIn", icon: LuLinkedin, href: "#" },
+    {
+      name: "Facebook",
+      icon: LuFacebook,
+      href: "https://www.facebook.com/ipbuniversity/?locale=id_ID",
+    },
+    { name: "Twitter", icon: LuTwitter, href: "https://x.com/ipbofficial" },
+    {
+      name: "Instagram",
+      icon: LuInstagram,
+      href: "https://www.instagram.com/tekomipb/",
+    },
+    {
+      name: "LinkedIn",
+      icon: LuLinkedin,
+      href: "https://id.linkedin.com/school/ipbuniversityindonesia/",
+    },
   ];
 
   return (
@@ -95,8 +106,6 @@ const Footer = () => {
               ))}
             </ul>
           </div>
-
-
 
           {/* Newsletter & Social */}
           <div>
