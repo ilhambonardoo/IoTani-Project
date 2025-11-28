@@ -193,8 +193,10 @@ const RobotViewer = () => {
             transition={{ duration: 0.5 }}
           >
             <div>
-              <h2 className="bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 bg-clip-text text-transparent text-5xl text-extrabold">
-                Prototipe
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-neutral-900 tracking-tight">
+                <span className="bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 bg-clip-text text-transparent">
+                  Prototipe
+                </span>
               </h2>
               <p className="text-neutral-600 text-xs sm:text-sm md:text-base mt-1">
                 Visualisasi 3D Interaktif Real-time
