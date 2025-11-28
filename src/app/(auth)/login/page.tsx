@@ -1,4 +1,4 @@
-import Login from "@/views/Login/LoginPage";
+import Login from "@/views/Auth/Login/LoginPage";
 
 const LoginPage = async ({
   searchParams,

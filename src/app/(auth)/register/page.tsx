@@ -1,4 +1,4 @@
-import Register from "@/views/Register/RegisterPage";
+import Register from "@/views/Auth/Register/RegisterPage";
 
 const RegisterPage = async ({
   searchParams,

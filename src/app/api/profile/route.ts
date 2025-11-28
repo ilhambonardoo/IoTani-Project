@@ -1,4 +1,7 @@
-import { getUserProfile, updateUserProfile } from "@/lib/firebase/service-profile";
+import {
+  getUserProfile,
+  updateUserProfile,
+} from "@/lib/db/firebase/service-profile";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
@@ -39,7 +42,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 export async function PUT(request: NextRequest): Promise<NextResponse> {
   try {
     const body = await request.json();
-    const { email, fullName, phone, location, bio, avatarUrl, instagram } = body || {};
+    const { email, fullName, phone, location, bio, avatarUrl, instagram } =
+      body || {};
 
     if (!email) {
       return NextResponse.json(
@@ -51,7 +55,6 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // Filter out undefined values to avoid Firestore errors
     const updateData: Record<string, string> = {};
     if (fullName !== undefined) updateData.fullName = fullName;
     if (phone !== undefined) updateData.phone = phone;
@@ -79,4 +82,3 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
     );
   }
 }
-

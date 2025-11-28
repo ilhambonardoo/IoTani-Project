@@ -1,4 +1,4 @@
-import { addQuestion, getQuestions } from "@/lib/firebase/service";
+import { addQuestion, getQuestions } from "@/lib/db/firebase/service";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {

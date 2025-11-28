@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import withAuth from "./middlewares/withAuth";
+import withAuth from "./middleware/withAuth";
 
 export async function mainMiddleware() {
   const res = NextResponse.next();

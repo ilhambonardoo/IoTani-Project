@@ -1,4 +1,4 @@
-import { addChili } from "@/lib/firebase/service";
+import { addChili } from "@/lib/db/firebase/service";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {

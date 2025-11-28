@@ -1,4 +1,4 @@
-import { deleteContent } from "@/lib/firebase/service";
+import { deleteContent } from "@/lib/db/firebase/service";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(request: NextRequest) {

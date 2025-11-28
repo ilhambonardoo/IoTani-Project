@@ -1,6 +1,3 @@
-// Shared utility for generating sensor data
-// Used by both DataPage and DashboardPage to keep data synchronized
-
 export interface SensorDataPoint {
   date: string;
   suhu: number;
@@ -8,7 +5,6 @@ export interface SensorDataPoint {
   pH: number;
 }
 
-// Generate initial data for historical view
 export const generateData = (days: number): SensorDataPoint[] => {
   const data: SensorDataPoint[] = [];
   const today = new Date();
@@ -30,7 +26,6 @@ export const generateData = (days: number): SensorDataPoint[] => {
   return data;
 };
 
-// Generate single new data point with current time (for real-time updates)
 export const generateNewDataPoint = (): SensorDataPoint => {
   const now = new Date();
   return {

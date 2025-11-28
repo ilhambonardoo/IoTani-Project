@@ -1,4 +1,4 @@
-import MessagePage from "@/views/Message/MessagePage";
+import MessagePage from "@/views/User/Message/UserMessagePage";
 
 const Message = () => {
   return <MessagePage />;

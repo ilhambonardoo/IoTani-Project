@@ -3,7 +3,7 @@ import {
   getTemplates,
   deleteTemplate,
   updateTemplate,
-} from "@/lib/firebase/service-templates";
+} from "@/lib/db/firebase/service-templates";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(): Promise<NextResponse> {

@@ -1,4 +1,4 @@
-import { deleteProfileImage } from "@/lib/firebase/service-profile";
+import { deleteProfileImage } from "@/lib/db/firebase/service-profile";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(request: NextRequest): Promise<NextResponse> {

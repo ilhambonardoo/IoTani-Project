@@ -1,13 +1,7 @@
 // Export data ke PDF dan CSV
 
-export interface ExportData {
-  date: string;
-  suhu: number;
-  kelembapan: number;
-  pH: number;
-}
+import type { ExportData } from "@/types";
 
-// Generate CSV content
 export const generateCSV = (data: ExportData[], dataType: string): string => {
   const headers = ["Tanggal", "Suhu (°C)", "Kelembapan (%)", "pH"];
 
@@ -23,7 +17,6 @@ export const generateCSV = (data: ExportData[], dataType: string): string => {
   return csvContent;
 };
 
-// Generate PDF content using HTML
 export const generatePDFContent = (
   data: ExportData[],
   dataType: string
@@ -133,7 +126,6 @@ export const generatePDFContent = (
   return tableHTML;
 };
 
-// Download CSV
 export const downloadCSV = (data: ExportData[], dataType: string) => {
   const csvContent = generateCSV(data, dataType);
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -166,10 +158,8 @@ interface Html2PdfInstance {
   save(): void;
 }
 
-// Download PDF using html2pdf library
 export const downloadPDF = async (data: ExportData[], dataType: string) => {
   try {
-    // Dynamic import html2pdf
     const html2pdfModule = await import("html2pdf.js");
     const html2pdf = html2pdfModule.default as () => Html2PdfInstance;
 
@@ -188,7 +178,6 @@ export const downloadPDF = async (data: ExportData[], dataType: string) => {
 
     html2pdf().set(opt).from(element).save();
   } catch {
-    // Fallback: buka di window baru
     const pdfContent = generatePDFContent(data, dataType);
     const printWindow = window.open("", "_blank");
     if (printWindow) {
