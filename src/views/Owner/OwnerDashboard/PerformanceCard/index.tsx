@@ -55,12 +55,10 @@ const PerformanceCard = ({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`rounded-2xl ${colorClasses[color]} p-4 sm:p-6 text-white shadow-lg`}
+      className={`rounded-2xl ${colorClasses[color]} p-4 sm:p-6 text-white shadow-lg lg:h-full`}
     >
       <div className="mb-4 flex items-center justify-between">
-        <div className="rounded-lg bg-white/20 p-3">
-          {getIcon()}
-        </div>
+        <div className="rounded-lg bg-white/20 p-3">{getIcon()}</div>
         {trend && <HiOutlineTrendingUp size={24} />}
       </div>
       <h3 className="text-3xl font-bold">{value}</h3>
@@ -71,4 +69,3 @@ const PerformanceCard = ({
 };
 
 export default PerformanceCard;
-
