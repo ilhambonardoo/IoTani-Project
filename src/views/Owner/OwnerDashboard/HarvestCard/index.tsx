@@ -30,9 +30,7 @@ const HarvestCard = ({ harvests }: HarvestCardProps) => {
             className="flex items-center justify-between rounded-lg border border-neutral-200 p-4 transition-all hover:bg-neutral-50"
           >
             <div>
-              <h3 className="font-semibold text-neutral-800">
-                {harvest.zone}
-              </h3>
+              <h3 className="font-semibold text-neutral-800">{harvest.zone}</h3>
               <p className="text-sm text-neutral-600">{harvest.date}</p>
             </div>
             <div className="text-right">
@@ -48,4 +46,3 @@ const HarvestCard = ({ harvests }: HarvestCardProps) => {
 };
 
 export default HarvestCard;
-

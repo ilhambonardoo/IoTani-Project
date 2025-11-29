@@ -46,7 +46,8 @@ export function useMessages(recipientRole?: "admin" | "owner") {
         // Untuk admin dan owner, fetch pesan dari lawan bicara mereka juga
         const isAdmin = session.role === "admin";
         const isOwner = session.role === "owner";
-        const shouldFetchBothDirections = (isAdmin || isOwner) && effectiveRecipientRole !== undefined;
+        const shouldFetchBothDirections =
+          (isAdmin || isOwner) && effectiveRecipientRole !== undefined;
 
         let questionList: QuestionMessage[] = [];
 
@@ -56,9 +57,11 @@ export function useMessages(recipientRole?: "admin" | "owner") {
             const url1 = `/api/forum/questions?recipientRole=${effectiveRecipientRole}`;
             const res1 = await fetch(url1);
             const data1 = await res1.json();
-            
+
             if (res1.ok && data1.status) {
-              const list1: QuestionMessage[] = Array.isArray(data1.data) ? data1.data : [];
+              const list1: QuestionMessage[] = Array.isArray(data1.data)
+                ? data1.data
+                : [];
               questionList = [...list1];
             }
           } catch (err) {
@@ -72,12 +75,14 @@ export function useMessages(recipientRole?: "admin" | "owner") {
             const url2 = `/api/forum/questions?recipientRole=${oppositeRole}&authorRole=${effectiveRecipientRole}`;
             const res2 = await fetch(url2);
             const data2 = await res2.json();
-            
+
             if (res2.ok && data2.status) {
-              const list2: QuestionMessage[] = Array.isArray(data2.data) ? data2.data : [];
+              const list2: QuestionMessage[] = Array.isArray(data2.data)
+                ? data2.data
+                : [];
               // Merge dan hapus duplikat berdasarkan ID
-              const existingIds = new Set(questionList.map(m => m.id));
-              const newMessages = list2.filter(m => !existingIds.has(m.id));
+              const existingIds = new Set(questionList.map((m) => m.id));
+              const newMessages = list2.filter((m) => !existingIds.has(m.id));
               questionList = [...questionList, ...newMessages];
             }
           } catch (err) {
@@ -105,7 +110,7 @@ export function useMessages(recipientRole?: "admin" | "owner") {
 
           const res = await fetch(url);
           const data = await res.json();
-          
+
           if (!res.ok || !data.status) {
             throw new Error(data.message || "Gagal memuat pertanyaan pengguna");
           }
@@ -119,7 +124,7 @@ export function useMessages(recipientRole?: "admin" | "owner") {
 
         // Prioritaskan focusMessageId jika ada (untuk reply atau action tertentu)
         const targetId = focusMessageId || selectedMessageIdRef.current;
-        
+
         if (targetId) {
           const focused = questionList.find((item) => item.id === targetId);
           if (focused) {
@@ -154,7 +159,11 @@ export function useMessages(recipientRole?: "admin" | "owner") {
             selectedMessageRef.current = null;
             selectedMessageIdRef.current = undefined;
           }
-        } else if (!selectedMessageRef.current && !silent && questionList.length > 0) {
+        } else if (
+          !selectedMessageRef.current &&
+          !silent &&
+          questionList.length > 0
+        ) {
           // Hanya pilih yang pertama jika belum ada selectedMessage sama sekali dan bukan silent fetch (first load)
           const firstMessage = questionList[0];
           setSelectedMessage(firstMessage);
@@ -240,7 +249,7 @@ export function useMessages(recipientRole?: "admin" | "owner") {
         },
         body: JSON.stringify({
           ...formData,
-          authorName: session.fullName || "User",
+          authorName: session.fullName,
           authorEmail: session.email,
           authorRole: session.role || "user",
         }),
