@@ -25,7 +25,7 @@ const Footer = () => {
     platform: [
       { name: "Dashboard", href: "/dashboard" },
       { name: "Grafik", href: "/data" },
-      { name: "Camera", href: "/camera" },
+      { name: "Kamera", href: "/camera" },
       { name: "Forum Edukasi", href: "/forumEdukasi" },
     ],
   };

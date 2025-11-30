@@ -14,7 +14,7 @@ const OwnerDashboardHeader = ({ userName }: OwnerDashboardHeaderProps) => {
       className="mb-6 sm:mb-8"
     >
       <h1 className="text-2xl sm:text-3xl font-bold text-neutral-800 lg:text-4xl text-center md:text-left">
-        Dashboard Owner
+        Dasbor Owner
       </h1>
       <p className="mt-2 text-sm sm:text-base text-neutral-600 text-center md:text-left">
         Selamat datang, {userName || "Owner"}! Ringkasan performa lahan
@@ -24,4 +24,3 @@ const OwnerDashboardHeader = ({ userName }: OwnerDashboardHeaderProps) => {
 };
 
 export default OwnerDashboardHeader;
-

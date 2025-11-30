@@ -150,7 +150,7 @@ const ProfilePage = () => {
       <section className="min-h-screen bg-linear-to-r from-neutral-50 to-neutral-100 py-16 md:py-24">
         <div className="container mx-auto px-4">
           <div className="flex h-96 items-center justify-center">
-            <p className="text-neutral-600">Memuat data profile...</p>
+            <p className="text-neutral-600">Memuat data profil...</p>
           </div>
         </div>
       </section>
@@ -185,7 +185,7 @@ const ProfilePage = () => {
             className="mb-6 sm:mb-8"
           >
             <h1 className="text-3xl sm:text-4xl font-bold text-neutral-800 md:text-5xl text-center md:text-left">
-              Profile Saya
+              Profil Saya
             </h1>
             <p className="mt-2 text-sm sm:text-base text-neutral-600 text-center md:text-left">
               Kelola informasi dan data diri Anda

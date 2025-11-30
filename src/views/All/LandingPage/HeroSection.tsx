@@ -30,7 +30,9 @@ const HeroSection = () => {
   // Auto-rotate images
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % galleryImages.length);
+      setCurrentImageIndex(
+        (prevIndex) => (prevIndex + 1) % galleryImages.length
+      );
     }, 5000);
     return () => clearInterval(interval);
   }, []);
@@ -60,15 +62,6 @@ const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          <motion.span
-            className="mb-6 inline-flex items-center rounded-full bg-gradient-to-r from-green-50 to-emerald-50 px-5 py-2 text-sm font-semibold text-green-700 ring-1 ring-green-200/50 shadow-sm"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-          >
-            Sistem Pengukuran pH dan Kelembapan Tanah
-          </motion.span>
-
           <motion.h1
             className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold leading-[1.1] text-neutral-900 tracking-tight"
             initial={{ opacity: 0, y: 20 }}
@@ -87,8 +80,8 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
           >
-            Solusi berbasis web untuk kontrol pompa otomatis dan deteksi tanaman
-            menggunakan AI yang cerdas dan efisien.
+            Sistem Pengukuran pH dan Kelembapan Tanah dengan Kontrol Pompa
+            Otomatis Berbasis Web dan Machine Learning pada Tanaman Cabai
           </motion.p>
 
           <motion.div
@@ -105,7 +98,10 @@ const HeroSection = () => {
             >
               <span className="relative z-10 flex items-center justify-center gap-2">
                 Login
-                <LuArrowRight className="transition-transform group-hover:translate-x-1" size={18} />
+                <LuArrowRight
+                  className="transition-transform group-hover:translate-x-1"
+                  size={18}
+                />
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-green-700 to-emerald-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </motion.button>
@@ -146,7 +142,7 @@ const HeroSection = () => {
                 />
               </motion.div>
             </AnimatePresence>
-            
+
             {/* Gradient overlay for better text contrast */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
           </div>
@@ -162,7 +158,7 @@ const HeroSection = () => {
             >
               <LuArrowLeft size={20} />
             </motion.button>
-            
+
             {/* Image indicators */}
             <div className="flex items-center gap-2">
               {galleryImages.map((_, index) => (

@@ -42,7 +42,7 @@ const Sidebar = ({
             ? "/dashboard_owner"
             : "/dashboard",
         icon: <IoIosHome size={24} />,
-        label: "Dashboard",
+        label: "Halaman Utama",
         roles: ["user", "admin", "owner"],
       },
       {
@@ -104,7 +104,7 @@ const Sidebar = ({
       {
         href: "/export",
         icon: <FaFileExport size={24} />,
-        label: "Export Database",
+        label: "Export Data ",
         roles: ["owner"],
       },
       {
@@ -123,7 +123,7 @@ const Sidebar = ({
       {
         href: "/profile",
         icon: <FaUser size={24} />,
-        label: "Profile",
+        label: "Profil",
         roles: ["user", "admin", "owner"],
       },
     ],

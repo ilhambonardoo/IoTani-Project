@@ -14,7 +14,7 @@ const AdminDashboardHeader = ({ userName }: AdminDashboardHeaderProps) => {
       className="mb-6 sm:mb-8"
     >
       <h1 className="text-2xl sm:text-3xl font-bold text-neutral-800 lg:text-4xl text-center md:text-left">
-        Dashboard Platform
+        Platform
       </h1>
       <p className="mt-2 text-sm sm:text-base text-neutral-600 text-center md:text-left">
         Selamat datang, {userName || "Admin"}! Kelola platform IoTani
@@ -24,4 +24,3 @@ const AdminDashboardHeader = ({ userName }: AdminDashboardHeaderProps) => {
 };
 
 export default AdminDashboardHeader;
-

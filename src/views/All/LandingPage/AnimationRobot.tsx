@@ -69,7 +69,7 @@ const AnimationRobot = () => {
           <div className="relative group rounded-3xl overflow-hidden shadow-2xl ring-1 ring-neutral-200/50 bg-neutral-900">
             {/* Glow effect */}
             <div className="absolute -inset-1 bg-gradient-to-r from-green-500/20 via-blue-500/20 to-purple-500/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
-            
+
             {/* Video */}
             <div className="relative aspect-video overflow-hidden">
               <video
@@ -91,10 +91,6 @@ const AnimationRobot = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.3 }}
               >
-                <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20">
-                  <LuPlay className="text-green-400" size={18} />
-                  <span className="text-sm font-semibold text-white">Live Demo</span>
-                </div>
                 <h3 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
                   Mini Bot
                   <span className="block text-2xl sm:text-3xl md:text-4xl bg-gradient-to-r from-green-400 via-emerald-400 to-green-300 bg-clip-text text-transparent">
@@ -111,8 +107,9 @@ const AnimationRobot = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.4 }}
               >
-                Dilengkapi dengan kamera ESP32, pompa air otomatis, dan pemrosesan
-                AI real-time untuk monitoring dan kontrol pertanian yang cerdas.
+                Dilengkapi dengan kamera ESP32, pompa air otomatis, dan
+                pemrosesan AI real-time untuk monitoring dan kontrol pertanian
+                yang cerdas.
               </motion.p>
 
               {/* Features */}
@@ -136,14 +133,18 @@ const AnimationRobot = () => {
                       transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}
                     >
                       <div className="relative z-10 flex items-center gap-3">
-                        <div className={`p-2 rounded-xl bg-gradient-to-br ${feature.color} shadow-lg`}>
+                        <div
+                          className={`p-2 rounded-xl bg-gradient-to-br ${feature.color} shadow-lg`}
+                        >
                           <Icon className="text-white" size={20} />
                         </div>
                         <span className="text-sm sm:text-base font-semibold text-white">
                           {feature.label}
                         </span>
                       </div>
-                      <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover/feature:opacity-20 transition-opacity duration-300`} />
+                      <div
+                        className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover/feature:opacity-20 transition-opacity duration-300`}
+                      />
                     </motion.div>
                   );
                 })}
