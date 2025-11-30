@@ -6,22 +6,22 @@ import Image from "next/legacy/image";
 const teamMembers = [
   {
     name: "Malik Raihan Oli`i",
-    role: "Robotic Design",
+    role: "Robotic and Project Manager",
     image: "/anggota/malik.jpg",
   },
   {
     name: "Ilham Bonardo Marpaung",
-    role: "Fullstack Web Developer",
+    role: "Fullstack Web Developer and Data Analyst",
     image: "/anggota/ilham.jpg",
   },
   {
     name: "Dandi Novian Pratama",
-    role: "Web Design",
+    role: "Publish Specialist",
     image: "/anggota/dandi.jpg",
   },
   {
     name: "Benediktus Aprilian Abimanyu",
-    role: "Development",
+    role: "Documentation Specialist",
     image: "/anggota/benediktus.jpg",
   },
 ];
@@ -75,4 +75,3 @@ const TeamSection = () => {
 };
 
 export default TeamSection;
-

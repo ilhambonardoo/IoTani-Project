@@ -11,7 +11,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY model_cabai.h5 .
+COPY model_cabai1.keras .
 COPY main.py .
 
 EXPOSE 8000

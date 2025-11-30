@@ -29,7 +29,7 @@ const ContentHeader = ({
           Manajemen Konten
         </h1>
         <p className="mt-2 text-sm sm:text-base text-neutral-600 text-center lg:text-left">
-          Kelola artikel dan konten edukasi untuk Forum QnA
+          Kelola artikel dan konten edukasi
         </p>
       </div>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -68,11 +68,3 @@ const ContentHeader = ({
 };
 
 export default ContentHeader;
-
-
-
-
-
-
-
-

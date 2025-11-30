@@ -29,7 +29,7 @@ app.add_middleware(
 print("Loading model...")
 model = None
 try:
-    model = tf.keras.models.load_model("model_cabai.h5")
+    model = tf.keras.models.load_model("model_cabai1.keras")
     print("Model loaded successfully.")
 except Exception as e:
     print(f"Error loading model: {e}")
@@ -48,7 +48,7 @@ CLASS_NAMES = [
 
 def preprocess_image(image_bytes):
     img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
-    img = img.resize((128, 128))
+    img = img.resize((224, 224))
     img_array = np.array(img) / 255.0
     img_array = np.expand_dims(img_array, axis=0)
     return img_array
