@@ -37,7 +37,6 @@ const Login = ({
     setIsLoading(true);
     setError("");
 
-    // Validasi role dipilih
     if (!role) {
       setError(
         "Silakan pilih tipe akun terlebih dahulu (User, Admin, atau Owner)"
@@ -51,10 +50,9 @@ const Login = ({
       const email = formData.get("email")?.toString() ?? "";
       const password = formData.get("password")?.toString() ?? "";
 
-      // Fetch user data untuk mendapatkan role sebenarnya
       let userData: LoginUserData | null;
       try {
-        userData = await login({ email }) as LoginUserData | null;
+        userData = (await login({ email })) as LoginUserData | null;
       } catch {
         setError(
           "Terjadi kesalahan saat memverifikasi akun. Silakan coba lagi."
@@ -70,7 +68,6 @@ const Login = ({
         return;
       }
 
-      // Validasi role yang dipilih dengan role user sebenarnya
       const userRole = (userData.role || "").toLowerCase().trim();
       const selectedRole = role.toLowerCase().trim();
 
@@ -118,8 +115,6 @@ const Login = ({
         return;
       }
 
-      // Jika role sesuai, lanjutkan login
-
       const res = await signIn("credentials", {
         redirect: false,
         email,
@@ -137,12 +132,12 @@ const Login = ({
           setIsLoading(false);
           e.currentTarget.reset();
         } else {
-          setError("Terjadi kesalahan saat login. Silakan coba lagi.");
+          setError("Email atau password salah");
           setIsLoading(false);
         }
       }
     } catch {
-      setError("Terjadi kesalahan saat login. Silakan coba lagi.");
+      setError("Email atau password salah");
       setIsLoading(false);
     }
   };

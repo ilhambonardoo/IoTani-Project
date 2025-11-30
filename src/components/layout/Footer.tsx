@@ -23,7 +23,7 @@ const Footer = () => {
 
   const footerLinks = {
     platform: [
-      { name: "Dashboard", href: "/dashboard" },
+      { name: "Halaman Utama", href: "/dashboard" },
       { name: "Grafik", href: "/data" },
       { name: "Kamera", href: "/camera" },
       { name: "Forum Edukasi", href: "/forumEdukasi" },
