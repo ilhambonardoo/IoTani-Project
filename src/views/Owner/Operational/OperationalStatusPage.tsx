@@ -112,10 +112,3 @@ const OperationalStatusPage = () => {
 };
 
 export default OperationalStatusPage;
-
-
-
-
-
-
-

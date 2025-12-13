@@ -88,7 +88,7 @@ const SensorStatusCard = ({
                 temperatureStatus.status
               )}`}
             >
-              {sensorData.temperature}°C
+              {sensorData.temperature.toFixed(2)}°C
             </p>
           </div>
         </div>
@@ -119,7 +119,7 @@ const SensorStatusCard = ({
                 moistureStatus.status
               )}`}
             >
-              {sensorData.moisture}%
+              {sensorData.moisture.toFixed(2)}%
             </p>
           </div>
         </div>
