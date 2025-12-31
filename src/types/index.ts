@@ -14,3 +14,4 @@ export * from "./export";
 export * from "./chart";
 export * from "./google";
 export * from "./firestore";
+export * from "./profile";

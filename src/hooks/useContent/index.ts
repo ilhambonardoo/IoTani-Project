@@ -15,7 +15,7 @@ export function useContent() {
     setError(null);
 
     try {
-      const response = await fetch("/api/content/get");
+      const response = await fetch("/api/content");
       const result = await response.json();
 
       if (!response.ok || !result.status) {
@@ -61,7 +61,7 @@ export function useContent() {
   const createContent = useCallback(
     async (data: ContentPayload) => {
       try {
-        const response = await fetch("/api/content/add", {
+        const response = await fetch("/api/content", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
@@ -88,7 +88,7 @@ export function useContent() {
   const updateContent = useCallback(
     async (id: string, data: Partial<ContentPayload>) => {
       try {
-        const response = await fetch("/api/content/update", {
+        const response = await fetch("/api/content", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id, ...data }),
@@ -115,7 +115,7 @@ export function useContent() {
   const deleteContent = useCallback(
     async (id: string) => {
       try {
-        const response = await fetch(`/api/content/delete?id=${id}`, {
+        const response = await fetch(`/api/content?id=${id}`, {
           method: "DELETE",
         });
 
@@ -150,4 +150,3 @@ export function useContent() {
     deleteContent,
   };
 }
-

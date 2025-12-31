@@ -3,14 +3,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { hasCustomAvatar } from "@/lib/utils/profile-avatar";
-
-interface ProfileFormData {
-  phone: string;
-  location: string;
-  bio: string;
-  avatarUrl: string;
-  instagram: string;
-}
+import { ProfileFormData } from "@/types/profile";
 
 export function useProfileUpdate() {
   const [isLoading, setIsLoading] = useState(false);
@@ -32,9 +25,7 @@ export function useProfileUpdate() {
         if (oldAvatarUrl && hasCustomAvatar(oldAvatarUrl)) {
           try {
             await fetch(
-              `/api/profile/delete-image?avatarUrl=${encodeURIComponent(
-                oldAvatarUrl
-              )}`,
+              `/api/profile?avatarUrl=${encodeURIComponent(oldAvatarUrl)}`,
               { method: "DELETE" }
             );
           } catch {
@@ -100,9 +91,7 @@ export function useProfileUpdate() {
     try {
       // Delete image file
       const deleteRes = await fetch(
-        `/api/profile/delete-image?avatarUrl=${encodeURIComponent(
-          currentAvatar
-        )}`,
+        `/api/profile?avatarUrl=${encodeURIComponent(currentAvatar)}`,
         {
           method: "DELETE",
         }
@@ -150,6 +139,3 @@ export function useProfileUpdate() {
     deletePhoto,
   };
 }
-
-
-
