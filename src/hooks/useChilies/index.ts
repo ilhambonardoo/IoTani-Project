@@ -14,7 +14,7 @@ export function useChilies() {
     setError(null);
 
     try {
-      const response = await fetch("/api/chilies/get");
+      const response = await fetch("/api/chilies");
       const result = await response.json();
 
       if (!response.ok || !result.status) {
@@ -69,7 +69,7 @@ export function useChilies() {
           }
         }
 
-        const response = await fetch("/api/chilies/add", {
+        const response = await fetch("/api/chilies", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...data, imageUrl }),
@@ -117,7 +117,7 @@ export function useChilies() {
           }
         }
 
-        const response = await fetch("/api/chilies/update", {
+        const response = await fetch("/api/chilies", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id, ...data, imageUrl }),
@@ -144,7 +144,7 @@ export function useChilies() {
   const deleteChili = useCallback(
     async (id: string) => {
       try {
-        const response = await fetch(`/api/chilies/delete?id=${id}`, {
+        const response = await fetch(`/api/chilies?id=${id}`, {
           method: "DELETE",
         });
 
@@ -176,4 +176,3 @@ export function useChilies() {
     deleteChili,
   };
 }
-

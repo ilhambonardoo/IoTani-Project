@@ -1,6 +1,7 @@
 import {
   getUserProfile,
   updateUserProfile,
+  deleteProfileImage,
 } from "@/lib/db/firebase/service-profile";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -65,6 +66,40 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
 
     const res = await updateUserProfile(email, updateData);
 
+    return NextResponse.json(
+      {
+        status: res.status,
+        message: res.message,
+      },
+      { status: res.statusCode }
+    );
+  } catch {
+    return NextResponse.json(
+      {
+        status: false,
+        message: "Terjadi kesalahan pada server",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest): Promise<NextResponse> {
+  try {
+    const { searchParams } = new URL(request.url);
+    const avatarUrl = searchParams.get("avatarUrl");
+
+    if (!avatarUrl) {
+      return NextResponse.json(
+        {
+          status: false,
+          message: "Avatar URL tidak boleh kosong",
+        },
+        { status: 400 }
+      );
+    }
+
+    const res = await deleteProfileImage(avatarUrl);
     return NextResponse.json(
       {
         status: res.status,
