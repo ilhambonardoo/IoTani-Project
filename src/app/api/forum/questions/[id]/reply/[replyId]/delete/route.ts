@@ -1,7 +1,7 @@
 import { deleteQuestionReply } from "@/lib/db/firebase/service";
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
-import type {ExtendedToken} from "@/types";
+import type { ExtendedToken } from "@/types";
 
 export async function DELETE(
   request: NextRequest,
@@ -20,7 +20,6 @@ export async function DELETE(
       );
     }
 
-    // Ambil role dari session
     const token = await getToken({
       req: request,
       secret: process.env.NEXTAUTH_SECRET,
