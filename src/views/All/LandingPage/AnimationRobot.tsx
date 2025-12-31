@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { LuCamera, LuBrain, LuZap, LuPlay } from "react-icons/lu";
+import { LuCamera, LuBrain, LuZap } from "react-icons/lu";
 
 const features = [
   {
